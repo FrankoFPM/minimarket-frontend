@@ -1,9 +1,7 @@
-import logoDark from './logo-dark.svg'
-import logoLight from './logo-light.svg'
+import { Link } from 'react-router-dom';  
+import logoDark from './logo-dark.svg';
+import logoLight from './logo-light.svg';
 
-// Practica React Router sin miedo
-// y edita este archivo como quieras
-// Puedes usar el componente Welcome como base para tu página de inicio
 export function Welcome() {
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
@@ -41,12 +39,29 @@ export function Welcome() {
                   </a>
                 </li>
               ))}
+              {}
+              <li>
+                <Link
+                  to="/login"
+                  className="group flex items-center gap-3 self-stretch p-3 leading-normal text-blue-700 hover:underline dark:text-blue-500"
+                >
+                  Iniciar sesión
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/register"
+                  className="group flex items-center gap-3 self-stretch p-3 leading-normal text-blue-700 hover:underline dark:text-blue-500"
+                >
+                  Registrarse
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>
       </div>
     </main>
-  )
+  );
 }
 
 const resources = [

@@ -1,25 +1,90 @@
-export default function Login() {
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';  // Importamos Link
+import "../../styles/loginAndRegister.css";  
+
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // Validación
+    if (!email || !password) {
+      setError('Por favor, completa todos los campos');
+      return;
+    }
+
+    console.log('Iniciando sesión con:', { email, password });
+
+    alert('Inicio de sesión exitoso');
+
+    setEmail('');
+    setPassword('');
+    setError('');
+  };
+
   return (
-    <>
-      {/* Contenedor del formulario
-      <form className="bg-white p-6 rounded shadow-md w-80">
-        <h1 className="text-2xl font-bold mb-4 text-center">Iniciar Sesión</h1>*/}
-      {/* Campo de entrada para el correo
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
-        />*/}
-      {/* Campo de entrada para la contraseña
-        <input
-          type="password"
-          placeholder="Contraseña"
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
-        />*/}
-      {/* Botón de inicio de sesión
-        <button className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-          Iniciar Sesión
-        </button>*/}
-    </>
-  )
-}
+    <div className="auth-container">
+      <div className="auth-card">
+        <h1 className="title">MINIMARKET</h1>
+
+        <div className="logo-container">
+          <img src="/logoM.png" alt="Logo Minimarket" className="logo" />
+        </div>
+
+        <h2 className="subtitle">Iniciar sesión</h2>
+
+        {error && <div className="error-message">{error}</div>}
+
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <div className="input-icon">
+              <i className="email-icon">✉️</i>
+            </div>
+            <input 
+              type="email" 
+              placeholder="Correo electrónico" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="input-field"
+            />
+          </div>
+
+          <div className="input-group">
+            <div className="input-icon">
+              <i className="password-icon">🔒</i>
+            </div>
+            <input 
+              type="password" 
+              placeholder="Contraseña" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input-field"
+            />
+          </div>
+
+          <button type="submit" className="submit-button">Iniciar sesión</button>
+        </form>
+
+        <div className="forgot-password">
+          <a href="#" onClick={() => alert('Recuperar contraseña')}>¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <div className="auth-switch">
+          <p>¿No tienes una cuenta?</p>
+            {}
+            <Link
+              to="/register"
+              className="text-blue-700 hover:underline dark:text-blue-500"
+            >
+              Registrarse
+            </Link>
+          
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
