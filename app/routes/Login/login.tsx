@@ -1,25 +1,102 @@
-export default function Login() {
+import { Link } from 'react-router'
+import { ContainerInput } from '../../Components/FormComponent'
+import { ThemeToggle } from '~/Components/UiComponentes'
+
+/**
+ * Componente principal para la página de inicio de sesión.
+ * Contiene el formulario de inicio de sesión y elementos de diseño.
+ */
+const Login = () => {
+  const Berror = false // Estado de error para los campos (puede ser dinámico)
+
+  // Clases reutilizables para el botón
+  const buttonClasses =
+    'my-2 w-full h-11 bg-primary-1 text-secondary font-medium px-3 py-1 rounded-md border-2 border-primary-1 cursor-pointer transition-all hover:animate-pulse hover:text-primary-1 hover:bg-secondary'
+
+  /**
+   * Componente reutilizable para los campos de entrada.
+   * @param label - Etiqueta del campo.
+   * @param placeholder - Texto de marcador de posición.
+   * @param type - Tipo de entrada (por ejemplo, "text", "password").
+   */
+  const InputField = ({
+    label,
+    placeholder,
+    type = 'text',
+  }: {
+    label: string
+    placeholder: string
+    type?: string
+  }) => (
+    <ContainerInput label={label} color={Berror ? 'has-[input:focus-within]:outline-red-500 outline-red-500' : ''}>
+      <input
+        type={type}
+        placeholder={placeholder}
+        className={`h-11 pl-3 w-full ${Berror ? 'text-red-500' : ''}`}
+      />
+    </ContainerInput>
+  )
+
   return (
-    <>
-      {/* Contenedor del formulario
-      <form className="bg-white p-6 rounded shadow-md w-80">
-        <h1 className="text-2xl font-bold mb-4 text-center">Iniciar Sesión</h1>*/}
-      {/* Campo de entrada para el correo
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
-        />*/}
-      {/* Campo de entrada para la contraseña
-        <input
-          type="password"
-          placeholder="Contraseña"
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
-        />*/}
-      {/* Botón de inicio de sesión
-        <button className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-          Iniciar Sesión
-        </button>*/}
-    </>
+    <div className="h-screen w-screen flex bg-background justify-center items-center">
+      <div className="absolute xl:w-[60rem] xl:h-[40rem] md:w-1/2 sm:w-full w-full h-screen flex items-center justify-center shadow-foreground/30 shadow-lg">
+        {/* Sección izquierda: Información de bienvenida */}
+        <div className="w-1/2 h-full hidden bg-primary-2 xl:flex flex-col items-center justify-center px-8">
+          <h1 className="w-full text-3xl font-bold uppercase text-foreground text-center">
+            Minimarket
+          </h1>
+
+          <div className="w-40 h-40 bg-primary-2 rounded-2xl flex justify-center items-center my-9">
+            <img src="/logoM.png" alt="Logo Minimarket" className="logo" />
+          </div>
+
+          <h2 className="text-xl font-semibold text-foreground text-center mb-4">
+            ¡Bienvenido!
+          </h2>
+
+          <p className="text-foreground text-center text-sm leading-relaxed max-w-xs">
+            Compra rápido, seguro y al mejor precio. Ingresa para descubrir ofertas exclusivas y productos esenciales para tu día a día.
+          </p>
+        </div>
+
+        {/* Sección derecha: Formulario de inicio de sesión */}
+        <div className="xl:w-1/2 h-full bg-background flex flex-col justify-center items-center gap-5">
+          <h1 className="text-2xl font-semibold text-foreground uppercase">
+            Iniciar sesión
+          </h1>
+          <form className="w-full bg-background flex flex-col justify-center items-center gap-5 px-20">
+            {/* Campo de entrada para el usuario */}
+            <InputField label="Usuario" placeholder="Nombre de usuario" type="text" />
+
+            {/* Campo de entrada para la contraseña */}
+            <InputField label="Contraseña" placeholder="Contraseña" type="password" />
+
+            {/* Botón de inicio de sesión */}
+            <button type="submit" className={buttonClasses}>
+              Iniciar sesión
+            </button>
+
+            {/* Enlaces adicionales */}
+            <div className="flex flex-col items-center justify-center mt-2 gap-2 text-foreground">
+              <Link to="/forgot-password" className="text-blue-700 hover:underline dark:text-blue-500">
+                Olvidaste tu contraseña?
+              </Link>
+              <p className="text-foreground font-medium flex gap-1">
+                ¿No tienes una cuenta?
+                <Link to="/register" className="text-blue-700 hover:underline dark:text-blue-500">
+                  Registrarse
+                </Link>
+              </p>
+            </div>
+          </form>
+          {/* Botón para alternar entre temas */}
+          <div className='absolute bottom-20'>
+            <ThemeToggle />
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
+
+export default Login

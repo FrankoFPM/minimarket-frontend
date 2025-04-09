@@ -1,15 +1,58 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-1: var(--primary-1);
+  --color-primary-2: var(--primary-2);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
 }
 
-html,
-body {
-  @apply bg-white dark:bg-gray-950;
+@layer utilities {
+  :root {
+    --background: #e9fbe9;
+    /* fondo claro, verde muy pálido */
+    --foreground: #1b1b1b;
+    /* texto principal */
+    --secondary: #ffffff;
+    /* tarjetas, paneles */
+    --primary-1: #2e7d51;
+    /* verde principal para botones */
+    --primary-2: #a8dab5;
+    /* verde pastel para resaltes */
+    --accent: #f4a261;
+    /* naranja suave para contrastes */
+    --border: #d0e9d0;
+    /* bordes suaves */
+  }
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
+  .dark {
+    --background: #101c17;
+    /* fondo oscuro verdoso */
+    --foreground: #f0fdf4;
+    /* texto claro */
+    --secondary: #1a3028;
+    /* tarjetas en dark mode */
+    --primary-1: #a8dab5;
+    /* verde pastel como base */
+    --primary-2: #2e7d51;
+    /* verde fuerte para botones */
+    --accent: #f4a261;
+    /* mantiene el contraste */
+    --border: #2c3e35;
+    /* bordes oscuros sutiles */
+  }
+}
+
+
+
+@layer components {
+  input[type='text'] {
+    @apply block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-foreground placeholder:text-gray-400 focus:outline-none sm:text-sm/6;
   }
 }
