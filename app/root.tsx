@@ -31,8 +31,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        {/* Script para aplicar el tema antes de que React se monte */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                const isDarkMode = localStorage.getItem('theme') === 'dark';
+                if (isDarkMode) {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              })();
+            `,
+          }}
+        />
       </head>
-      <body>
+      <body className='bg-background'>
         {children}
         <ScrollRestoration />
         <Scripts />

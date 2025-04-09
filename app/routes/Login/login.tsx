@@ -1,90 +1,102 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';  // Importamos Link
-import "../../styles/loginAndRegister.css";  
+import { Link } from 'react-router'
+import { ContainerInput } from '../../Components/FormComponent'
+import { ThemeToggle } from '~/Components/UiComponentes'
 
+/**
+ * Componente principal para la página de inicio de sesión.
+ * Contiene el formulario de inicio de sesión y elementos de diseño.
+ */
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const Berror = false // Estado de error para los campos (puede ser dinámico)
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // Validación
-    if (!email || !password) {
-      setError('Por favor, completa todos los campos');
-      return;
-    }
+  // Clases reutilizables para el botón
+  const buttonClasses =
+    'my-2 w-full h-11 bg-primary-1 text-secondary font-medium px-3 py-1 rounded-md border-2 border-primary-1 cursor-pointer transition-all hover:animate-pulse hover:text-primary-1 hover:bg-secondary'
 
-    console.log('Iniciando sesión con:', { email, password });
-
-    alert('Inicio de sesión exitoso');
-
-    setEmail('');
-    setPassword('');
-    setError('');
-  };
+  /**
+   * Componente reutilizable para los campos de entrada.
+   * @param label - Etiqueta del campo.
+   * @param placeholder - Texto de marcador de posición.
+   * @param type - Tipo de entrada (por ejemplo, "text", "password").
+   */
+  const InputField = ({
+    label,
+    placeholder,
+    type = 'text',
+  }: {
+    label: string
+    placeholder: string
+    type?: string
+  }) => (
+    <ContainerInput label={label} color={Berror ? 'has-[input:focus-within]:outline-red-500 outline-red-500' : ''}>
+      <input
+        type={type}
+        placeholder={placeholder}
+        className={`h-11 pl-3 w-full ${Berror ? 'text-red-500' : ''}`}
+      />
+    </ContainerInput>
+  )
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h1 className="title">MINIMARKET</h1>
+    <div className="h-screen w-screen flex bg-background justify-center items-center">
+      <div className="absolute xl:w-[60rem] xl:h-[40rem] md:w-1/2 sm:w-full w-full h-screen flex items-center justify-center shadow-foreground/30 shadow-lg">
+        {/* Sección izquierda: Información de bienvenida */}
+        <div className="w-1/2 h-full hidden bg-primary-2 xl:flex flex-col items-center justify-center px-8">
+          <h1 className="w-full text-3xl font-bold uppercase text-foreground text-center">
+            Minimarket
+          </h1>
 
-        <div className="logo-container">
-          <img src="/logoM.png" alt="Logo Minimarket" className="logo" />
-        </div>
-
-        <h2 className="subtitle">Iniciar sesión</h2>
-
-        {error && <div className="error-message">{error}</div>}
-
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <div className="input-icon">
-              <i className="email-icon">✉️</i>
-            </div>
-            <input 
-              type="email" 
-              placeholder="Correo electrónico" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="input-field"
-            />
+          <div className="w-40 h-40 bg-primary-2 rounded-2xl flex justify-center items-center my-9">
+            <img src="/logoM.png" alt="Logo Minimarket" className="logo" />
           </div>
 
-          <div className="input-group">
-            <div className="input-icon">
-              <i className="password-icon">🔒</i>
-            </div>
-            <input 
-              type="password" 
-              placeholder="Contraseña" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="input-field"
-            />
-          </div>
+          <h2 className="text-xl font-semibold text-foreground text-center mb-4">
+            ¡Bienvenido!
+          </h2>
 
-          <button type="submit" className="submit-button">Iniciar sesión</button>
-        </form>
-
-        <div className="forgot-password">
-          <a href="#" onClick={() => alert('Recuperar contraseña')}>¿Olvidaste tu contraseña?</a>
+          <p className="text-foreground text-center text-sm leading-relaxed max-w-xs">
+            Compra rápido, seguro y al mejor precio. Ingresa para descubrir ofertas exclusivas y productos esenciales para tu día a día.
+          </p>
         </div>
 
-        <div className="auth-switch">
-          <p>¿No tienes una cuenta?</p>
-            {}
-            <Link
-              to="/register"
-              className="text-blue-700 hover:underline dark:text-blue-500"
-            >
-              Registrarse
-            </Link>
-          
+        {/* Sección derecha: Formulario de inicio de sesión */}
+        <div className="xl:w-1/2 h-full bg-background flex flex-col justify-center items-center gap-5">
+          <h1 className="text-2xl font-semibold text-foreground uppercase">
+            Iniciar sesión
+          </h1>
+          <form className="w-full bg-background flex flex-col justify-center items-center gap-5 px-20">
+            {/* Campo de entrada para el usuario */}
+            <InputField label="Usuario" placeholder="Nombre de usuario" type="text" />
+
+            {/* Campo de entrada para la contraseña */}
+            <InputField label="Contraseña" placeholder="Contraseña" type="password" />
+
+            {/* Botón de inicio de sesión */}
+            <button type="submit" className={buttonClasses}>
+              Iniciar sesión
+            </button>
+
+            {/* Enlaces adicionales */}
+            <div className="flex flex-col items-center justify-center mt-2 gap-2 text-foreground">
+              <Link to="/forgot-password" className="text-blue-700 hover:underline dark:text-blue-500">
+                Olvidaste tu contraseña?
+              </Link>
+              <p className="text-foreground font-medium flex gap-1">
+                ¿No tienes una cuenta?
+                <Link to="/register" className="text-blue-700 hover:underline dark:text-blue-500">
+                  Registrarse
+                </Link>
+              </p>
+            </div>
+          </form>
+          {/* Botón para alternar entre temas */}
+          <div className='absolute bottom-20'>
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login
