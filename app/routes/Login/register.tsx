@@ -1,9 +1,25 @@
 import { Link } from 'react-router'
 import { InputField } from '~/Components/FormComponent'
 import { ThemeToggle } from '~/Components/UiComponentes'
+import { useForm } from 'react-hook-form'
 
 const Register = () => {
 
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
+  interface FormData {
+    nombres: string;
+    apellidos: string;
+    telefono: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  }
+
+  const onSubmit = (data: FormData) => {
+    console.log(data)
+  }
+
+  console.log(errors)
   return (
     <div className="h-screen w-screen flex bg-background justify-center items-center">
       <div className="absolute xl:w-[60rem] xl:h-[40rem] md:w-1/2 sm:w-full w-full h-screen flex items-center justify-center shadow-foreground/30 shadow-lg">
@@ -31,16 +47,63 @@ const Register = () => {
           <h1 className="text-2xl font-semibold text-foreground uppercase">
                 Registrarse
           </h1>
-          <form className="w-full bg-background grid grid-cols-2 gap-5 px-20">
+          <form className="w-full bg-background grid grid-cols-2 gap-5 px-14" onSubmit={handleSubmit(onSubmit)}>
             {/* Campo de entrada para el usuario */}
-            <InputField label="Nombre" placeholder="Ingrese sus nombres" type="text" />
-            <InputField label="Apellido" placeholder="Ingrese sus apellidos" type="text" />
-            <InputField label="Telefono" placeholder="Ingrese su telefono" type="number" />
-            <InputField label="Email" placeholder="Ingrese su correo" type="email" />
-
+            <InputField
+              label="Nombre"
+              placeholder="Ingrese sus nombres"
+              type="text"
+              {...register('nombres',{required: 'Debe ingresar su nombre'})}
+              error={errors.nombres?.message}
+            />
+            <InputField
+              label="Apellido"
+              placeholder="Ingrese sus apellidos"
+              type="text"
+              {...register('apellidos', { required: 'Debe ingresar su apellido' })}
+              error={errors.apellidos?.message}
+            />
+            <InputField
+              label="Telefono"
+              placeholder="Ingrese su telefono"
+              type="number"
+              {...register('telefono', {
+                required: 'Debe ingresar su telefono',
+                pattern: { value: /^[0-9]+$/, message: 'Solo se permiten números' }
+              })}
+              error={errors.telefono?.message}
+            />
+            <InputField
+              label="Email"
+              placeholder="Ingrese su correo"
+              type="email"
+              {...register('email', {
+                required: 'Debe ingresar su correo',
+                pattern: { value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/, message: 'Correo no válido' }
+              })}
+              error={errors.email?.message}
+            />
             {/* Campo de entrada para la contraseña */}
-            <InputField label="Contraseña" placeholder="Contraseña" type="password" />
-            <InputField label="Confirmar Contraseña" placeholder="Confirmar contraseña" type="password" />
+            <InputField
+              label="Contraseña"
+              placeholder="Contraseña"
+              type="password"
+              {...register('password', {
+                required: 'Debe ingresar una contraseña',
+                minLength: { value: 6, message: 'La contraseña debe tener al menos 6 caracteres' }
+              })}
+              error={errors.password?.message}
+            />
+            <InputField
+              label="Confirmar Contraseña"
+              placeholder="Confirmar contraseña"
+              type="password"
+              {...register('confirmPassword', {
+                required: 'Debe confirmar su contraseña',
+                validate: (value, context) => value === context.password || 'Las contraseñas no coinciden'
+              })}
+              error={errors.confirmPassword?.message}
+            />
 
             {/* Botón de registro */}
             <button type="submit" className={'btn-success col-span-2'}>

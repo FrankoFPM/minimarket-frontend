@@ -1,3 +1,4 @@
+import type { FieldError, Merge } from 'react-hook-form'
 import { MdError } from 'react-icons/md'
 
 interface ContainerInput {
@@ -9,7 +10,7 @@ interface ContainerInput {
 export function ContainerInput({ label,children, color }: ContainerInput) {
   return (
     <div className="w-full">
-      <label htmlFor={label.toLowerCase.toString()} className="block text-sm/6 font-medium text-foreground">
+      <label htmlFor={label.toLowerCase.toString()} className={'block text-sm/6 font-medium' + (color ? ' text-red-500 font-bold' : ' text-foreground')}>
         {label}
       </label>
       <div
@@ -23,16 +24,19 @@ export function ContainerInput({ label,children, color }: ContainerInput) {
 
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string
-  error?: boolean
+  error?: string | FieldError | Merge<FieldError, FieldError> | null
 }
 
-export function InputField({ label, error = false, ...props }: InputFieldProps) {
+export function InputField({ label, error = null, ...props }: InputFieldProps) {
   return (
-    <ContainerInput label={label}>
-      <input
-        {...props} // Pasa todos los atributos adicionales al input
-        className={`h-11 pl-3 w-full ${error ? 'text-red-500' : ''}`}
-      />
-    </ContainerInput>
+    <div className="flex flex-col">
+      <ContainerInput label={label} color={error ? 'has-[input:focus-within]:outline-red-500 outline-red-500' : ''}>
+        <input
+          {...props} // Pasa todos los atributos adicionales al input
+          className={`h-11 pl-3 w-full ${error ? 'text-red-500' : ''}`}
+        />
+      </ContainerInput>
+      <p className='text-red-500 text-xs font-medium mt-1'>{error ? (typeof error === 'string' ? error : String(error.message)) : ''}</p>
+    </div>
   )
 }
