@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 
 const Register = () => {
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
+  const { register, handleSubmit, formState: { errors }, getValues } = useForm<FormData>()
   interface FormData {
     nombres: string;
     apellidos: string;
@@ -19,7 +19,10 @@ const Register = () => {
     console.log(data)
   }
 
-  console.log(errors)
+  if (process.env.NODE_ENV === 'development') {
+    console.log(errors)
+  }
+
   return (
     <div className="h-screen w-screen flex bg-background justify-center items-center">
       <div className="absolute xl:w-[60rem] xl:h-[40rem] md:w-1/2 sm:w-full w-full h-screen flex items-center justify-center shadow-foreground/30 shadow-lg">
@@ -100,7 +103,7 @@ const Register = () => {
               type="password"
               {...register('confirmPassword', {
                 required: 'Debe confirmar su contraseña',
-                validate: (value, context) => value === context.password || 'Las contraseñas no coinciden'
+                validate: (value) => value === getValues('password') || 'Las contraseñas no coinciden'
               })}
               error={errors.confirmPassword?.message}
             />

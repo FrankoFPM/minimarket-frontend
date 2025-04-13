@@ -10,7 +10,7 @@ interface ContainerInput {
 export function ContainerInput({ label,children, color }: ContainerInput) {
   return (
     <div className="w-full">
-      <label htmlFor={label.toLowerCase.toString()} className={'block text-sm/6 font-medium' + (color ? ' text-red-500 font-bold' : ' text-foreground')}>
+      <label htmlFor={label.toLowerCase()} className={'block text-sm/6 font-medium' + (color ? ' text-red-500 font-bold' : ' text-foreground')}>
         {label}
       </label>
       <div
