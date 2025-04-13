@@ -1,12 +1,27 @@
 import { Link } from 'react-router'
 import { InputField } from '../../Components/FormComponent'
 import { ThemeToggle } from '~/Components/UiComponentes'
+import { useForm } from 'react-hook-form'
 
 /**
  * Componente principal para la página de inicio de sesión.
  * Contiene el formulario de inicio de sesión y elementos de diseño.
  */
 const Login = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
+
+  interface FormData {
+    email: string;
+    password: string;
+  }
+
+  const onSubmit = (data: FormData) => {
+    console.log(data)
+  }
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log(errors)
+  }
 
   return (
     <div className="h-screen w-screen flex bg-background justify-center items-center">
@@ -35,12 +50,25 @@ const Login = () => {
           <h1 className="text-2xl font-semibold text-foreground uppercase">
             Iniciar sesión
           </h1>
-          <form className="w-full bg-background flex flex-col justify-center items-center gap-5 px-20">
+          <form className="w-full bg-background flex flex-col justify-center items-center gap-5 px-20" onSubmit={handleSubmit(onSubmit)}>
             {/* Campo de entrada para el usuario */}
-            <InputField label="Usuario" placeholder="Nombre de usuario" type="text" />
+            <InputField
+              label="Email"
+              placeholder="example@example.com"
+              type="email"
+              {...register('email', {required: 'Debe ingresar su email',
+                pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: 'Email no válido' } })}
+              error={errors.email?.message}
+            />
 
             {/* Campo de entrada para la contraseña */}
-            <InputField label="Contraseña" placeholder="Contraseña" type="password" />
+            <InputField
+              label="Contraseña"
+              placeholder="Ingrese su contraseña"
+              type="password"
+              {...register('password', { required: 'Debe ingresar su contraseña' })}
+              error={errors.password?.message}
+            />
 
             {/* Botón de inicio de sesión */}
             <button type="submit" className={'btn-success'}>
