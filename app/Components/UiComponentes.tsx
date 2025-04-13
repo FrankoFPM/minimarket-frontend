@@ -3,38 +3,44 @@ import { AiFillMoon } from 'react-icons/ai'
 import { MdSunny } from 'react-icons/md'
 
 export function ThemeToggle() {
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    // Recuperar el estado inicial desde localStorage
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('theme')
-      return savedTheme === 'dark'
-    }
-    return false // Valor por defecto si no hay tema guardado
-  })
+  const [isDarkMode, setIsDarkMode] = useState(false)
 
   useEffect(() => {
-    // Aplicar la clase 'dark' al cargar el componente
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
+    // Leer el tema de la cookie al cargar
+    const savedTheme = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('theme='))
+      ?.split('=')[1]
+
+    if (savedTheme) {
+      setIsDarkMode(savedTheme === 'dark')
+      document.documentElement.classList.toggle('dark', savedTheme === 'dark')
     }
-  }, [isDarkMode])
+  }, [])
 
   const toggleTheme = () => {
-    const newTheme = !isDarkMode
-    setIsDarkMode(newTheme)
-    // Guardar el estado en localStorage
-    localStorage.setItem('theme', newTheme ? 'dark' : 'light')
-    document.documentElement.classList.toggle('dark', newTheme)
+    const newTheme = !isDarkMode ? 'dark' : 'light'
+    setIsDarkMode(!isDarkMode)
+
+    // Guardar el tema en una cookie
+    document.cookie = `theme=${newTheme}; path=/; max-age=31536000` // 1 año
+    document.documentElement.classList.toggle('dark', newTheme === 'dark')
   }
 
   return (
-    <>
-      <div className='relative flex items-center justify-center' onClick={toggleTheme}>
-        <AiFillMoon size={60} className={`absolute text-white hover:rotate-45 duration-700 transition-transform ${isDarkMode ? '': 'scale-0'}`} />
-        <MdSunny size={60} className={`absolute text-yellow-400 hover:rotate-90 duration-700 transition-transform ${isDarkMode ? 'scale-0' : ''}`} />
-      </div>
-    </>
+    <div className="relative flex items-center justify-center" onClick={toggleTheme}>
+      <AiFillMoon
+        size={60}
+        className={`absolute text-white hover:rotate-45 duration-700 transition-transform ${
+          isDarkMode ? '' : 'scale-0'
+        }`}
+      />
+      <MdSunny
+        size={60}
+        className={`absolute text-yellow-400 hover:rotate-90 duration-700 transition-transform ${
+          isDarkMode ? 'scale-0' : ''
+        }`}
+      />
+    </div>
   )
 }
