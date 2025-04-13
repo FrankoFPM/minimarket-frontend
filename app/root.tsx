@@ -24,23 +24,33 @@ export const links: Route.LinksFunction = () => [
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  // Leer la cookie del tema en el servidor
+  const theme =
+    typeof document === 'undefined'
+      ? 'light' // Valor predeterminado en el servidor
+      : document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('theme='))
+        ?.split('=')[1] || 'light'
   return (
-    <html lang="en">
+    <html lang="en" className={theme}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
-        {/* Script para aplicar el tema antes de que React se monte */}
+        {/* Script para ajustar el tema después de la carga */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                const isDarkMode = localStorage.getItem('theme') === 'dark';
-                if (isDarkMode) {
-                  document.documentElement.classList.add('dark');
-                } else {
-                  document.documentElement.classList.remove('dark');
+                const savedTheme = document.cookie
+                  .split('; ')
+                  .find((row) => row.startsWith('theme='))
+                  ?.split('=')[1];
+                if (savedTheme) {
+                  document.documentElement.classList.add(savedTheme);
+                  document.documentElement.classList.remove(savedTheme === 'dark' ? 'light' : 'dark');
                 }
               })();
             `,
