@@ -8,10 +8,6 @@ import { ThemeToggle } from '~/Components/UiComponentes'
  */
 const Login = () => {
 
-  // Clases reutilizables para el botón
-  const buttonClasses =
-    'my-2 w-full h-11 bg-primary-1 text-secondary font-medium px-3 py-1 rounded-md border-2 border-primary-1 cursor-pointer transition-all hover:animate-pulse hover:text-primary-1 hover:bg-secondary'
-
   return (
     <div className="h-screen w-screen flex bg-background justify-center items-center">
       <div className="absolute xl:w-[60rem] xl:h-[40rem] md:w-1/2 sm:w-full w-full h-screen flex items-center justify-center shadow-foreground/30 shadow-lg">
@@ -47,7 +43,7 @@ const Login = () => {
             <InputField label="Contraseña" placeholder="Contraseña" type="password" />
 
             {/* Botón de inicio de sesión */}
-            <button type="submit" className={buttonClasses}>
+            <button type="submit" className={'btn-success'}>
               Iniciar sesión
             </button>
 
