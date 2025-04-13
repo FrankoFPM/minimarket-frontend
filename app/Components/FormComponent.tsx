@@ -20,3 +20,19 @@ export function ContainerInput({ label,children, color }: ContainerInput) {
     </div>
   )
 }
+
+interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label: string
+  error?: boolean
+}
+
+export function InputField({ label, error = false, ...props }: InputFieldProps) {
+  return (
+    <ContainerInput label={label}>
+      <input
+        {...props} // Pasa todos los atributos adicionales al input
+        className={`h-11 pl-3 w-full ${error ? 'text-red-500' : ''}`}
+      />
+    </ContainerInput>
+  )
+}
