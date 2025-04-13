@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { ContainerInput } from '../../Components/FormComponent'
+import { InputField } from '../../Components/FormComponent'
 import { ThemeToggle } from '~/Components/UiComponentes'
 
 /**
@@ -7,35 +7,6 @@ import { ThemeToggle } from '~/Components/UiComponentes'
  * Contiene el formulario de inicio de sesión y elementos de diseño.
  */
 const Login = () => {
-  const Berror = false // Estado de error para los campos (puede ser dinámico)
-
-  // Clases reutilizables para el botón
-  const buttonClasses =
-    'my-2 w-full h-11 bg-primary-1 text-secondary font-medium px-3 py-1 rounded-md border-2 border-primary-1 cursor-pointer transition-all hover:animate-pulse hover:text-primary-1 hover:bg-secondary'
-
-  /**
-   * Componente reutilizable para los campos de entrada.
-   * @param label - Etiqueta del campo.
-   * @param placeholder - Texto de marcador de posición.
-   * @param type - Tipo de entrada (por ejemplo, "text", "password").
-   */
-  const InputField = ({
-    label,
-    placeholder,
-    type = 'text',
-  }: {
-    label: string
-    placeholder: string
-    type?: string
-  }) => (
-    <ContainerInput label={label} color={Berror ? 'has-[input:focus-within]:outline-red-500 outline-red-500' : ''}>
-      <input
-        type={type}
-        placeholder={placeholder}
-        className={`h-11 pl-3 w-full ${Berror ? 'text-red-500' : ''}`}
-      />
-    </ContainerInput>
-  )
 
   return (
     <div className="h-screen w-screen flex bg-background justify-center items-center">
@@ -72,7 +43,7 @@ const Login = () => {
             <InputField label="Contraseña" placeholder="Contraseña" type="password" />
 
             {/* Botón de inicio de sesión */}
-            <button type="submit" className={buttonClasses}>
+            <button type="submit" className={'btn-success'}>
               Iniciar sesión
             </button>
 
