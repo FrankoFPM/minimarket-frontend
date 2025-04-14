@@ -25,9 +25,9 @@ const Login = () => {
 
   return (
     <div className="h-screen w-screen flex bg-background justify-center items-center">
-      <div className="absolute xl:w-[60rem] xl:h-[40rem] md:w-1/2 sm:w-full w-full h-screen flex items-center justify-center shadow-foreground/30 shadow-lg">
+      <div className="absolute lg:w-full xl:w-[65rem] xl:h-[90%] xl:max-h-[40rem] xl:rounded-2xl overflow-hidden w-full h-screen flex items-center justify-center shadow-foreground/30 xl:shadow-lg">
         {/* Sección izquierda: Información de bienvenida */}
-        <div className="w-1/2 h-full hidden bg-primary-2 xl:flex flex-col items-center justify-center px-8">
+        <div className="w-1/2 h-full hidden bg-primary-2 lg:flex flex-col items-center justify-center px-8">
           <h1 className="w-full text-3xl font-bold uppercase text-foreground text-center">
             Minimarket
           </h1>
@@ -46,11 +46,11 @@ const Login = () => {
         </div>
 
         {/* Sección derecha: Formulario de inicio de sesión */}
-        <div className="xl:w-1/2 h-full bg-background flex flex-col justify-center items-center gap-5">
+        <div className="w-full lg:w-1/2 h-full bg-background flex flex-col justify-center items-center gap-5">
           <h1 className="text-2xl font-semibold text-foreground uppercase">
             Iniciar sesión
           </h1>
-          <form className="w-full bg-background flex flex-col justify-center items-center gap-5 px-20" onSubmit={handleSubmit(onSubmit)}>
+          <form className="w-full max-w-[30rem] bg-background flex flex-col justify-center items-center gap-5 px-5 sm:px-10 lg:px-20" onSubmit={handleSubmit(onSubmit)}>
             {/* Campo de entrada para el usuario */}
             <InputField
               label="Email"
