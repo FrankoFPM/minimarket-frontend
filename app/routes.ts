@@ -1,9 +1,9 @@
-import { type RouteConfig, index, route } from '@react-router/dev/routes'
+import { type RouteConfig, index, layout, route } from '@react-router/dev/routes'
 
 // Exporta la configuración de rutas para la aplicación
 export default [
   // Define la ruta principal (index) que apunta al archivo 'home.tsx'
-  index('routes/home.tsx'),
+  //index('routes/home.tsx'),
 
   // Define la ruta para la página de inicio de sesión (login)
   route('login', 'routes/Login/login.tsx'), // Esta es la página de inicio de sesión
@@ -17,6 +17,9 @@ export default [
   //   route('login', 'routes/Login/login.tsx'), // Ruta de inicio de sesión dentro del layout
   //   route('register', 'routes/Login/register.tsx'), // Ruta de registro dentro del layout
   // ])
+  layout('routes/Shop/Layout.tsx', [
+    index('routes/Shop/index.tsx'), // Ruta principal dentro del layout de la tienda
+  ]),
 
   // Ejemplo de uso de prefix para agrupar rutas relacionadas con usuarios
   //...prefix('users', [
