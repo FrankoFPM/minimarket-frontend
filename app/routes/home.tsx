@@ -1,7 +1,7 @@
 import type { Route } from './+types/home'
 import { Welcome } from '../welcome/welcome'
 
-//Edita lo que desees aquí para que practiques
+// Edita lo que desees aquí para que practiques
 // y aprendas a usar React Router
 // Puedes usar el componente Welcome como base para tu página de inicio
 // o crear tu propio componente
