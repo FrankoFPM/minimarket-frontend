@@ -29,7 +29,7 @@ interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export function InputField({ label, error = null, ...props }: InputFieldProps) {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full">
       <ContainerInput label={label} color={error ? 'has-[input:focus-within]:outline-red-500 outline-red-500' : ''}>
         <input
           {...props} // Pasa todos los atributos adicionales al input

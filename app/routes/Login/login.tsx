@@ -1,18 +1,33 @@
 import { Link } from 'react-router'
 import { InputField } from '../../Components/FormComponent'
 import { ThemeToggle } from '~/Components/UiComponentes'
+import { useForm } from 'react-hook-form'
 
 /**
  * Componente principal para la página de inicio de sesión.
  * Contiene el formulario de inicio de sesión y elementos de diseño.
  */
 const Login = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
+
+  interface FormData {
+    email: string;
+    password: string;
+  }
+
+  const onSubmit = (data: FormData) => {
+    console.log(data)
+  }
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log(errors)
+  }
 
   return (
     <div className="h-screen w-screen flex bg-background justify-center items-center">
-      <div className="absolute xl:w-[60rem] xl:h-[40rem] md:w-1/2 sm:w-full w-full h-screen flex items-center justify-center shadow-foreground/30 shadow-lg">
+      <div className="absolute lg:w-full xl:w-[65rem] xl:h-[90%] xl:max-h-[40rem] xl:rounded-2xl overflow-hidden w-full h-screen flex items-center justify-center shadow-foreground/30 xl:shadow-lg">
         {/* Sección izquierda: Información de bienvenida */}
-        <div className="w-1/2 h-full hidden bg-primary-2 xl:flex flex-col items-center justify-center px-8">
+        <div className="w-1/2 h-full hidden bg-primary-2 lg:flex flex-col items-center justify-center px-8">
           <h1 className="w-full text-3xl font-bold uppercase text-foreground text-center">
             Minimarket
           </h1>
@@ -31,16 +46,29 @@ const Login = () => {
         </div>
 
         {/* Sección derecha: Formulario de inicio de sesión */}
-        <div className="xl:w-1/2 h-full bg-background flex flex-col justify-center items-center gap-5">
+        <div className="w-full lg:w-1/2 h-full bg-background flex flex-col justify-center items-center gap-5">
           <h1 className="text-2xl font-semibold text-foreground uppercase">
             Iniciar sesión
           </h1>
-          <form className="w-full bg-background flex flex-col justify-center items-center gap-5 px-20">
+          <form className="w-full max-w-[30rem] bg-background flex flex-col justify-center items-center gap-5 px-5 sm:px-10 lg:px-20" onSubmit={handleSubmit(onSubmit)}>
             {/* Campo de entrada para el usuario */}
-            <InputField label="Usuario" placeholder="Nombre de usuario" type="text" />
+            <InputField
+              label="Email"
+              placeholder="example@example.com"
+              type="email"
+              {...register('email', {required: 'Debe ingresar su email',
+                pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: 'Email no válido' } })}
+              error={errors.email?.message}
+            />
 
             {/* Campo de entrada para la contraseña */}
-            <InputField label="Contraseña" placeholder="Contraseña" type="password" />
+            <InputField
+              label="Contraseña"
+              placeholder="Ingrese su contraseña"
+              type="password"
+              {...register('password', { required: 'Debe ingresar su contraseña' })}
+              error={errors.password?.message}
+            />
 
             {/* Botón de inicio de sesión */}
             <button type="submit" className={'btn-success'}>
