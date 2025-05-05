@@ -56,6 +56,14 @@ export function Welcome() {
                   Registrarse
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/nosotros"
+                  className="group flex items-center gap-3 self-stretch p-3 leading-normal text-blue-700 hover:underline dark:text-blue-500"
+                >
+                  Nosotros
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>
