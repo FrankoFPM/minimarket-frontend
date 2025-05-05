@@ -2,7 +2,7 @@ import type { FieldError, Merge } from 'react-hook-form'
 import { MdError } from 'react-icons/md'
 
 interface ContainerInput {
-  label: string;
+  label?: string;
   children: React.ReactNode;
   color?: string;
 }
@@ -10,9 +10,10 @@ interface ContainerInput {
 export function ContainerInput({ label,children, color }: ContainerInput) {
   return (
     <div className="w-full">
-      <label htmlFor={label.toLowerCase()} className={'block text-sm/6 font-medium' + (color ? ' text-red-500 font-bold' : ' text-foreground')}>
-        {label}
-      </label>
+      {/*<label htmlFor={label.toLowerCase()} className={'block text-sm/6 font-medium' + (color ? ' text-red-500 font-bold' : ' text-foreground')}>*/}
+      {
+        label ? <label htmlFor={label.toLowerCase()} className={'block text-sm/6 font-medium' + (color ? ' text-red-500 font-bold' : ' text-foreground')}>{label}</label> : ''
+      }
       <div
         className={`drop-shadow-xs flex items-center rounded-md bg-secondary  outline-1 -outline-offset-1 outline-background has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 ${color ? color : 'has-[input:focus-within]:outline-primary-1'}`}>
         {children}
@@ -23,18 +24,22 @@ export function ContainerInput({ label,children, color }: ContainerInput) {
 }
 
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string
+  label?: string
   error?: string | FieldError | Merge<FieldError, FieldError> | null
+  beforeElement?: React.ReactNode
+  afterElement?: React.ReactNode
 }
 
-export function InputField({ label, error = null, ...props }: InputFieldProps) {
+export function InputField({ label, error = null, beforeElement, afterElement, ...props }: InputFieldProps) {
   return (
     <div className="flex flex-col w-full">
       <ContainerInput label={label} color={error ? 'has-[input:focus-within]:outline-red-500 outline-red-500' : ''}>
+        {beforeElement}
         <input
           {...props} // Pasa todos los atributos adicionales al input
           className={`h-11 pl-3 w-full ${error ? 'text-red-500' : ''}`}
         />
+        {afterElement}
       </ContainerInput>
       <p className='text-red-500 text-xs font-medium mt-1'>{error ? (typeof error === 'string' ? error : String(error.message)) : ''}</p>
     </div>
