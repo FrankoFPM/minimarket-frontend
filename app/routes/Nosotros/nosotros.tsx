@@ -5,7 +5,7 @@ const Content = () => {
     <div className="contenido">
       <div className="subcontenido">
         <div className="textonosotros">
-          <h2>¿QUIÉNES SOMOS?</h2>
+          <h2 className='text'>¿QUIÉNES SOMOS?</h2>
           <p>El minimarket “La Caserita” es un negocio ubicado en el distrito de Carabayllo, por el Km. 24 cerca de la urbanización de Torre Blanca, cuenta con 5 años de funcionamiento el cual surgió en una época de pandemia, donde las oportunidades laborales eran muy estrechas. La necesidad del entorno de contar con un lugar donde realizar sus compras cotidianas y productos de primera necesidad, surge la idea de crear este negocio, el cual desde un principio dio buenos resultados, ganando la confianza de sus clientes hasta hoy. Sin embargo, surge la necesidad de aprovechar las tecnologías de la información para mejorar el proceso del negocio abarcar más la preferencia de las personas.                     </p>
         </div>
         <div className="textonosotros">
