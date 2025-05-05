@@ -18,7 +18,7 @@ export function HeaderShop() {
           <Link to="/carrito" className="text-gray-700 hover:text-blue-500"><AiOutlineShoppingCart size={35} /></Link>
         </nav>
       </div>
-      {/* Aqui estaran las categorias genrales*/}
+      {/* Aqui estaran las categorias generales*/}
       <div>
 
       </div>
