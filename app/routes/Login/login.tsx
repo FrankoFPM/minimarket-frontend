@@ -46,11 +46,11 @@ const Login = () => {
         </div>
 
         {/* Sección derecha: Formulario de inicio de sesión */}
-        <div className="w-full lg:w-1/2 h-full bg-background flex flex-col justify-center items-center gap-5">
+        <div className="w-full lg:w-1/2 h-full bg-secondary flex flex-col justify-center items-center gap-5">
           <h1 className="text-2xl font-semibold text-foreground uppercase">
             Iniciar sesión
           </h1>
-          <form className="w-full max-w-[30rem] bg-background flex flex-col justify-center items-center gap-5 px-5 sm:px-10 lg:px-20" onSubmit={handleSubmit(onSubmit)}>
+          <form className="w-full max-w-[30rem] flex flex-col justify-center items-center gap-5 px-5 sm:px-10 lg:px-20" onSubmit={handleSubmit(onSubmit)}>
             {/* Campo de entrada para el usuario */}
             <InputField
               label="Email"
@@ -59,6 +59,7 @@ const Login = () => {
               {...register('email', {required: 'Debe ingresar su email',
                 pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: 'Email no válido' } })}
               error={errors.email?.message}
+              className='rounded-md'
             />
 
             {/* Campo de entrada para la contraseña */}
@@ -68,6 +69,7 @@ const Login = () => {
               type="password"
               {...register('password', { required: 'Debe ingresar su contraseña' })}
               error={errors.password?.message}
+              className='rounded-md'
             />
 
             {/* Botón de inicio de sesión */}

@@ -28,7 +28,7 @@ export function ThemeToggle() {
   }
 
   return (
-    <div className="relative flex items-center justify-center" onClick={toggleTheme}>
+    <div className="relative inline-flex items-center justify-center" onClick={toggleTheme}>
       <AiFillMoon
         size={60}
         className={`absolute text-white hover:rotate-45 duration-700 transition-transform ${
