@@ -13,12 +13,13 @@
 <!-- Tabla de Contenido-->
 
 <details>
-<summary><h1 id="tabla-de-contenido">Tabla de Contendio</h1></summary>
-<!-- Lista con Contenido Deplegalble-->
+<summary><h1 id="tabla-de-contenido">Tabla de Contenido</h1></summary>
+<!-- Lista con Contenido Deplegable-->
  <ol>
   <li><a href="#acerca-del-proyecto">Acerca del Proyecto<a></li>
   <li><a href="#stack-tecnologico">Stack Tecnologico<a></li>
   <li><a href="#caracteristicas-principales">Características Principales<a></li>
+  <li><a href="#clonar-repositorio">Inicio Rapido 🚀</a></li>
   <li><a href="#">Codigo 🤖</a></li>
   <li><a href="#">Base de Datos 💾</a></li>
  </ol>
@@ -44,11 +45,29 @@ Con esta herramienta, se espera reducir los errores asociados a la gestión manu
 * 💹 Reportes del Negocio para toma de decisiones
 * 💻 Interfaz amigable y responsiva
 
+## Clonar Repositorio
+```git
+git clone https://github.com/FrankoFPM/minimarket-frontend.git
+```
+
+## Instalar Dependencias
+```bash
+npm install
+```
+
 ## Capturas de Pantalla
 
 <!-- -->
 ![Diseño de la Web](https://img.freepik.com/vector-gratis/conjunto-plantillas-diseno-pagina-destino-sitio-web-moderno-telefono-movil-o-tableta-articulos-galeria-formulario-contacto-ilustracion-aislada-plana_1284-60948.jpg?t=st=1743564309~exp=1743567909~hmac=f52a266effcd618b51a069a55f64cf50dc50a4db40e38ad27507a353e0f5641a&w=740  "Diseño Fronted")
 
+### Login
+El login servira como la vista para que el usuraio sea administrador o cliente para ingresar y acceder a las funcionalidades de cada rol ....... 
+
+- [ ] **Login**
+- [ ] **Inicio**
+- [ ] **Catalogo**
+- [ ] **Ventas**
+- [ ] **Reportes**
 
 ## Stack Tecnologico
 * ![HTML](https://img.shields.io/badge/html-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
