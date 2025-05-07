@@ -16,7 +16,7 @@ export function ContainerInput({ label,children, color, className }: ContainerIn
         label ? <label htmlFor={label.toLowerCase()} className={'block text-sm/6 font-medium' + (color ? ' text-red-500 font-bold' : ' text-foreground')}>{label}</label> : ''
       }
       <div
-        className={`${className} drop-shadow-sm flex items-center bg-secondary outline-1 -outline-offset-1 outline-primary-2 has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 ${color ? color : 'has-[input:focus-within]:outline-primary-1'}`}>
+        className={`${className || ''} drop-shadow-sm flex items-center bg-secondary outline-1 -outline-offset-1 outline-primary-2 has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 ${color ? color : 'has-[input:focus-within]:outline-primary-1'}`}>
         {children}
         {color ? <MdError className='absolute text-red-500 inline-block mx-2 right-0' />   : ''}
       </div>
