@@ -48,7 +48,7 @@ export function HeaderShop() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/register" className="flex items-center py-2 justify-center rounded-md text-foreground font-semiboldtext-md hover:opacity-80 hover:bg-background">
+                  <Link to="/register" className="flex items-center py-2 justify-center rounded-md text-foreground font-semibold text-md hover:opacity-80 hover:bg-background">
                   Regístrate
                   </Link>
                 </li>
