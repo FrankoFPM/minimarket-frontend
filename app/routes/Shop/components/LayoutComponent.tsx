@@ -1,4 +1,4 @@
-import { AiOutlineShoppingCart, AiOutlineUser, AiOutlineLogout } from 'react-icons/ai'
+import { AiOutlineShoppingCart, AiOutlineUser, AiOutlineLogout, AiOutlineInfoCircle } from 'react-icons/ai'
 import { FaSearch } from 'react-icons/fa'
 import { Link } from 'react-router'
 import { InputField } from '~/Components/FormComponent'
@@ -55,13 +55,18 @@ export function HeaderShop() {
                 <li className='border-b border-primary-1 my-2'></li>
                 <li>
                   <Link to="/pedidos" className="flex flex-row items-center justify-start gap-4 px-4 py-2 rounded-md text-foreground hover:opacity-80 hover:bg-background">
-                    <AiOutlineShoppingCart size={35} />Mis Pedidos
+                    <AiOutlineShoppingCart size={25} />Mis Pedidos
                   </Link>
                 </li>
                 <li>
                   <Link to="/logout" className="flex items-center justify-start gap-4 px-4 py-2 rounded-md text-foreground hover:opacity-80 hover:bg-background">
-                    {/* <AiOutlineUser size={35} />Mi Cuenta */}
-                    <AiOutlineLogout size={35} />Cerrar Sesión
+                    <AiOutlineLogout size={25} />Cerrar Sesión
+                  </Link>
+                </li>
+                <li className='border-b border-primary-1 my-2'></li>
+                <li>
+                  <Link to="/nosotros" className="flex items-center justify-start gap-4 px-4 py-2 rounded-md text-foreground hover:opacity-80 hover:bg-background">
+                    <AiOutlineInfoCircle size={25} />Nosotros
                   </Link>
                 </li>
               </ul>
