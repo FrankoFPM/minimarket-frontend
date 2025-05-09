@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { AiOutlineShoppingCart, AiOutlineUser, AiOutlineLogout, AiOutlineInfoCircle } from 'react-icons/ai'
 import { FaSearch } from 'react-icons/fa'
 import { Link } from 'react-router'
@@ -5,8 +6,27 @@ import { InputField } from '~/Components/FormComponent'
 import { ThemeToggle } from '~/Components/UiComponentes'
 
 export function HeaderShop() {
+
+  const [isSticky, setIsSticky] = useState(false)
+
+  const handleScroll = () => {
+    const scrollTop = window.scrollY
+    if (scrollTop > 0) {
+      setIsSticky(true)
+    } else {
+      setIsSticky(false)
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
   return (
-    <header className="bg-primary-1 shadow-md p-4">
+    <header className={`p-4 sticky transition-colors ${isSticky ? 'top-0 left-0 w-full z-50 shadow-md bg-secondary text-foreground' : 'bg-primary-1 text-background'}`}>
       <div className="container mx-auto flex justify-between items-center gap-5">
         <div
           className="min-w-fit relative before:absolute before:-inset-1 before:block before:-skew-y-3 before:bg-background"
@@ -22,16 +42,16 @@ export function HeaderShop() {
           type='text'
           placeholder='Buscar productos...'
           afterElement={<div className='flex items-center justify-center w-16 h-9 bg-primary-1 rounded-4xl mr-1 cursor-pointer'>
-            <FaSearch size={25} className='text-background' /></div>}
+            <FaSearch size={25} /></div>}
           className='rounded-4xl'
         />
         <nav className="flex gap-4 items-center min-w-fit">
           <div id='relative-group' className="relative group">
             {/* Botón de usuario */}
-            <div className="text-gray-700 hover:opacity-80 min-w-fit cursor-pointer">
+            <div className="hover:opacity-80 min-w-fit cursor-pointer">
               <div className='flex items-center gap-2'>
-                <AiOutlineUser size={35} className='text-background' />
-                <div className='text-sm text-background'>
+                <AiOutlineUser size={35}/>
+                <div className='text-sm'>
                 ¡Bienvenido!
                   <p className='font-bold'>Identifícate / Regístrate</p>
                 </div>
@@ -72,11 +92,11 @@ export function HeaderShop() {
               </ul>
             </div>
           </div>
-          <Link to="/carrito" className="hover:opacity-80 text-background">
+          <Link to="/carrito" className="hover:opacity-80">
             <div className="flex items-center gap-2">
-              <AiOutlineShoppingCart size={35} className='text-background' />
-              <div className="flex flex-col text-sm text-background font-bold">
-                <span className='inline-block px-2 w-fit h-5 bg-secondary text-center rounded-full font-bold text-foreground'>0</span>
+              <AiOutlineShoppingCart size={35} />
+              <div className="flex flex-col text-sm font-bold">
+                <span className={`inline-block px-2 w-fit h-5 text-center rounded-full font-bold ${isSticky ? 'bg-primary-1 text-secondary': 'bg-secondary text-foreground'}` }>0</span>
                 Carrito
               </div>
             </div>
@@ -97,9 +117,61 @@ export function HeaderShop() {
 
 export function FooterShop() {
   return (
-    <footer className="bg-white shadow-md p-4 mt-auto">
-      <div className="container mx-auto text-center">
-        <p className="text-gray-700">© 2025 Mi Tienda. Todos los derechos reservados.</p>
+    <footer className="bg-secondary text-foreground shadow-md mt-auto">
+      <div className='container mx-auto p-4'>
+        <div className='flex flex-row justify-evenly items-center'>
+          <p className='inline-block text-2xl'>Suscríbete y disfruta de nuestras ofertas más destacadas</p>
+          <div className="flex justify-center items-center w-1/2">
+            <form action="" className='w-full'>
+              <InputField
+                type='email'
+                placeholder='Ingresa tu correo electrónico'
+                className='rounded-4xl'
+                afterElement={<button className="mx-0.5 bg-primary-1 text-white rounded-4xl px-4 py-2 hover:bg-primary-2">
+              Suscribirse
+                </button>}
+              />
+              <div className="flex items-center justify-center mt-2">
+                <input type="checkbox" id="terms" className="mr-2 accent-primary-1" />
+                <label htmlFor="terms" className="text-sm">Acepto los <Link to="/terminos" className="text-primary-1 hover:underline">términos y condiciones</Link></label>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div className='h-2 bg-primary-1 container my-4'></div>
+
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4'>
+          <div className='flex flex-col gap-2'>
+            <h3 className='text-lg font-bold'>Información</h3>
+            <ul className='flex flex-col gap-1'>
+              <li><Link to="/nosotros" className="hover:underline">Nosotros</Link></li>
+              <li><Link to="/contacto" className="hover:underline">Contacto</Link></li>
+              <li><Link to="/politicas" className="hover:underline">Políticas de privacidad</Link></li>
+              <li><Link to="/terminos" className="hover:underline">Términos y condiciones</Link></li>
+            </ul>
+          </div>
+
+          <div className='flex flex-col gap-2'>
+            <h3 className='text-lg font-bold'>Redes Sociales</h3>
+            <ul className='flex flex-col gap-1'>
+              <li><a href="#" className="hover:underline">Facebook</a></li>
+              <li><a href="#" className="hover:underline">Instagram</a></li>
+              <li><a href="#" className="hover:underline">Twitter</a></li>
+            </ul>
+          </div>
+
+          <div className='flex flex-col gap-2'>
+            <h3 className='text-lg font-bold'>Contáctanos</h3>
+            <p>Teléfono: +51 123 456 7890</p>
+            <p>Email: example@example.com </p>
+            <p>Dirección: Av. Ejemplo 123, Ciudad</p>
+          </div>
+
+        </div>
+
+      </div>
+      <div className="mx-auto bg-primary-1 w-full h-10 flex justify-center items-center">
+        <p className="text-foreground text-lg text-center">© 2025 Minimarket la caserita. Todos los derechos reservados.</p>
       </div>
     </footer>
   )
