@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { AiOutlineShoppingCart, AiOutlineUser, AiOutlineLogout, AiOutlineInfoCircle } from 'react-icons/ai'
 import { FaSearch } from 'react-icons/fa'
 import { Link } from 'react-router'
@@ -7,109 +6,93 @@ import { ThemeToggle } from '~/Components/UiComponentes'
 
 export function HeaderShop() {
 
-  const [isSticky, setIsSticky] = useState(false)
-
-  const handleScroll = () => {
-    const scrollTop = window.scrollY
-    if (scrollTop > 0) {
-      setIsSticky(true)
-    } else {
-      setIsSticky(false)
-    }
-  }
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll)
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [])
-
   return (
-    <header className={`p-4 sticky transition-colors ${isSticky ? 'top-0 left-0 w-full z-50 shadow-md bg-secondary text-foreground' : 'bg-primary-1 text-background'}`}>
-      <div className="container mx-auto flex justify-between items-center gap-5">
-        <div
-          className="min-w-fit relative before:absolute before:-inset-1 before:block before:-skew-y-3 before:bg-background"
-        >
-          <img
-            src="/images/Logo.webp"
-            alt="logo la caserita"
-            width={180}
-            className='relative z-10 drop-shadow-sm drop-shadow-foreground/20'
+    <header className="stuck">
+      <div className={'stuck-child p-4 sticky transition-colors top-0 w-full'}>
+        <div className="container mx-auto flex justify-between items-center gap-5">
+          <div
+            className="min-w-fit relative before:absolute before:-inset-1 before:block before:-skew-y-3 before:bg-background"
+          >
+            <img
+              src="/images/Logo.webp"
+              alt="logo la caserita"
+              width={180}
+              className='relative z-10 drop-shadow-sm drop-shadow-foreground/20'
+            />
+          </div>
+          <InputField
+            type='text'
+            placeholder='Buscar productos...'
+            afterElement={<div className='flex items-center justify-center w-16 h-9 bg-primary-1 rounded-4xl mr-1 cursor-pointer'>
+              <FaSearch size={25} /></div>}
+            className='rounded-4xl'
           />
-        </div>
-        <InputField
-          type='text'
-          placeholder='Buscar productos...'
-          afterElement={<div className='flex items-center justify-center w-16 h-9 bg-primary-1 rounded-4xl mr-1 cursor-pointer'>
-            <FaSearch size={25} /></div>}
-          className='rounded-4xl'
-        />
-        <nav className="flex gap-4 items-center min-w-fit">
-          <div id='relative-group' className="relative group">
-            {/* Botón de usuario */}
-            <div className="hover:opacity-80 min-w-fit cursor-pointer">
-              <div className='flex items-center gap-2'>
-                <AiOutlineUser size={35}/>
-                <div className='text-sm'>
+          <nav className="flex gap-4 items-center min-w-fit">
+            <div id='relative-group' className="relative group">
+              {/* Botón de usuario */}
+              <div className="hover:opacity-80 min-w-fit cursor-pointer">
+                <div className='flex items-center gap-2'>
+                  <AiOutlineUser size={35}/>
+                  <div className='text-sm'>
                 ¡Bienvenido!
-                  <p className='font-bold'>Identifícate / Regístrate</p>
+                    <p className='font-bold'>Identifícate / Regístrate</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            {/* Menú desplegable */}
-            <div className="absolute right-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
-              {/* Espina del menú */}
-              <div className="absolute right-4 w-3 h-3 top-3 bg-secondary rotate-45"></div>
-              <ul className="py-4 z-10 mt-4 bg-secondary shadow-xl rounded-md  px-2">
-                <li>
-                  <Link to="/login" className="flex items-center w-60 justify-center rounded-3xl px-4 py-2 btn-success font-bold text-xl">
+              {/* Menú desplegable */}
+              <div className="absolute right-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
+                {/* Espina del menú */}
+                <div className="absolute right-4 w-3 h-3 top-3 bg-secondary rotate-45"></div>
+                <ul className="py-4 z-10 mt-4 bg-secondary shadow-xl rounded-md  px-2">
+                  <li>
+                    <Link to="/login" className="flex items-center w-60 justify-center rounded-3xl px-4 py-2 btn-success font-bold text-xl">
                   Identifícate
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/register" className="flex items-center py-2 justify-center rounded-md text-foreground font-semibold text-md hover:opacity-80 hover:bg-background">
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/register" className="flex items-center py-2 justify-center rounded-md text-foreground font-semibold text-md hover:opacity-80 hover:bg-background">
                   Regístrate
-                  </Link>
-                </li>
-                <li className='border-b border-primary-1 my-2'></li>
-                <li>
-                  <Link to="/pedidos" className="flex flex-row items-center justify-start gap-4 px-4 py-2 rounded-md text-foreground hover:opacity-80 hover:bg-background">
-                    <AiOutlineShoppingCart size={25} />Mis Pedidos
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/logout" className="flex items-center justify-start gap-4 px-4 py-2 rounded-md text-foreground hover:opacity-80 hover:bg-background">
-                    <AiOutlineLogout size={25} />Cerrar Sesión
-                  </Link>
-                </li>
-                <li className='border-b border-primary-1 my-2'></li>
-                <li>
-                  <Link to="/nosotros" className="flex items-center justify-start gap-4 px-4 py-2 rounded-md text-foreground hover:opacity-80 hover:bg-background">
-                    <AiOutlineInfoCircle size={25} />Nosotros
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <Link to="/carrito" className="hover:opacity-80">
-            <div className="flex items-center gap-2">
-              <AiOutlineShoppingCart size={35} />
-              <div className="flex flex-col text-sm font-bold">
-                <span className={`inline-block px-2 w-fit h-5 text-center rounded-full font-bold ${isSticky ? 'bg-primary-1 text-secondary': 'bg-secondary text-foreground'}` }>0</span>
-                Carrito
+                    </Link>
+                  </li>
+                  <li className='border-b border-primary-1 my-2'></li>
+                  <li>
+                    <Link to="/pedidos" className="flex flex-row items-center justify-start gap-4 px-4 py-2 rounded-md text-foreground hover:opacity-80 hover:bg-background">
+                      <AiOutlineShoppingCart size={25} />Mis Pedidos
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/logout" className="flex items-center justify-start gap-4 px-4 py-2 rounded-md text-foreground hover:opacity-80 hover:bg-background">
+                      <AiOutlineLogout size={25} />Cerrar Sesión
+                    </Link>
+                  </li>
+                  <li className='border-b border-primary-1 my-2'></li>
+                  <li>
+                    <Link to="/nosotros" className="flex items-center justify-start gap-4 px-4 py-2 rounded-md text-foreground hover:opacity-80 hover:bg-background">
+                      <AiOutlineInfoCircle size={25} />Nosotros
+                    </Link>
+                  </li>
+                </ul>
               </div>
             </div>
-          </Link>
+            <Link to="/carrito" className="hover:opacity-80">
+              <div className="flex items-center gap-2">
+                <AiOutlineShoppingCart size={35} />
+                <div className="flex flex-col text-sm font-bold">
+                  <span className={'stuck-span inline-block px-2 w-fit h-5 text-center rounded-full font-bold' }>0</span>
+                Carrito
+                </div>
+              </div>
+            </Link>
 
-          <div className='w-16 flex justify-center items-center'>
-            <ThemeToggle />
-          </div>
-        </nav>
-      </div>
-      {/* Aqui estaran las categorias generales*/}
-      <div>
+            <div className='w-16 flex justify-center items-center'>
+              <ThemeToggle />
+            </div>
+          </nav>
+        </div>
+        {/* Aqui estaran las categorias generales*/}
+        <div>
 
+        </div>
       </div>
     </header>
   )
