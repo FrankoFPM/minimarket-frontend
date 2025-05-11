@@ -1,0 +1,203 @@
+.carousel {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  anchor-name: --carousel;
+  border-radius: 10px;
+
+  @media(prefers-reduced-motion: no-preference) {
+    scroll-behavior: smooth;
+  }
+
+  /* snap to center */
+  & li {
+    scroll-snap-align: center;
+  }
+}
+
+
+/* SCROLL BUTTONS */
+/* create buttons by selecting them and adding content */
+.carousel {
+  &::scroll-button(*) {
+    @apply transition-colors duration-200;
+    position-anchor: --carousel;
+    position: fixed;
+    /*makethemroundandeasytopress*/
+    inline-size: 48px;
+    height: 30px;
+    width: 30px;
+    font-weight: 900;
+    border-radius: 10%;
+    background: var(--primary-1);
+    border: 2px solid var(--primary-1);
+    /*spacefromcontent*/
+    margin: 5px;
+    -webkit-border-radius: 10%;
+    -moz-border-radius: 10%;
+    -ms-border-radius: 10%;
+    -o-border-radius: 10%;
+  }
+
+  &::scroll-button(*):focus-visible {
+    outline-offset: 5px;
+  }
+
+  &::scroll-button(*):not(:disabled):is(:hover, :active) {
+    background-color: transparent;
+    cursor: pointer;
+  }
+
+  &::scroll-button(*):not(:disabled):active {
+    scale: 90%;
+  }
+
+  &::scroll-button(left) {
+    content: "<<" / "Scroll Left";
+
+    position-area: inline-start center;
+    translate: 50px -50%;
+    /* place markers in parent grid area */
+  }
+
+  &::scroll-button(right) {
+    content: ">>" / "Scroll Right";
+    position-area: inline-end center;
+    translate: -50px -50%;
+  }
+
+  &::scroll-button(*):disabled {
+    opacity: 0;
+  }
+}
+
+
+
+
+/* SCROLL MARKERS */
+/* create marker group */
+/* create markers for each item */
+.carousel {
+  /* create markers 'after' scroller */
+  scroll-marker-group: after;
+
+  /* create markers container and own dots layout */
+  &::scroll-marker-group {
+    position-anchor: --carousel;
+    position: fixed;
+    position-area: center center;
+    translate: 0 220px;
+
+    grid-area: markers;
+    /* place markers in parent grid area */
+
+    /* 15px by 15px horizontal grid - size of dots */
+    display: grid;
+    place-content: safe center;
+    grid: 10px / auto-flow 10px;
+    gap: 15px;
+    padding: 15px;
+    scroll-padding: 15px;
+
+    /* handle overflow */
+    overflow: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+
+    @media (prefers-reduced-motion: no-preference) {
+      scroll-behavior: smooth;
+    }
+  }
+
+  /* a marker for each <li> */
+  &>.content>li {
+
+    /* create by adding content */
+    &::scroll-marker {
+      content: "";
+      /* empty content is fine, just like ::before */
+
+      /* style it as you need */
+      border: 1px solid var(--primary-2);
+
+      border-radius: 50%;
+      outline-offset: 4px;
+      -webkit-tap-highlight-color: transparent;
+
+      /* snap if group is overflowing */
+      scroll-snap-align: center;
+    }
+
+    &::scroll-marker:is(:hover, :focus-visible) {
+      border-color: var(--primary-1);
+    }
+
+    &::scroll-marker:target-current {
+      background: var(--primary-1);
+      border-color: var(--primary-2);
+    }
+  }
+}
+
+.scroll-layout {
+  display: grid;
+  /*     border: 1px dashed gray; */
+
+  /* try a different layout =) */
+  grid-template-areas:
+    "left scroll right"
+    ". markers .";
+
+  /* just place items in the grid */
+  grid-template-areas:
+    "scroll scroll scroll"
+    "left markers right";
+
+  grid-template-columns: auto 1fr auto;
+
+  .carousel {
+    grid-area: scroll;
+  }
+}
+
+.carousel {
+  max-inline-size: 80cqi;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+}
+
+.content {
+  display: grid;
+  grid: auto / auto-flow 1000px;
+  padding: 0;
+  margin: 0;
+  width: 1000px;
+  border-radius: 10px;
+  scrollbar-width: none;
+
+  >li {
+    list-style-type: none;
+    width: fit-content;
+  }
+
+  li img {
+    width: auto;
+    height: auto;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+  }
+}
+
+.carousel::-webkit-scrollbar {
+  display: none;
+  /* Oculta el scroll */
+}
+
+.scroll-none::-webkit-scrollbar {
+  display: none;
+  /* Oculta el scroll */
+}
