@@ -13,7 +13,7 @@ export function CarruselBanner() {
               <img src="/images/test.webp" alt="Banner"/>
             </li>
           ))}
-        </ ul>
+        </ul>
       </div>
     </div>
   )
