@@ -20,8 +20,13 @@ export default [
   //   route('login', 'routes/Login/login.tsx'), // Ruta de inicio de sesión dentro del layout
   //   route('register', 'routes/Login/register.tsx'), // Ruta de registro dentro del layout
   // ])
-  layout('routes/Shop/Layout.tsx', [
+  layout('routes/Shop/Layout.tsx',[
     index('routes/Shop/index.tsx'), // Ruta principal dentro del layout de la tienda
+  ]),
+
+  layout('routes/Admin/Layout.tsx',[
+    route('admin' ,'routes/Admin/index.tsx'),
+    // Ruta principal dentro del layout de la tienda
   ]),
 
   // Ejemplo de uso de prefix para agrupar rutas relacionadas con usuarios
@@ -32,3 +37,4 @@ export default [
   //  route('profile', 'routes/Users/profile.tsx'), // Ruta: '/users/profile'
   //]),
 ] satisfies RouteConfig
+
