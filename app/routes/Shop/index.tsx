@@ -8,57 +8,7 @@ import { PiCarrot } from 'react-icons/pi'
 import { LuTruck } from 'react-icons/lu'
 import { BsTags } from 'react-icons/bs'
 import { FaHouseLaptop } from 'react-icons/fa6'
-/*{ id: 1, name: 'Manzana', price: 1.5, priceBefore:2.5, stars: 5, image: '/images/apple.webp' } */
-interface CardProductProps {
-  name: string
-  price: number
-  stars: number
-  image: string,
-  marca?: string,
-  discount?: number
-}
-
-function CardProduct({ name, price, stars, image, marca, discount }: CardProductProps) {
-  return (
-    <div className="relative flex flex-col bg-secondary rounded-md hover:shadow-md transition-shadow duration-300 cursor-pointer">
-      {discount && discount > 0 ? (
-        <span className="absolute bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-md right-3 top-3">
-              -{Math.round((discount) * 100)}%
-        </span>
-      ) : ''}
-
-      <picture className='h-fit flex justify-center items-center'>
-        <img src={image} alt={name} className="w-auto h-full object-cover rounded-md bg-secondary" />
-      </picture>
-      <div className='p-4 '>
-        <p className='text-foreground/50 font-bold'>{marca}</p>
-        <h3 className="text-primary-1 font-semibold text-lg">{name}</h3>
-        <div className='flex flex-row justify-start items-center gap-3'>
-          <p className="text-primary-1 font-bold text-xl">S/.{price - price * (discount ?? 0)}</p>
-          {discount && discount > 0 ? (
-            <p className="text-gray-500 text-sm line-through">S/.{price}</p>
-          ): ''}
-        </div>
-        <div className="flex items-center mt-2">
-          {[...Array(stars)].map((_, index) => (
-            <span key={index} className="text-yellow-500">★</span>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function InfoCard({ title, color, icon }: { title: string, color: string, icon?: React.ReactNode }) {
-  return (
-    <div className="flex flex-wrap flex-col justify-center items-center gap-4 w-28 h-fit">
-      <div className={' h-28 w-28 rounded-full flex justify-center items-center text-gray-600 ' + color}>
-        {icon}
-      </div>
-      <h3 className="text-foreground font-light text-center">{title}</h3>
-    </div>
-  )
-}
+import { BannerHome, CardProduct, InfoCard } from './components/Cards'
 
 export default function Shop() {
 
@@ -107,6 +57,7 @@ export default function Shop() {
           <InfoCard title="Compra desde casa" color='bg-red-200' icon={<FaHouseLaptop size={50} />} />
         </div>
       </div>
+      <BannerHome image='/images/legumbres.webp' />
       <div className='flex flex-row gap-4'>
         <div className="flex flex-col p-4 w-[25rem] h-fit bg-secondary rounded-lg overflow-hidden sticky top-3">
           <h2 className="text-primary-1 font-semibold text-xl">Categorias</h2>
