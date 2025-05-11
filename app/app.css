@@ -20,7 +20,7 @@
     --secondary: #ffffff;
     --primary-1: #43b18a;
     --primary-2: #368f7a;
-    --accent: #2563EB;
+    --accent: #7ba429;
     --border: #E5E7EB;
   }
 
@@ -30,7 +30,7 @@
     --secondary: #1C252E;
     --primary-1: #43b18a;
     --primary-2: #368f7a;
-    --accent: #60A5FA;
+    --accent: #7ba429;
     --border: #374151;
   }
 }
@@ -57,7 +57,7 @@
     transition: background-color 0.3s, color 0.3s;
     background-color: var(--primary-1);
     color: var(--secondary);
-    z-index: 20;
+    z-index: 50;
 
     >.stuck-child {
       @container scroll-state(stuck: top) {
@@ -194,5 +194,29 @@
     display: none;
   }
 
+  /* marqee */
+  .animate-marquee {
+    animation: marquee 40s linear infinite;
+    -webkit-animation: marquee 40s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+      -webkit-transform: translateX(0%);
+      -moz-transform: translateX(0%);
+      -ms-transform: translateX(0%);
+      -o-transform: translateX(0%);
+    }
+
+    100% {
+      transform: translateX(-50%);
+      -webkit-transform: translateX(-50%);
+      -moz-transform: translateX(-50%);
+      -ms-transform: translateX(-50%);
+      -o-transform: translateX(-50%);
+    }
+
+  }
 
 }

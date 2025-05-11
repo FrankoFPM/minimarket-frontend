@@ -1,4 +1,6 @@
+import { FaClock, FaCreditCard, FaShoppingCart, FaTruck } from 'react-icons/fa'
 import { FiShoppingBag } from 'react-icons/fi'
+import { GiBread, GiFruitBowl, GiSoap } from 'react-icons/gi'
 import { Link } from 'react-router'
 
 interface CardProductProps {
@@ -43,8 +45,8 @@ export function CardProduct({ name, price, stars, image, marca, discount }: Card
 
 export function InfoCard({ title, color, icon }: { title: string, color: string, icon?: React.ReactNode }) {
   return (
-    <div className="flex flex-wrap flex-col justify-center items-center gap-4 w-28 h-fit">
-      <div className={' h-28 w-28 rounded-full flex justify-center items-center text-gray-600 ' + color}>
+    <div className="flex flex-wrap flex-col justify-center items-center gap-4 w-28 h-fit group">
+      <div className={' h-28 w-28 rounded-full flex justify-center items-center text-gray-600 transition-transform group-hover:scale-x-[-1] ' + color}>
         {icon}
       </div>
       <h3 className="text-foreground font-light text-center">{title}</h3>
@@ -70,6 +72,41 @@ export function BannerHome({ image }: { image: string }) {
       >
       Comprar ahora! <span>|</span> <FiShoppingBag size={20} />
       </Link>
+    </div>
+  )
+}
+
+export function Marquee() {
+  const mensajes = [
+    { texto: 'Productos frescos todos los días', icono: <GiFruitBowl /> },
+    { texto: 'Atención rápida y cercana', icono: <FaClock /> },
+    { texto: 'Variedad para toda la familia', icono: <FaShoppingCart /> },
+    { texto: 'Aceptamos Yape, Plin y tarjetas', icono: <FaCreditCard /> },
+    { texto: 'Pan recién horneado cada mañana', icono: <GiBread /> },
+    { texto: 'Artículos de limpieza y más', icono: <GiSoap /> },
+    { texto: 'Delivery disponible en tu zona', icono: <FaTruck /> },
+  ]
+
+  // Duplicamos el contenido para simular scroll infinito
+  const contenido = [...mensajes, ...mensajes]
+
+  return (
+    <div
+      className="relative w-full h-16 overflow-hidden border-y border-gray-300 flex items-center
+      before:w-20 before:z-20 before:bg-gradient-to-r before:from-10% before:from-background before:to-transparent before:absolute before:-inset-1
+      after:w-20 after:z-20 after:bg-gradient-to-l after:from-10% after:from-background after:to-transparent after:absolute after:ml-auto after:-inset-1"
+    >
+      <div className="flex animate-marquee whitespace-nowrap">
+        {contenido.map((item, index) => (
+          <div
+            key={index}
+            className="flex items-center gap-2 text-foreground font-medium text-sm px-6"
+          >
+            {item.icono}
+            <span>{item.texto}</span>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

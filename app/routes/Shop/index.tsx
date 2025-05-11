@@ -8,7 +8,7 @@ import { PiCarrot } from 'react-icons/pi'
 import { LuTruck } from 'react-icons/lu'
 import { BsTags } from 'react-icons/bs'
 import { FaHouseLaptop } from 'react-icons/fa6'
-import { BannerHome, CardProduct, InfoCard } from './components/Cards'
+import { BannerHome, CardProduct, InfoCard, Marquee } from './components/Cards'
 
 export default function Shop() {
 
@@ -46,6 +46,7 @@ export default function Shop() {
   return (
     <div className="flex flex-col bg-background mx-auto my-10 container gap-4 min-h-screen">
       <CarruselJS />
+      <Marquee />
       <div className='my-10'>
         <h2 className="text-foreground font-semibold text-3xl text-center">¿Qué nos hace diferentes?</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 h-fit my-5 justify-items-center">
@@ -59,7 +60,7 @@ export default function Shop() {
       </div>
       <BannerHome image='/images/legumbres.webp' />
       <div className='flex flex-row gap-4'>
-        <div className="flex flex-col p-4 w-[25rem] h-fit bg-secondary rounded-lg overflow-hidden sticky top-3">
+        <div className="flex flex-col p-4 w-[25rem] h-fit bg-secondary rounded-lg overflow-hidden sticky top-26">
           <h2 className="text-primary-1 font-semibold text-xl">Categorias</h2>
           <ul className="flex flex-col gap-2 mt-4">
             {filterTags.map((tag) => (
