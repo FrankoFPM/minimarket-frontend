@@ -1,25 +1,43 @@
 import { AiOutlineEllipsis } from 'react-icons/ai'
 import { FaAppleAlt, FaCheese, FaSoap, FaTooth } from 'react-icons/fa'
 import { GiBreadSlice, GiCarrot, GiMeat } from 'react-icons/gi'
-import { MdLocalDrink, MdLocalGroceryStore } from 'react-icons/md'
+import { MdLocalDrink, MdLocalGroceryStore, MdOutlineSupportAgent } from 'react-icons/md'
+import { CarruselJS } from './components/Carrusel'
+import { GoShieldCheck } from 'react-icons/go'
+import { PiCarrot } from 'react-icons/pi'
+import { LuTruck } from 'react-icons/lu'
+import { BsTags } from 'react-icons/bs'
+import { FaHouseLaptop } from 'react-icons/fa6'
 /*{ id: 1, name: 'Manzana', price: 1.5, priceBefore:2.5, stars: 5, image: '/images/apple.webp' } */
 interface CardProductProps {
   name: string
   price: number
-  priceBefore: number
   stars: number
-  image: string
+  image: string,
+  marca?: string,
+  discount?: number
 }
 
-function CardProduct({ name, price, priceBefore, stars, image }: CardProductProps) {
+function CardProduct({ name, price, stars, image, marca, discount }: CardProductProps) {
   return (
-    <div className="flex flex-col bg-secondary rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer">
-      <img src={image} alt={name} className="w-full h-40 object-cover rounded-md bg-secondary" />
-      <div className='p-4'>
-        <h3 className="text-primary-1 font-semibold text-lg mt-2">{name}</h3>
+    <div className="relative flex flex-col bg-secondary rounded-md hover:shadow-md transition-shadow duration-300 cursor-pointer">
+      {discount && discount > 0 ? (
+        <span className="absolute bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-md right-3 top-3">
+              -{Math.round((discount) * 100)}%
+        </span>
+      ) : ''}
+
+      <picture className='h-fit flex justify-center items-center'>
+        <img src={image} alt={name} className="w-auto h-full object-cover rounded-md bg-secondary" />
+      </picture>
+      <div className='p-4 '>
+        <p className='text-foreground/50 font-bold'>{marca}</p>
+        <h3 className="text-primary-1 font-semibold text-lg">{name}</h3>
         <div className='flex flex-row justify-start items-center gap-3'>
-          <p className="text-primary-1 font-bold text-xl">S/.{price}</p>
-          <p className="text-gray-500 text-sm line-through">S/.{priceBefore}</p>
+          <p className="text-primary-1 font-bold text-xl">S/.{price - price * (discount ?? 0)}</p>
+          {discount && discount > 0 ? (
+            <p className="text-gray-500 text-sm line-through">S/.{price}</p>
+          ): ''}
         </div>
         <div className="flex items-center mt-2">
           {[...Array(stars)].map((_, index) => (
@@ -27,6 +45,17 @@ function CardProduct({ name, price, priceBefore, stars, image }: CardProductProp
           ))}
         </div>
       </div>
+    </div>
+  )
+}
+
+function InfoCard({ title, color, icon }: { title: string, color: string, icon?: React.ReactNode }) {
+  return (
+    <div className="flex flex-wrap flex-col justify-center items-center gap-4 w-28 h-fit">
+      <div className={' h-28 w-28 rounded-full flex justify-center items-center text-gray-600 ' + color}>
+        {icon}
+      </div>
+      <h3 className="text-foreground font-light text-center">{title}</h3>
     </div>
   )
 }
@@ -47,51 +76,66 @@ export default function Shop() {
   ]
 
   const productos = [
-    { id: 1, name: 'Manzana', price: 1.5, priceBefore:2.5, stars: 5, image: '/images/apple.webp' },
-    { id: 2, name: 'Manzana', price: 1.5, priceBefore:2.5, stars: 5, image: '/images/apple.webp' },
-    { id: 3, name: 'Manzana', price: 1.5, priceBefore:2.5, stars: 5, image: '/images/apple.webp' },
-    { id: 4, name: 'Manzana', price: 1.5, priceBefore:2.5, stars: 5, image: '/images/apple.webp' },
-    { id: 5, name: 'Manzana', price: 1.5, priceBefore:2.5, stars: 5, image: '/images/apple.webp' },
-    { id: 6, name: 'Manzana', price: 1.5, priceBefore:2.5, stars: 5, image: '/images/apple.webp' },
-    { id: 7, name: 'Manzana', price: 1.5, priceBefore:2.5, stars: 5, image: '/images/apple.webp' },
-    { id: 8, name: 'Manzana', price: 1.5, priceBefore:2.5, stars: 5, image: '/images/apple.webp' },
-    { id: 9, name: 'Manzana', price: 1.5, priceBefore:2.5, stars: 5, image: '/images/apple.webp' },
-    { id: 10, name: 'Manzana', price: 1.5, priceBefore:2.5, stars: 5, image: '/images/apple.webp' },
-    { id: 11, name: 'Manzana', price: 1.5, priceBefore:2.5, stars: 5, image: '/images/apple.webp' },
-    { id: 12, name: 'Manzana', price: 1.5, priceBefore:2.5, stars: 5, image: '/images/apple.webp' },
-    { id: 13, name: 'Manzana', price: 1.5, priceBefore:2.5, stars: 5, image: '/images/apple.webp' },
-    { id: 14, name: 'Manzana', price: 1.5, priceBefore:2.5, stars: 5, image: '/images/apple.webp' },
+    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0 },
+    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.2 },
+    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
 
   ]
 
   return (
-    <div className="flex flex-row bg-background mx-auto my-10 w-[90rem] gap-4 min-h-screen">
-      <div className="flex flex-col p-4 w-[25rem] h-fit bg-secondary rounded-lg overflow-hidden sticky top-3">
-        <h2 className="text-primary-1 font-semibold text-xl">Categorias</h2>
-        <ul className="flex flex-col gap-2 mt-4">
-          {filterTags.map((tag) => (
-            <li key={tag.id} className="group transition-colors group flex items-center gap-2 p-2 rounded-md hover:bg-primary-1 hover:text-secondary cursor-pointer">
-              {tag.icon && <span className="transition-colors text-primary-1 group-hover:text-secondary">{tag.icon}</span>}
-              <label htmlFor={`tag-${tag.id}`} className="transition-colors text-sm font-semibold text-foreground group-hover:text-secondary cursor-pointer select-none">{tag.name}</label>
-            </li>
-          ))}
-        </ul>
-
+    <div className="flex flex-col bg-background mx-auto my-10 container gap-4 min-h-screen">
+      <CarruselJS />
+      <div className='my-10'>
+        <h2 className="text-foreground font-semibold text-3xl text-center">¿Qué nos hace diferentes?</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 h-fit my-5 justify-items-center">
+          <InfoCard title="Pago Seguro" color='bg-purple-200' icon={<GoShieldCheck  size={50} />} />
+          <InfoCard title="Productos Frescos" color='bg-green-200' icon={<PiCarrot size={50} />} />
+          <InfoCard title="Envíos Rápidos" color='bg-orange-200' icon={<LuTruck size={50} />} />
+          <InfoCard title="Atención Personalizada" color='bg-blue-200' icon={<MdOutlineSupportAgent size={50} />} />
+          <InfoCard title="Precios Competitivos" color='bg-slate-200' icon={<BsTags size={50} />} />
+          <InfoCard title="Compra desde casa" color='bg-red-200' icon={<FaHouseLaptop size={50} />} />
+        </div>
       </div>
-      <div className="w-full h-full text-primary-1 p-4">
-        <h2 className='text-foreground text-2xl font-bold'>Nuestros productos</h2>
-        <p className='text-foreground'>Explora nuestra amplia gama de productos frescos y de calidad.</p>
-        <div className="grid grid-cols-4 gap-4 mt-4">
-          {productos.map((producto) => (
-            <CardProduct
-              key={producto.id}
-              name={producto.name}
-              price={producto.price}
-              priceBefore={producto.priceBefore}
-              stars={producto.stars}
-              image={producto.image}
-            />
-          ))}
+      <div className='flex flex-row gap-4'>
+        <div className="flex flex-col p-4 w-[25rem] h-fit bg-secondary rounded-lg overflow-hidden sticky top-3">
+          <h2 className="text-primary-1 font-semibold text-xl">Categorias</h2>
+          <ul className="flex flex-col gap-2 mt-4">
+            {filterTags.map((tag) => (
+              <li key={tag.id} className="group transition-colors group flex items-center gap-2 p-2 rounded-md hover:bg-primary-1 hover:text-secondary cursor-pointer">
+                {tag.icon && <span className="transition-colors text-primary-1 group-hover:text-secondary">{tag.icon}</span>}
+                <label htmlFor={`tag-${tag.id}`} className="transition-colors text-sm font-semibold text-foreground group-hover:text-secondary cursor-pointer select-none">{tag.name}</label>
+              </li>
+            ))}
+          </ul>
+
+        </div>
+        <div className="w-full h-full text-primary-1 p-4">
+          <h2 className='text-foreground text-2xl font-bold'>Nuestros productos</h2>
+          <p className='text-foreground'>Explora nuestra amplia gama de productos frescos y de calidad.</p>
+          <div className="grid grid-cols-4 gap-4 mt-4">
+            {productos.map((producto) => (
+              <CardProduct
+                key={producto.id}
+                name={producto.name}
+                price={producto.price}
+                stars={producto.stars}
+                image={producto.image}
+                marca={producto.marca}
+                discount={producto.discount}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>
