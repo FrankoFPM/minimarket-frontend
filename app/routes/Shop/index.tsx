@@ -27,19 +27,19 @@ export default function Shop() {
 
   const productos = [
     { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0 },
-    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
-    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
-    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
-    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
-    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.2 },
-    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
-    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
-    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
-    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
-    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
-    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
-    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
-    { id: 1, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 2, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 3, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 4, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 5, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 6, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.2 },
+    { id: 7, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 8, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 9, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 10, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 11, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 12, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 13, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
+    { id: 14, name: 'Manzana', price: 2, priceBefore:2.5, stars: 5, image: '/images/apple.webp', marca: 'Marca 1', discount: 0.5 },
 
   ]
 
