@@ -2,9 +2,9 @@ import TextoSeccion from '../../Components/TextoSeccion'
 import ImageCarrusel from '../../Components/Carrusel'
 
 const imagenes = [
-  '../../public/images/banner1minimark.jpg',
-  '../../public/images/banner2minimark.webp',
-  '../../public/images/banner3minimark.jpg',
+  '/images/banner1minimark.jpg',
+  '/images/banner2minimark.webp',
+  '/images/banner3minimark.jpg',
 ]
 
 const Nosotros = () => {
