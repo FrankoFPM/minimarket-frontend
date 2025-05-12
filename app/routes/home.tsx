@@ -1,4 +1,4 @@
-import type { Route } from './+types/home'
+import type { Route } from './Shop/+types'
 import { Welcome } from '../welcome/welcome'
 
 // Edita lo que desees aquí para que practiques

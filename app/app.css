@@ -15,37 +15,23 @@
 
 @layer utilities {
   :root {
-    --background: #e9fbe9;
-    /* fondo claro, verde muy pálido */
-    --foreground: #1b1b1b;
-    /* texto principal */
+    --background: #f8f9fa;
+    --foreground: #171717;
     --secondary: #ffffff;
-    /* tarjetas, paneles */
-    --primary-1: #2e7d51;
-    /* verde principal para botones */
-    --primary-2: #a8dab5;
-    /* verde pastel para resaltes */
-    --accent: #f4a261;
-    /* naranja suave para contrastes */
-    --border: #d0e9d0;
-    /* bordes suaves */
+    --primary-1: #43b18a;
+    --primary-2: #368f7a;
+    --accent: #7ba429;
+    --border: #E5E7EB;
   }
 
   .dark {
-    --background: #101c17;
-    /* fondo oscuro verdoso */
-    --foreground: #f0fdf4;
-    /* texto claro */
-    --secondary: #1a3028;
-    /* tarjetas en dark mode */
-    --primary-1: #a8dab5;
-    /* verde pastel como base */
-    --primary-2: #2e7d51;
-    /* verde fuerte para botones */
-    --accent: #f4a261;
-    /* mantiene el contraste */
-    --border: #2c3e35;
-    /* bordes oscuros sutiles */
+    --background: #141A21;
+    --foreground: #ffffff;
+    --secondary: #1C252E;
+    --primary-1: #43b18a;
+    --primary-2: #368f7a;
+    --accent: #7ba429;
+    --border: #374151;
   }
 }
 
@@ -61,6 +47,176 @@
   }
 
   .btn-success {
-    @apply my-2 w-full h-11 bg-primary-1 text-secondary font-medium px-3 py-1 rounded-md border-2 border-primary-1 cursor-pointer transition-all hover:animate-pulse hover:text-primary-1 hover:bg-secondary;
+    @apply my-2 w-full h-11 bg-primary-1 text-background font-medium px-3 py-1 rounded-md border-2 border-primary-1 cursor-pointer transition-all hover:animate-pulse hover:text-background hover:bg-primary-1;
   }
+
+  .stuck {
+    container-type: scroll-state;
+    position: sticky;
+    top: 0px;
+    transition: background-color 0.3s, color 0.3s;
+    background-color: var(--primary-1);
+    color: var(--secondary);
+    z-index: 50;
+
+    >.stuck-child {
+      @container scroll-state(stuck: top) {
+        background-color: var(--secondary);
+        color: var(--foreground);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    .stuck-child .stuck-span {
+      background-color: var(--secondary);
+      color: var(--primary-1);
+
+      @container scroll-state(stuck: top) {
+        background-color: var(--primary-1);
+        color: var(--secondary);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+  }
+
+  /*swiper*/
+  .custom-navigation {
+    @apply absolute top-1/2 w-full flex justify-between transform -translate-y-1/2;
+  }
+
+  .swiper-pagination {
+    transform: translate3d(0, 0, 0);
+    @apply absolute text-center transition-opacity duration-300 z-10;
+  }
+
+  .swiper-pagination.swiper-pagination-hidden {
+    @apply opacity-0;
+  }
+
+  .swiper-pagination-disabled>.swiper-pagination,
+  .swiper-pagination.swiper-pagination-disabled {
+    display: none !important;
+  }
+
+  /* Common Styles */
+  .swiper-pagination-fraction,
+  .swiper-pagination-custom,
+  .swiper-horizontal>.swiper-pagination-bullets,
+  .swiper-pagination-bullets.swiper-pagination-horizontal {
+    bottom: var(--swiper-pagination-bottom, 8px);
+    top: var(--swiper-pagination-top, auto);
+    left: 0;
+    width: 100%;
+  }
+
+  /* Bullets */
+  .swiper-pagination-bullets-dynamic {
+    overflow: hidden;
+    font-size: 0;
+  }
+
+  .swiper-pagination-bullets-dynamic .swiper-pagination-bullet {
+    transform: scale(0.33);
+    position: relative;
+  }
+
+  .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active {
+    transform: scale(1);
+  }
+
+  .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-main {
+    transform: scale(1);
+  }
+
+  .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev {
+    transform: scale(0.66);
+  }
+
+  .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev-prev {
+    transform: scale(0.33);
+  }
+
+  .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next {
+    transform: scale(0.66);
+  }
+
+  .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next-next {
+    transform: scale(0.33);
+  }
+
+  button.swiper-pagination-bullet {
+    border: none;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .swiper-pagination-clickable .swiper-pagination-bullet {
+    cursor: pointer;
+  }
+
+  .swiper-pagination-bullet:only-child {
+    display: none !important;
+  }
+
+  .swiper-pagination-bullet-active {
+    opacity: var(--swiper-pagination-bullet-opacity, 1);
+    background: var(--primary-2, var(--swiper-theme-color));
+  }
+
+  .swiper-horizontal>.swiper-pagination-bullets .swiper-pagination-bullet,
+  .swiper-pagination-horizontal.swiper-pagination-bullets .swiper-pagination-bullet {
+    margin: 0 var(--swiper-pagination-bullet-horizontal-gap, 4px);
+  }
+
+  .swiper-horizontal>.swiper-pagination-bullets.swiper-pagination-bullets-dynamic,
+  .swiper-pagination-horizontal.swiper-pagination-bullets.swiper-pagination-bullets-dynamic {
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+
+  .swiper-horizontal>.swiper-pagination-bullets.swiper-pagination-bullets-dynamic .swiper-pagination-bullet,
+  .swiper-pagination-horizontal.swiper-pagination-bullets.swiper-pagination-bullets-dynamic .swiper-pagination-bullet {
+    transition: 200ms transform,
+      200ms left;
+  }
+
+  .swiper-horizontal.swiper-rtl>.swiper-pagination-bullets-dynamic .swiper-pagination-bullet {
+    transition: 200ms transform,
+      200ms right;
+  }
+
+  .swiper-pagination-lock {
+    display: none;
+  }
+
+  /* marqee */
+  .animate-marquee {
+    animation: marquee 40s linear infinite;
+    -webkit-animation: marquee 40s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+      -webkit-transform: translateX(0%);
+      -moz-transform: translateX(0%);
+      -ms-transform: translateX(0%);
+      -o-transform: translateX(0%);
+    }
+
+    100% {
+      transform: translateX(-50%);
+      -webkit-transform: translateX(-50%);
+      -moz-transform: translateX(-50%);
+      -ms-transform: translateX(-50%);
+      -o-transform: translateX(-50%);
+    }
+
+  }
+
 }
