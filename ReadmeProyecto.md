@@ -42,7 +42,7 @@ Con esta herramienta, se espera reducir los errores asociados a la gestión manu
 * 💻 Interfaz amigable y responsiva
 
 ## Descargar README en PDF
-[![Descargar PDF](https://img.shields.io/badge/DESCARGAR-PDF-red?style=for-the-badge&logo=adobeacrobatreader&logoColor=white&labelColor=red)](README.pdf)
+[![Descargar PDF](https://img.shields.io/badge/DESCARGAR-PDF-red?style=for-the-badge&logo=adobeacrobatreader&logoColor=white&labelColor=red)](README_Minimarket.pdf)
 
 ## Clonar Repositorio
 ```git
@@ -88,7 +88,10 @@ _La sección **Nosotros** presenta la historia, misión y visión del minimarket
 <p align="right"><a href="#tabla-de-contenido">Indice</a></p>
 
 ### Tienda
-![Img Tienda](https://raw.githubusercontent.com/CristianRVM/ImgMinimarket/refs/heads/main/tienda.webp "Catalogo")
+<!--
+  ![Img Tienda](https://raw.githubusercontent.com/CristianRVM/ImgMinimarket/refs/heads/main/tienda.webp "Catalogo")
+-->
+![Gif Tienda](https://github.com/CristianRVM/ImgMinimarket/blob/main/tienda.gif "GIF Catalogo")
 _La **Tienda** es el catálogo en línea donde los clientes pueden ver los productos disponibles, sus precios, y agregarlos al carrito. También muestra promociones y recomendaciones, facilitando la experiencia de compra desde cualquier dispositivo_
 
 <details>
@@ -119,6 +122,7 @@ Esta vista está diseñada para que el cliente explore fácilmente la amplia var
 * ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
 * ![React](https://img.shields.io/badge/REACT-%2361DAFB?style=for-the-badge&logo=react&logoColor=%23fff&labelColor=%2303C4E8&color=%2303C4E8)
 * ![Tailwind](https://img.shields.io/badge/TAILWIND-logo?style=for-the-badge&logo=tailwindcss&logoColor=%23fff&labelColor=%2300ff87&color=%2300ff87)
+* ![Node](https://img.shields.io/badge/Node-%235FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white)
 
 
 <p align="right"><a href="#tabla-de-contenido">Indice</a></p>
