@@ -15,7 +15,7 @@ interface CardProductProps {
 
 export function CardProduct({ name, price, stars, image, marca, discount, src }: CardProductProps) {
   return (
-    <Link to={src} className="relative flex flex-col bg-secondary rounded-md hover:shadow-md transition-shadow duration-300 cursor-pointer">
+    <Link to={src.toLowerCase()} className="relative flex flex-col bg-secondary rounded-md hover:shadow-md transition-shadow duration-300 cursor-pointer">
       {discount && discount > 0 ? (
         <span className="absolute bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-md right-3 top-3">
               -{Math.round((discount) * 100)}%
