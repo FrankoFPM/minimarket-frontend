@@ -23,6 +23,8 @@ export default [
   layout('routes/Shop/Layout.tsx', [
     index('routes/Shop/index.tsx'), // Ruta principal dentro del layout de la tienda
     route('producto/:id', 'routes/Shop/Products/product.tsx'), // Ruta de producto dentro del layout de la tienda
+    route('carrito', 'routes/Shop/Carrito.tsx'), // Ruta de producto dentro del layout de la tienda
+    route('terminos', 'routes/nosotros/Terminos.tsx'), // Ruta de producto dentro del layout de la tienda
   ]),
 
   // Ejemplo de uso de prefix para agrupar rutas relacionadas con usuarios
