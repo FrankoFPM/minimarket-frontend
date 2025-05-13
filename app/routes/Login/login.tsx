@@ -1,22 +1,52 @@
 import { Link } from 'react-router'
 import { InputField } from '../../Components/FormComponent'
-import { ThemeToggle } from '~/Components/UiComponentes'
 import { useForm } from 'react-hook-form'
+import { FaFacebook, FaGoogle } from 'react-icons/fa'
+import { authenticateUser } from '~/services/authService'
 
 /**
  * Componente principal para la página de inicio de sesión.
  * Contiene el formulario de inicio de sesión y elementos de diseño.
  */
-const Login = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
-
+export default function Login() {
+  const { register, handleSubmit, setError, clearErrors, formState: { errors } } = useForm<FormData>({criteriaMode: 'all'})
   interface FormData {
     email: string;
     password: string;
   }
 
-  const onSubmit = (data: FormData) => {
-    console.log(data)
+  function error(){
+    console.log('Credenciales incorrectas')
+    setError('email', { type: 'manual', message: 'Credenciales incorrectas' })
+    setError('password', { type: 'manual', message: 'Credenciales incorrectas' })
+  }
+
+  const onSubmit = async (data: FormData) => {
+    console.log('Datos enviados:', data)
+    const { email, password } = data
+    if(!email || !password) {
+      return
+    }
+
+    try {
+      const isAuthenticated = await authenticateUser(email, password)
+      if (isAuthenticated) {
+        // Redirigir al usuario a la página de inicio o a la página deseada
+        alert('Inicio de sesión exitoso GG')
+        window.location.href = '/'
+      }else {
+        error()
+      }
+
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('Error al autenticar:', error.message)
+      } else {
+        console.error('Error desconocido:', error)
+      }
+
+    }
+
   }
 
   if (process.env.NODE_ENV === 'development') {
@@ -60,6 +90,9 @@ const Login = () => {
                 pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: 'Email no válido' } })}
               error={errors.email?.message}
               className='rounded-md'
+              onChange={() => {
+                clearErrors('email')
+              }}
             />
 
             {/* Campo de entrada para la contraseña */}
@@ -77,6 +110,21 @@ const Login = () => {
               Iniciar sesión
             </button>
 
+            {/* Contenedor para inicio de sesión con OAuth */}
+            <div className="flex flex-col items-center justify-center gap-5 w-full">
+              <span className='relative w-full border-b-1 border-foreground after:content-["o"] after:bg-secondary after:w-7 after:h-5 after:text-xl after:text-foreground after:absolute after:inset-0 after:-translate-y-3.5 after:-translate-x-1/2 after:left-1/2 after:text-center' />
+              <div className="grid grid-cols-2 gap-4 w-full">
+                <button className="flex items-center justify-center gap-2 px-4 py-2 border-1 border-primary-1 text-foreground rounded-md hover:bg-primary-1 hover:text-white transition">
+                  <FaGoogle size={20} />
+                  Google
+                </button>
+                <button type='submit' className="flex items-center justify-center gap-2 px-4 py-2 border-1 border-primary-1 text-foreground rounded-md hover:bg-primary-1 hover:text-white transition">
+                  <FaFacebook size={20} />
+                  Facebook
+                </button>
+              </div>
+            </div>
+
             {/* Enlaces adicionales */}
             <div className="flex flex-col items-center justify-center mt-2 gap-2 text-foreground">
               <Link to="/forgot-password" className="text-blue-700 hover:underline dark:text-blue-500">
@@ -88,16 +136,14 @@ const Login = () => {
                   Registrarse
                 </Link>
               </p>
+              {/* Opción para entrar como invitado */}
+              <Link to="/" className="text-primary-1 hover:underline font-semibold">
+    Entrar como invitado
+              </Link>
             </div>
           </form>
-          {/* Botón para alternar entre temas */}
-          <div className='absolute bottom-20'>
-            <ThemeToggle />
-          </div>
         </div>
       </div>
     </div>
   )
 }
-
-export default Login

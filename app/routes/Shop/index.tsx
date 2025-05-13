@@ -85,6 +85,7 @@ export default function Shop() {
                 image={producto.image}
                 marca={producto.marca}
                 discount={producto.discount}
+                src={`/producto/${producto.id}`} // Cambia la ruta según tu estructura de rutas
               />
             ))}
           </div>
