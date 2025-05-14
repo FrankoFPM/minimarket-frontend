@@ -57,22 +57,60 @@ export function InfoCard({ title, color, icon }: { title: string, color: string,
 
 export function BannerHome({ image }: { image: string }) {
   return (
-    <div className="relative w-full h-72 bg-accent rounded-lg mb-24">
-      <div className='flex flex-col w-fit gap-6 absolute top-1/2 -translate-y-1/2 left-28'>
-        <span
-          className="text-gray-800 font-semibold text-lg text-center w-64 bg-yellow-300 px-6 py-2 rounded-full"
-        >
-          Producto 100% natural
-        </span>
-        <h2 className="text-white font-semibold text-3xl text-left text-wrap w-70">¡Compra productos frescos!</h2>
+    <div className="w-full bg-accent rounded-lg mb-24 relative xl:h-72">
+      {/* --- Vista móvil y tablet hasta <1280px --- */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 px-6 py-10 xl:hidden">
+        {/* Texto + botón */}
+        <div className="flex flex-col gap-4 items-center md:items-start w-full md:w-1/2">
+          <span className="text-gray-800 font-semibold text-sm md:text-lg text-center bg-yellow-300 px-4 py-2 rounded-full">
+            Producto 100% natural
+          </span>
+          <h2 className="text-white font-semibold text-2xl md:text-3xl text-center md:text-left max-w-sm">
+            ¡Compra productos frescos!
+          </h2>
+          <Link
+            to="/shop"
+            className="mt-4 px-6 py-3 rounded-full bg-gray-800 text-white font-bold uppercase flex gap-2 w-full md:w-72 items-center justify-center"
+          >
+            Comprar ahora! <span>|</span> <FiShoppingBag size={20} />
+          </Link>
+        </div>
+
+        {/* Imagen visible hasta <1280px */}
+        <img
+          src={image}
+          alt="Banner"
+          className="w-full md:w-1/2 h-auto max-h-72 object-contain md:object-cover rounded-xl"
+        />
       </div>
-      <img src={image} alt="Banner" className="absolute w-auto h-72 object-cover right-1/2 translate-x-1/2 top-1/2 -translate-y-20 rounded-xl" />
-      <Link
-        to={'/shop'}
-        className='px-10 py-4 rounded-full bg-gray-800 text-white font-bold uppercase flex gap-2 w-72 items-center justify-center absolute top-1/2 -translate-y-1/2 right-28'
-      >
-      Comprar ahora! <span>|</span> <FiShoppingBag size={20} />
-      </Link>
+
+      {/* --- Vista "god" desde xl (1280px+) --- */}
+      <div className="hidden xl:block relative w-full h-72">
+        {/* Texto a la izquierda */}
+        <div className="flex flex-col w-fit gap-6 absolute top-1/2 -translate-y-1/2 left-28">
+          <span className="text-gray-800 font-semibold text-lg text-center w-64 bg-yellow-300 px-6 py-2 rounded-full">
+            Producto 100% natural
+          </span>
+          <h2 className="text-white font-semibold text-3xl text-left text-wrap w-70">
+            ¡Compra productos frescos!
+          </h2>
+        </div>
+
+        {/* Imagen flotando en el centro */}
+        <img
+          src={image}
+          alt="Banner"
+          className="absolute w-auto h-72 object-cover right-1/2 translate-x-1/2 top-1/2 -translate-y-20 rounded-xl"
+        />
+
+        {/* Botón a la derecha */}
+        <Link
+          to="/shop"
+          className="px-10 py-4 rounded-full bg-gray-800 text-white font-bold uppercase flex gap-2 w-72 items-center justify-center absolute top-1/2 -translate-y-1/2 right-28"
+        >
+          Comprar ahora! <span>|</span> <FiShoppingBag size={20} />
+        </Link>
+      </div>
     </div>
   )
 }

@@ -9,16 +9,16 @@ export function HeaderShop() {
 
   return (
     <header className="stuck">
-      <div className={'stuck-child p-4 sticky transition-colors top-0 w-full'}>
+      <div className={'stuck-child p-4 sticky transition-colors duration-400 top-0 w-full'}>
         <div className="container mx-auto flex justify-between items-center gap-5">
           <div
-            className="min-w-fit relative before:absolute before:-inset-1 before:block before:-skew-y-3 before:bg-background"
+            className="min-w-fit"
           >
             <img
               src="/images/Logo.webp"
               alt="logo la caserita"
-              width={180}
-              className='relative z-10 drop-shadow-sm drop-shadow-foreground/20'
+              width={300}
+              className='relative z-10 drop-shadow-xs drop-shadow-secondary/50'
             />
           </div>
           <InputField
