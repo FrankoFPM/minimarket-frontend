@@ -11,7 +11,7 @@ export function HeaderShop() {
     <header className="stuck">
       <div className={'stuck-child p-4 sticky transition-colors duration-400 top-0 w-full'}>
         <div className="container mx-auto flex justify-between items-center gap-5">
-          <div
+          <Link to={'/'}
             className="min-w-fit"
           >
             <img
@@ -20,7 +20,7 @@ export function HeaderShop() {
               width={300}
               className='relative z-10 drop-shadow-xs drop-shadow-secondary/50'
             />
-          </div>
+          </Link>
           <InputField
             type='text'
             placeholder='Buscar productos...'
