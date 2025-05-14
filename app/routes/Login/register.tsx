@@ -19,7 +19,6 @@ const Register = () => {
   const onSubmit =async (data: FormData) => {
 
     console.log('Datos enviados:', data)
-    console.log('primer click')
 
     const { nombres, apellidos, telefono, email, password, confirmPassword } = data
     if (!nombres || !apellidos || !telefono || !email || !password || !confirmPassword) {
