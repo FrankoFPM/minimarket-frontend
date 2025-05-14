@@ -8,7 +8,7 @@ import { PiCarrot } from 'react-icons/pi'
 import { LuTruck } from 'react-icons/lu'
 import { BsTags } from 'react-icons/bs'
 import { FaHouseLaptop } from 'react-icons/fa6'
-import { BannerHome, CardProduct, InfoCard, Marquee } from './components/Cards'
+import { BannerHome, CardProduct, InfoCard, Marquee, MarqueeLogos } from './components/Cards'
 
 export default function Shop() {
 
@@ -91,6 +91,9 @@ export default function Shop() {
           </div>
         </div>
       </div>
+      {/* brands */}
+      <MarqueeLogos />
+
     </div>
   )
 }
