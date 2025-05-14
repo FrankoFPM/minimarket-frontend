@@ -2,6 +2,7 @@ import { Link } from 'react-router'
 import { InputField } from '~/Components/FormComponent'
 import { ThemeToggle } from '~/Components/UiComponentes'
 import { useForm } from 'react-hook-form'
+import { registerUserClient } from '~/services/registerUser'
 
 const Register = () => {
 
@@ -15,7 +16,47 @@ const Register = () => {
     confirmPassword: string;
   }
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit =async (data: FormData) => {
+
+    console.log('Datos enviados:', data)
+
+    const { nombres, apellidos, telefono, email, password, confirmPassword } = data
+    if (!nombres || !apellidos || !telefono || !email || !password || !confirmPassword) {
+      return
+    }
+
+    try {
+      const user = await registerUserClient({
+        id: '',
+        nombre: nombres,
+        apellido: apellidos,
+        email: email,
+        distritoId: 1, // TODO: agregar al formulario
+        password: password,
+        telefono: telefono,
+        direccion: 'falso' //TODO: agregar al formulario
+      })
+
+      console.log('Segundo click')
+      console.log('Usuario registrado:', user)
+      if (user) {
+        // Redirigir al usuario a la página de inicio o a la página deseada
+        console.log('Registro exitoso')
+        alert('Registro exitoso GG')
+        window.location.href = '/login'
+      } else {
+        console.error('Error en el registro')
+      }
+
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Error al registrar:', error.message)
+      } else {
+        console.error('Error desconocido:', error)
+      }
+
+    }
+
     console.log(data)
   }
 

@@ -28,6 +28,8 @@ export default [
     route('politicas', 'routes/nosotros/PoliticaPrivacidad.tsx'), // Ruta de producto dentro del layout de la tienda
   ]),
 
+  route('test', 'test/appTest.tsx'), // Ruta de prueba
+
   // Ejemplo de uso de prefix para agrupar rutas relacionadas con usuarios
   //...prefix('users', [
   //  index('routes/Users/index.tsx'), // Ruta principal: '/users'
