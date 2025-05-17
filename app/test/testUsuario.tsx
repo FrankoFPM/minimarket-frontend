@@ -1,36 +1,36 @@
-import React, { useEffect, useState } from 'react'
-import { getDistritos } from '~/services/distritoService'
+import { fetchUsers } from '~/services/usuarioService'
 import { ContaninerTest } from './appTest'
+import { useEffect, useState } from 'react'
 
-export const TestDistritos = () => {
+export const TestUsuario = () => {
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle')
   const [message, setMessage] = useState<string>('')
   const [recommendation, setRecommendation] = useState<string>('')
 
   useEffect(() => {
-    const fetchDistritos = async () => {
+    const fetchUsuarios = async () => {
       setStatus('loading')
-      setMessage('Cargando distritos...')
+      setMessage('Cargando usuarios...')
       try {
-        const distritos = await getDistritos()
+        const usuarios = await fetchUsers()
         setStatus('ok')
-        setMessage('Distritos obtenidos correctamente')
-        setRecommendation(`Total: ${distritos.length}`)
-        console.log('Distritos obtenidos:', distritos)
+        setMessage('Usuarios obtenidos correctamente')
+        setRecommendation(`Total: ${usuarios.length}`)
+        console.log('Usuarios obtenidos:', usuarios)
       } catch (error) {
         setStatus('error')
-        setMessage('Error al obtener distritos')
+        setMessage('Error al obtener usuarios')
         setRecommendation('Verifique la conexión o intente más tarde')
-        console.error('Error al obtener distritos:', error)
+        console.error('Error al obtener usuarios:', error)
       }
     }
 
-    fetchDistritos()
+    fetchUsuarios()
   }, [])
 
   return (
     <ContaninerTest
-      modulo="Distritos"
+      modulo="Usuarios"
       status={status}
       message={message}
       recommendation={recommendation}
