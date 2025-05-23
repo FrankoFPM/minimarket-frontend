@@ -22,7 +22,18 @@ export default [
   // ])
   layout('routes/Shop/Layout.tsx', [
     index('routes/Shop/index.tsx'), // Ruta principal dentro del layout de la tienda
+    route('producto/:id', 'routes/Shop/Products/product.tsx'), // Ruta de producto dentro del layout de la tienda
+    route('carrito', 'routes/Shop/Carrito.tsx'), // Ruta de producto dentro del layout de la tienda
+    route('terminos', 'routes/Nosotros/Terminos.tsx'), // Ruta de producto dentro del layout de la tienda
+    route('politicas', 'routes/Nosotros/PoliticaPrivacidad.tsx'), // Ruta de producto dentro del layout de la tienda
+    route('contacto', 'routes/Nosotros/Contacto.tsx')
   ]),
+
+  layout('routes/Admin/Layout.tsx', [
+    route('dashboard','routes/Admin/index.tsx'), // Ruta principal dentro del layout de administración
+  ]),
+
+  route('test', 'test/appTest.tsx'), // Ruta de prueba
 
   // Ejemplo de uso de prefix para agrupar rutas relacionadas con usuarios
   //...prefix('users', [
