@@ -29,6 +29,10 @@ export default [
     route('contacto', 'routes/Nosotros/Contacto.tsx')
   ]),
 
+  layout('routes/Admin/Layout.tsx', [
+    route('dashboard','routes/Admin/index.tsx'), // Ruta principal dentro del layout de administración
+  ]),
+
   route('test', 'test/appTest.tsx'), // Ruta de prueba
 
   // Ejemplo de uso de prefix para agrupar rutas relacionadas con usuarios
