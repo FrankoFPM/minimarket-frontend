@@ -8,7 +8,7 @@ import { PiCarrot } from 'react-icons/pi'
 import { LuTruck } from 'react-icons/lu'
 import { BsTags } from 'react-icons/bs'
 import { FaHouseLaptop } from 'react-icons/fa6'
-import { BannerHome, CardProduct, InfoCard, Marquee } from './components/Cards'
+import { BannerHome, CardProduct, InfoCard, Marquee, MarqueeLogos } from './components/Cards'
 
 export default function Shop() {
 
@@ -60,7 +60,7 @@ export default function Shop() {
       </div>
       <BannerHome image='/images/legumbres.webp' />
       <div className='flex flex-row gap-4'>
-        <div className="flex flex-col p-4 w-[25rem] h-fit bg-secondary rounded-lg overflow-hidden sticky top-26">
+        <div className="hidden md:flex flex-col p-4 w-[25rem] h-fit bg-secondary rounded-lg overflow-hidden sticky top-26">
           <h2 className="text-primary-1 font-semibold text-xl">Categorias</h2>
           <ul className="flex flex-col gap-2 mt-4">
             {filterTags.map((tag) => (
@@ -75,7 +75,7 @@ export default function Shop() {
         <div className="w-full h-full text-primary-1 p-4">
           <h2 className='text-foreground text-2xl font-bold'>Nuestros productos</h2>
           <p className='text-foreground'>Explora nuestra amplia gama de productos frescos y de calidad.</p>
-          <div className="grid grid-cols-4 gap-4 mt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
             {productos.map((producto) => (
               <CardProduct
                 key={producto.id}
@@ -91,6 +91,9 @@ export default function Shop() {
           </div>
         </div>
       </div>
+      {/* brands */}
+      <MarqueeLogos />
+
     </div>
   )
 }
