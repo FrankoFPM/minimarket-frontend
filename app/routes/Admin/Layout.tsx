@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router'
-import { Header, Navbar } from './Components/LayoutComponets'
+import { Header, Navbar } from './Components/LayoutComponents'
 
 export default function AdminLayout() {
   return (
