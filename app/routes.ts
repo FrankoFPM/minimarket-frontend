@@ -24,8 +24,9 @@ export default [
     index('routes/Shop/index.tsx'), // Ruta principal dentro del layout de la tienda
     route('producto/:id', 'routes/Shop/Products/product.tsx'), // Ruta de producto dentro del layout de la tienda
     route('carrito', 'routes/Shop/Carrito.tsx'), // Ruta de producto dentro del layout de la tienda
-    route('terminos', 'routes/nosotros/Terminos.tsx'), // Ruta de producto dentro del layout de la tienda
-    route('politicas', 'routes/nosotros/PoliticaPrivacidad.tsx'), // Ruta de producto dentro del layout de la tienda
+    route('terminos', 'routes/Nosotros/Terminos.tsx'), // Ruta de producto dentro del layout de la tienda
+    route('politicas', 'routes/Nosotros/PoliticaPrivacidad.tsx'), // Ruta de producto dentro del layout de la tienda
+    route('contacto', 'routes/Nosotros/Contacto.tsx')
   ]),
 
   route('test', 'test/appTest.tsx'), // Ruta de prueba

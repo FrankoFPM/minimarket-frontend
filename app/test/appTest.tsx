@@ -19,10 +19,10 @@ export default function TestApp() {
 }
 
 interface ContainerTestProps {
-  modulo: string,
-  status: string,
-  message: string,
-  recommendation: string
+  readonly modulo: string,
+  readonly status: string,
+  readonly message: string,
+  readonly recommendation: string
 }
 
 export function ContaninerTest( { modulo, status, message, recommendation }: ContainerTestProps) {
