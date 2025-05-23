@@ -1,0 +1,42 @@
+[
+  {
+    "link": "/dashboard",
+    "icon": "home",
+    "text": "Inicio"
+  },
+  {
+    "link": "/dashboard/finance",
+    "icon": "GiDinosaurRex",
+    "text": "Finanzas dinosaurio"
+  },
+  {
+    "link": "/categories",
+    "icon": "FaClipboardList",
+    "text": "Categorías"
+  },
+  {
+    "link": "/dashboard/sales",
+    "icon": "FaShoppingCart",
+    "text": "Ventas"
+  },
+  {
+    "link": "/dashboard/inventory",
+    "icon": "FaBox",
+    "text": "Inventario"
+  },
+  {
+    "link": "/dashboard/reports",
+    "icon": "FaChartPie",
+    "text": "Reportes"
+  },
+  {
+    "link": "/dashboard/settings",
+    "icon": "FaCog",
+    "text": "Configuración"
+  },
+  {
+    "link": "/dashboard/rol",
+    "icon": "FaUsers",
+    "text": "Roles"
+  }
+]
