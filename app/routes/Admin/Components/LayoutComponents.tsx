@@ -1,7 +1,6 @@
 import { FaBox, FaChartPie, FaClipboardList, FaCog, FaHome, FaShoppingCart, FaUser, FaUsers } from 'react-icons/fa'
 import { Link, useLocation } from 'react-router'
 import navigationData from '../navigation.json'
-import { GiDinosaurRex } from 'react-icons/gi'
 
 export function Header(){
 
