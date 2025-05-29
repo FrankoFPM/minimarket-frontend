@@ -4,7 +4,11 @@ export default function AdminIndex() {
 
   const headers = [
     { text: 'ID', className: 'text-center' },
-    { text:'Producto', className: 'text-left' },
+    { text:'DNI', className: 'text-left' },
+    { text:'Nombres', className: 'text-left' },
+    { text:'Apellidos', className: 'text-left' },
+    { text:'Email', className: 'text-left' },
+    { text:'Contraseña', className: 'text-left' },
     { text: 'Fecha de modificacion', className: 'text-left' },
     { text: 'Estado', className: 'text-center' },
     { text: 'Acciones', className: 'text-center' },

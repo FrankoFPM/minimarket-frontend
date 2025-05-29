@@ -5,14 +5,9 @@
     "text": "Inicio"
   },
   {
-    "link": "/dashboard/finance",
-    "icon": "GiDinosaurRex",
-    "text": "Finanzas dinosaurio"
-  },
-  {
-    "link": "/categories",
-    "icon": "FaClipboardList",
-    "text": "Categorías"
+    "link": "/dashboard/user",
+    "icon": "FaUser",
+    "text": "Usuarios"
   },
   {
     "link": "/dashboard/sales",
@@ -20,23 +15,18 @@
     "text": "Ventas"
   },
   {
+    "link": "/dashboard/categories",
+    "icon": "FaClipboardList",
+    "text": "Reportes"
+  },
+  {
     "link": "/dashboard/inventory",
     "icon": "FaBox",
     "text": "Inventario"
   },
   {
-    "link": "/dashboard/reports",
-    "icon": "FaChartPie",
-    "text": "Reportes"
-  },
-  {
-    "link": "/dashboard/settings",
-    "icon": "FaCog",
-    "text": "Configuración"
-  },
-  {
-    "link": "/dashboard/rol",
+    "link": "/dashboard/suppliers",
     "icon": "FaUsers",
-    "text": "Roles"
+    "text": "Proovedores"
   }
 ]
