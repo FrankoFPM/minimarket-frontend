@@ -1,8 +1,11 @@
+import { addToast } from '@heroui/react'
 import { FacebookAuthProvider, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { FaFacebook, FaGoogle } from 'react-icons/fa'
+import { useNavigate } from 'react-router'
 import { auth } from '~/firebase/firebaseConfig'
 
 export const LoginSocial = () =>{
+  const navigate = useNavigate()
   const loginWithProvider = async (providerName: 'google.com' | 'facebook.com') => {
     const provider = providerName === 'google.com'
       ? new GoogleAuthProvider()
@@ -33,21 +36,44 @@ export const LoginSocial = () =>{
       const data = await response.json()
 
       if (data.success) {
-        alert(`Autenticación exitosa con ${providerName}`)
-        // Aquí puedes guardar el usuario, redirigir, etc.
+        addToast({
+          title: 'Autenticación exitosa',
+          description: `Usuario autenticado con ${providerName}.`,
+          color: 'success',
+          shouldShowTimeoutProgress: true,
+        })
+        console.log(`Usuario autenticado con ${providerName}:`, data.user)
+
+        navigate('/')
       } else {
         alert(`Error en la autenticación: ${data.message}`)
         console.error(`Error en la autenticación con ${providerName}:`, data.message)
       }
 
     } catch (error) {
-
       if (error instanceof Error) {
-        console.error('Error al autenticar con el proveedor:', error.message)
-        alert(`Error al autenticar con ${providerName}: ${error.message}`)
+        const firebaseError = error as { code?: string }
+        if (
+          firebaseError.code === 'auth/popup-closed-by-user' ||
+          firebaseError.code === 'auth/cancelled-popup-request' ||
+          firebaseError.code === 'auth/user-cancelled' // <-- Facebook cancelado
+        ) {
+          addToast({
+            title: 'Autenticación cancelada',
+            description: `El usuario canceló o interrumpió la autenticación con ${providerName}.`,
+            color: 'danger',
+            shouldShowTimeoutProgress: true,
+          })
+          return
+        }
       } else {
         console.error('Error desconocido al autenticar con el proveedor:', error)
-        alert(`Error desconocido al autenticar con ${providerName}`)
+        addToast({
+          title: 'Error desconocido',
+          description: `Ocurrió un error desconocido al autenticar con ${providerName}.`,
+          color: 'danger',
+          shouldShowTimeoutProgress: true,
+        })
       }
 
     }
