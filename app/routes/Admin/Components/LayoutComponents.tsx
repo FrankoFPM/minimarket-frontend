@@ -60,13 +60,14 @@ interface ButtonProps {
 }
 
 export function Button({ link, icon, text }: Omit<ButtonProps, 'active'>) {
+  const navButtonBase = 'w-full h-16 cursor-pointer text-foreground p-2 rounded-xl flex items-center gap-3 font-semibold drop-shadow-xs transition-colors'
+  const navButtonActive = 'bg-secondary duration-300'
+  const navButtonInactive = 'hover:bg-secondary duration-200'
   return (
     <NavLink
       to={link}
       className={({ isActive }) =>
-        `w-full h-16 cursor-pointer text-foreground p-2 rounded-xl 
-         flex items-center gap-3 font-semibold drop-shadow-xs transition-colors
-         ${isActive ? 'bg-secondary duration-300' : 'hover:bg-secondary duration-200'}`
+        `${navButtonBase} ${isActive ? navButtonActive : navButtonInactive}`
       }
       end
     >
