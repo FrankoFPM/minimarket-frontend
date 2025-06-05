@@ -1,7 +1,6 @@
-import { FaBox, FaChartPie, FaClipboardList, FaCog, FaHome, FaShoppingCart, FaUser, FaUsers } from 'react-icons/fa'
+import { FaBox, FaChartPie, FaCog, FaHome, FaShoppingCart,FaClipboardList, FaUser, FaUsers } from 'react-icons/fa'
 import { Link, useLocation } from 'react-router'
 import navigationData from '../navigation.json'
-import { GiDinosaurRex } from 'react-icons/gi'
 
 export function Header(){
 
@@ -42,13 +41,13 @@ export function Header(){
 
 const icons = {
   home: <FaHome />,
-  GiDinosaurRex  : <GiDinosaurRex  />,
-  FaClipboardList : <FaClipboardList  />,
-  FaShoppingCart : <FaShoppingCart  />,
-  FaBox : <FaBox  />,
-  FaChartPie : <FaChartPie  />,
-  FaCog : <FaCog  />,
-  FaUsers : <FaUsers  />,
+  FaUser: <FaUser />,
+  FaShoppingCart: <FaShoppingCart  />,
+  FaBox: <FaBox  />,
+  FaChartPie: <FaChartPie  />,
+  FaCog: <FaCog  />,
+  FaUsers: <FaUsers  />,
+  FaClipboardList: <FaClipboardList  />,
 }
 
 type IconKeys = keyof typeof icons;
@@ -80,7 +79,7 @@ export function Navbar(){
   return (
     <nav className="w-fit h-full px-6 nav">
       <div className='flex items-center gap-3 my-6 px-4'>
-        <img src="/images/Logo.webp" alt="Logo" width={200} height={70}/>
+        <img src="/images/Logo.webp" alt="Logo" width={200}  height={70}/>
       </div>
       <div className='h-0.5 bg-gradient-to-r from-primary-1/25 via-primary-1 to-primary-1/25 w-full mb-6 rounded-4xl'>
       </div>
