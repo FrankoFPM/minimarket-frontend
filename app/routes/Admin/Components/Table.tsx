@@ -1,5 +1,7 @@
 'use client'
 import { TbEdit, TbEye, TbTrash } from 'react-icons/tb'
+import { Modaltest, type ModalTestRef } from './modal'
+import { useRef } from 'react'
 
 interface Header {
   text: string;
@@ -69,8 +71,11 @@ export function SkeletonTable({rows}: {rows?: number}){
 
 export function ButtonsActions() {
 
+  const modalRef = useRef<ModalTestRef>(null)
+
   function handleEdit() {
     console.log('Edit')
+    modalRef.current?.openModal()
   }
   function handleView() {
     console.log('View')
@@ -82,6 +87,7 @@ export function ButtonsActions() {
     <TbEye className="text-blue-400 drop-shadow-xs cursor-pointer" onClick={handleView} />
     <TbEdit className="text-amber-400 drop-shadow-xs cursor-pointer" onClick={handleEdit} />
     <TbTrash className="text-red-600 drop-shadow-xs cursor-pointer" onClick={handleDelete} />
+    <Modaltest ref={modalRef} />
   </div>
 
 }
