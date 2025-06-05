@@ -1,8 +1,8 @@
 import { Link } from 'react-router'
 import { InputField } from '../../Components/FormComponent'
 import { useForm } from 'react-hook-form'
-import { FaFacebook, FaGoogle } from 'react-icons/fa'
 import { authenticateUser } from '~/services/authService'
+import { LoginSocial } from '~/services/firebaseAuth'
 
 /**
  * Componente principal para la página de inicio de sesión.
@@ -80,49 +80,41 @@ export default function Login() {
           <h1 className="text-2xl font-semibold text-foreground uppercase">
             Iniciar sesión
           </h1>
-          <form className="w-full max-w-[30rem] flex flex-col justify-center items-center gap-5 px-5 sm:px-10 lg:px-20" onSubmit={handleSubmit(onSubmit)}>
-            {/* Campo de entrada para el usuario */}
-            <InputField
-              label="Email"
-              placeholder="example@example.com"
-              type="email"
-              {...register('email', {required: 'Debe ingresar su email',
-                pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: 'Email no válido' } })}
-              error={errors.email?.message}
-              className='rounded-md'
-              onChange={() => {
-                clearErrors('email')
-              }}
-            />
+          <div className="w-full max-w-[30rem] px-5 sm:px-10 lg:px-20">
+            <form className="w-full flex flex-col justify-center items-center gap-5 mb-4" onSubmit={handleSubmit(onSubmit)}>
+              {/* Campo de entrada para el usuario */}
+              <InputField
+                label="Email"
+                placeholder="example@example.com"
+                type="email"
+                {...register('email', {required: 'Debe ingresar su email',
+                  pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: 'Email no válido' } })}
+                error={errors.email?.message}
+                className='rounded-md'
+                onChange={() => {
+                  clearErrors('email')
+                }}
+              />
 
-            {/* Campo de entrada para la contraseña */}
-            <InputField
-              label="Contraseña"
-              placeholder="Ingrese su contraseña"
-              type="password"
-              {...register('password', { required: 'Debe ingresar su contraseña' })}
-              error={errors.password?.message}
-              className='rounded-md'
-            />
+              {/* Campo de entrada para la contraseña */}
+              <InputField
+                label="Contraseña"
+                placeholder="Ingrese su contraseña"
+                type="password"
+                {...register('password', { required: 'Debe ingresar su contraseña' })}
+                error={errors.password?.message}
+                className='rounded-md'
+              />
 
-            {/* Botón de inicio de sesión */}
-            <button type="submit" className={'btn-success'}>
+              {/* Botón de inicio de sesión */}
+              <button type="submit" className={'btn-success'}>
               Iniciar sesión
-            </button>
-
+              </button>
+            </form>
             {/* Contenedor para inicio de sesión con OAuth */}
             <div className="flex flex-col items-center justify-center gap-5 w-full">
               <span className='relative w-full border-b-1 border-foreground after:content-["o"] after:bg-secondary after:w-7 after:h-5 after:text-xl after:text-foreground after:absolute after:inset-0 after:-translate-y-3.5 after:-translate-x-1/2 after:left-1/2 after:text-center' />
-              <div className="grid grid-cols-2 gap-4 w-full">
-                <button className="flex items-center justify-center gap-2 px-4 py-2 border-1 border-primary-1 text-foreground rounded-md hover:bg-primary-1 hover:text-white transition">
-                  <FaGoogle size={20} />
-                  Google
-                </button>
-                <button type='submit' className="flex items-center justify-center gap-2 px-4 py-2 border-1 border-primary-1 text-foreground rounded-md hover:bg-primary-1 hover:text-white transition">
-                  <FaFacebook size={20} />
-                  Facebook
-                </button>
-              </div>
+              <LoginSocial />
             </div>
 
             {/* Enlaces adicionales */}
@@ -141,7 +133,8 @@ export default function Login() {
     Entrar como invitado
               </Link>
             </div>
-          </form>
+
+          </div>
         </div>
       </div>
     </div>
