@@ -6,13 +6,13 @@ export default [
   //index('routes/home.tsx'),
 
   // Define la ruta para la página de inicio de sesión (login)
-  route('login', 'routes/Login/login.tsx'), // Esta es la página de inicio de sesión
+  route('login', 'routes/Login/Login.tsx'), // Esta es la página de inicio de sesión
 
   // Define la ruta para la página de registro (register)
-  route('register', 'routes/Login/register.tsx'), // Esta es la página de registro
+  route('register', 'routes/Login/Register.tsx'), // Esta es la página de registro
 
   // Define la ruta para la página de nosotros (nosotros)
-  route('nosotros', 'routes/Nosotros/nosotros.tsx'), // Esta es la página de registro
+  route('nosotros', 'routes/Nosotros/Nosotros.tsx'), // Esta es la página de registro
 
   // Ejemplo comentado de cómo usar un layout para agrupar rutas relacionadas
   // layout('routes/Login/layout.tsx', [
@@ -22,7 +22,7 @@ export default [
   // ])
   layout('routes/Shop/Layout.tsx', [
     index('routes/Shop/index.tsx'), // Ruta principal dentro del layout de la tienda
-    route('producto/:id', 'routes/Shop/Products/product.tsx'), // Ruta de producto dentro del layout de la tienda
+    route('producto/:id', 'routes/Shop/Products/Product.tsx'), // Ruta de producto dentro del layout de la tienda
     route('carrito', 'routes/Shop/Carrito.tsx'), // Ruta de producto dentro del layout de la tienda
     route('terminos', 'routes/Nosotros/Terminos.tsx'), // Ruta de producto dentro del layout de la tienda
     route('politicas', 'routes/Nosotros/PoliticaPrivacidad.tsx'), // Ruta de producto dentro del layout de la tienda
