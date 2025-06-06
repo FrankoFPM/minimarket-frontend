@@ -2,7 +2,7 @@ import { Link } from 'react-router'
 import { InputField } from '../../Components/FormComponent'
 import { useForm } from 'react-hook-form'
 import { authenticateUser } from '~/services/authService'
-import { LoginSocial } from '~/services/firebaseAuth'
+import { LoginSocial, LoginWithEmail } from '~/services/firebaseAuth'
 
 /**
  * Componente principal para la página de inicio de sesión.
@@ -33,7 +33,7 @@ export default function Login() {
       if (isAuthenticated) {
         // Redirigir al usuario a la página de inicio o a la página deseada
         alert('Inicio de sesión exitoso GG')
-        window.location.href = '/'
+        LoginWithEmail(email, password)
       }else {
         error()
       }

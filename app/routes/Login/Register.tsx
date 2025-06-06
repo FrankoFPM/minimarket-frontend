@@ -3,6 +3,7 @@ import { InputField } from '~/Components/FormComponent'
 import { ThemeToggle } from '~/Components/UiComponentes'
 import { useForm } from 'react-hook-form'
 import { registerUserClient } from '~/services/registerUser'
+import { registerWithEmail } from '~/services/firebaseAuth'
 
 const Register = () => {
 
@@ -42,6 +43,7 @@ const Register = () => {
       if (user) {
         // Redirigir al usuario a la página de inicio o a la página deseada
         console.log('Registro exitoso')
+        registerWithEmail(email, password)
         alert('Registro exitoso GG')
         window.location.href = '/login'
       } else {
