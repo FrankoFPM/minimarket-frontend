@@ -28,5 +28,10 @@
     "link": "/dashboard/suppliers",
     "icon": "FaUsers",
     "text": "Proovedores"
+  },
+  {
+    "link": "/dashboard/products",
+    "icon": "FaBoxOpen",
+    "text": "Productos"
   }
 ]

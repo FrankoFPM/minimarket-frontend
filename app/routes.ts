@@ -36,6 +36,7 @@ export default [
     route('dashboard/inventory', 'routes/Admin/inventory.tsx'),
     route('dashboard/suppliers', 'routes/Admin/suppliers.tsx'),
     route('dashboard/reports', 'routes/Admin/reports.tsx'),
+    route('dashboard/products', 'routes/Admin/Products/Products.tsx'), // Ruta de productos dentro del layout de administración
   ]),
 
   route('test', 'test/appTest.tsx'), // Ruta de prueba
