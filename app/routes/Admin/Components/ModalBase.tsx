@@ -1,5 +1,10 @@
-// ModalBase.tsx
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react'
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
+} from '@heroui/react'
 
 export interface ModalBaseProps {
   isOpen: boolean;
@@ -11,8 +16,14 @@ export interface ModalBaseProps {
 
 export function ModalBase({ isOpen, onClose, title, children, footer }: ModalBaseProps) {
   return (
-    <Modal isOpen={isOpen} onOpenChange={onClose}>
-      <ModalContent>
+    <Modal
+      isOpen={isOpen}
+      onOpenChange={onClose}
+      classNames={{
+        backdrop: 'backdrop-blur-md'
+      }}
+    >
+      <ModalContent className="max-w-lg">
         {() => (
           <>
             {title && <ModalHeader>{title}</ModalHeader>}

@@ -4,19 +4,18 @@ import { InputField } from '~/Components/FormComponent'
 import { ChipStatus, Table } from '../Components/Table'
 import { ModalBase } from '../Components/ModalBase'
 
-export default function ModuloProducto() {
+export default function ModuloSales() {
 
   const headers = [
-    { text: 'ID', className: 'text-center' },
-    { text:'Nombre', className: 'text-center' },
-    { text:'Categoría', className: 'text-center' },
-    { text:'Descripción', className: 'text-center' },
-    { text:'Stock actual', className: 'text-center' },
+    { text:'Codigo de venta', className: 'text-center' },
+    { text:'Cajero', className: 'text-center' }, //
+    { text:'ID del Producto', className: 'text-center' },
+    { text:'Nombre del Producto', className: 'text-center' },
+    { text:'Cantidad', className: 'text-center' }, //
     { text:'Precio de venta', className: 'text-center' },
-    { text:'Precio de compra', className: 'text-center' },
-    { text: 'Fecha de modificacion', className: 'text-center' },
-    { text: 'Estado', className: 'text-center' },
-    { text: 'Acciones', className: 'text-center' },
+    { text:'Fecha de modificacion', className: 'text-center' },
+    { text:'Estado', className: 'text-center' },
+    { text:'Acciones', className: 'text-center' },
   ]
 
   return (
@@ -27,20 +26,19 @@ export default function ModuloProducto() {
       <Table headers={headers}>
 
         <tr className="[&>td]:h-12 [&>td]:px-4 [&>td]:py-1.5">
-          <td className="text-center" width={160}>1</td>
-          <td className="text-center" width={160}>Manzana</td>
-          <td className="text-center" width={160}>Fruta</td>
-          <td className="text-center" width={160}>abcdef</td>
-          <td className="text-center" width={160}>30</td>
-          <td className="text-center" width={160}>S/.0.50</td>
-          <td className="text-center" width={160}>S/.0.80</td>
+          <td className="text-center" width={160}>U001</td>
+          <td className="text-center" width={160}>Juan Perez</td>
+          <td className="text-center" width={160}>P102</td>
+          <td className="text-center" width={160}>Arroz Costeño 1kg</td>
+          <td className="text-center" width={160}>2</td>
+          <td className="text-center" width={160}>S/ 3.50</td>
           <td className="text-center" width={160}>10/03/25</td>
           <td className="">
             <ChipStatus status={1} />
           </td>
           <td className="">
             <div className="flex items-center justify-center text-2xl gap-4">
-              <ModalActions idProduc='5' />
+              <ModalActions codSales='1' />
             </div>
           </td>
         </tr>
@@ -50,17 +48,17 @@ export default function ModuloProducto() {
 }
 
 interface ModalActions {
-  idProduc: string;
+  codSales: string;
 }
 
-function ModalActions({idProduc}: ModalActions){
+function ModalActions({codSales}: ModalActions){
   const editModal = useDisclosure()
   const viewModal = useDisclosure()
   const deleteModal = useDisclosure()
 
   //fetch product data by idProduc if needed
   // const fetchProductData = async (id: string) => {
-  idProduc = idProduc || '1' // Example id, replace with actual data
+  codSales = codSales || '1' // Example id, replace with actual data
 
   return (
     <>
@@ -90,49 +88,37 @@ function ModalActions({idProduc}: ModalActions){
         }
       >
         <form action="">
-          <input type="hidden" value={idProduc} />
+          <input type="hidden" value={codSales} />
           <InputField
-            label="ID"
+            label="Codigo de venta"
             name="productId"
             type="text"
-            placeholder="Ingrese el ID del producto"
+            placeholder="Ingrese el codigo del producto"
           />
           <InputField
-            label="Nombre"
+            label="Nombre del cajero"
             name="productName"
             type="text"
-            placeholder="Ingrese el nombre del producto"
+            placeholder="Ingrese el nombre del cajero"
             value={'Manzana'} // Example value, replace with actual data
           />
           <InputField
-            label="Categoría de producto"
-            name="productDate"
-            type="text"
-            placeholder="Ingrese la categoría del producto"
-          />
-          <InputField
-            label="Descripción"
+            label="ID del producto"
             name="productDate"
             type="text"
             placeholder="Ingrese la descripción del producto"
           />
           <InputField
-            label="Stock actual"
+            label="Cantidad"
             name="productDate"
             type="text"
-            placeholder="Ingrese el stock actual del producto"
+            placeholder="Ingrese la cantidad del producto"
           />
           <InputField
-            label="Precio de venta"
+            label="Precio de venta del producto"
             name="productDate"
             type="text"
-            placeholder="Ingrese el precio de venta del producto"
-          />
-          <InputField
-            label="Precio de compra"
-            name="productDate"
-            type="text"
-            placeholder="Ingrese el precio de compra del producto"
+            placeholder="Ingrese el precio del producto"
           />
         </form>
       </ModalBase>
@@ -148,12 +134,13 @@ function ModalActions({idProduc}: ModalActions){
         }
       >
         <div className="flex flex-col gap-4">
-          <p><strong>ID:</strong> {idProduc}</p>
-          <p><strong>Nombre:</strong> Manzana</p>
-          <p><strong>Categoría:</strong> Fruta </p>
-          <p><strong>Descripción:</strong> abcdefg </p>
-          <p><strong>Precio:</strong> S/0.50 </p>
-          <p><strong>Stock:</strong> 20 </p>
+          <p><strong>Código de venta:</strong> {codSales}</p>
+          <p><strong>Cajero:</strong> Manzana</p>
+          <p><strong>ID del producto:</strong> abcdefg </p>
+          <p><strong>Nombre del producto:</strong> abcdefg </p>
+          <p><strong>Cantidad:</strong> 1</p>
+          <p><strong>Precio de venta:</strong> S/3.50 </p>
+          <p><strong>Cantidad:</strong> 20 </p>
           <p><strong>Fecha de modificación:</strong>10/03/25</p>
           <p><strong>Estado:</strong> Activo</p>
         </div>
@@ -175,7 +162,7 @@ function ModalActions({idProduc}: ModalActions){
           </>
         }
       >
-        <p>¿Estás seguro de que deseas eliminar el producto del ID {idProduc}?</p>
+        <p>¿Estás seguro de que deseas eliminar el producto del ID {codSales}?</p>
       </ModalBase>
 
     </>
@@ -191,7 +178,7 @@ function ModalAdd(){
         className="w-fit ml-auto"
         onPress={addModal.onOpen}
       >
-        Agregar nuevo producto
+        Agregar nueva venta
       </Button>
 
       <ModalBase
@@ -211,46 +198,40 @@ function ModalAdd(){
       >
         <form action="">
           <InputField
-            label="ID"
+            label="Código de venta"
+            name="productName"
+            type="text"
+            placeholder="Ingrese el código de venta"
+          />
+          <InputField
+            label="Cajero"
+            name="productName"
+            type="text"
+            placeholder="Ingrese el nombre del ccajero"
+          />
+          <InputField
+            label="ID del producto"
             name="productName"
             type="text"
             placeholder="Ingrese el ID del producto"
           />
           <InputField
-            label="Nombre"
+            label="Nombre del producto"
             name="productName"
             type="text"
-            placeholder="Ingrese el nombre del producto"
+            placeholder="Ingrese la cantidad del producto"
           />
           <InputField
-            label="Categoría del producto"
-            name="productCategory"
+            label="Cantidad"
+            name="productName"
             type="text"
-            placeholder="Ingrese la categoría del producto"
-          />
-          <InputField
-            label="Descripción"
-            name="productDescription"
-            type="text"
-            placeholder="Ingrese una descripción del producto"
+            placeholder="Ingrese la cantidad del producto"
           />
           <InputField
             label="Precio de venta"
-            name="productPrice"
-            type="number"
-            placeholder="Ingrese el precio del producto"
-          />
-          <InputField
-            label="Precio de compra"
-            name="productPrice"
-            type="number"
-            placeholder="Ingrese el precio de compra del producto"
-          />
-          <InputField
-            label="Cantidad en stock actual"
-            name="productStock"
-            type="number"
-            placeholder="Ingrese la cantidad disponible del stock actual"
+            name="productDescription"
+            type="text"
+            placeholder="Ingrese el precio d eventa del producto"
           />
         </form>
       </ModalBase>
