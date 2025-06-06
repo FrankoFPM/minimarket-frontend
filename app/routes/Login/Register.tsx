@@ -43,13 +43,8 @@ const Register = () => {
       if (user) {
         // Redirigir al usuario a la página de inicio o a la página deseada
         console.log('Registro exitoso')
-        registerWithEmail(email, password)
-        alert('Registro exitoso GG')
-        window.location.href = '/login'
-      } else {
-        console.error('Error en el registro')
+        registerWithEmail(email, password, `${nombres} ${apellidos}`)
       }
-
     } catch (error) {
       if (error instanceof Error) {
         console.error('Error al registrar:', error.message)

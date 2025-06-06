@@ -1,5 +1,5 @@
 import { addToast } from '@heroui/react'
-import { createUserWithEmailAndPassword, FacebookAuthProvider, getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
+import { createUserWithEmailAndPassword, FacebookAuthProvider, getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth'
 import { FaFacebook, FaGoogle } from 'react-icons/fa'
 import { useNavigate } from 'react-router'
 import { auth } from '~/firebase/firebaseConfig'
@@ -97,19 +97,23 @@ export const LoginSocial = () =>{
   )
 }
 
-export const registerWithEmail = (email: string, password: string) => {
-
+export const registerWithEmail = (email: string, password: string , displayName: string) => {
+  const navigate = useNavigate()
   const auth = getAuth()
   createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
     // Signed up
       const user = userCredential.user
+      updateProfile(user, {
+        displayName: displayName,
+      })
       addToast({
         title: 'Registro exitoso',
         description: 'Usuario registrado correctamente.',
         color: 'success',
         shouldShowTimeoutProgress: true,
       })
+      navigate('/')
       console.log('Usuario registrado:', user)
     })
     .catch((error) => {
@@ -127,6 +131,7 @@ export const registerWithEmail = (email: string, password: string) => {
 
 export const LoginWithEmail = (email: string, password: string) => {
   const auth = getAuth()
+  const navigate = useNavigate()
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
     // Signed in
@@ -138,6 +143,7 @@ export const LoginWithEmail = (email: string, password: string) => {
         shouldShowTimeoutProgress: true,
       })
       console.log('Usuario autenticado:', user)
+      navigate('/')
     }).catch((error) => {
       const errorCode = error.code
       const errorMessage = error.message
