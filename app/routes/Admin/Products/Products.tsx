@@ -8,7 +8,11 @@ export default function ModuloProducto() {
 
   const headers = [
     { text: 'ID', className: 'text-center' },
-    { text:'Producto', className: 'text-left' },
+    { text:'Producto', className: 'text-center' },
+    { text:'Descripción', className: 'text-center' },
+    { text:'Stock', className: 'text-center' },
+    { text:'Precio', className: 'text-center' },
+    { text:'Categoría', className: 'text-center' },
     { text: 'Fecha de modificacion', className: 'text-left' },
     { text: 'Estado', className: 'text-center' },
     { text: 'Acciones', className: 'text-center' },
@@ -24,6 +28,9 @@ export default function ModuloProducto() {
         <tr className="[&>td]:h-12 [&>td]:px-4 [&>td]:py-1.5">
           <td className="text-center" width={160}>1</td>
           <td>Manzana</td>
+          <td>abcdef</td>
+          <td>30</td>
+          <td>S/.0.50</td>
           <td>10/03/25</td>
           <td className="">
             <ChipStatus status={1} />
@@ -82,8 +89,8 @@ function ModalActions({idProduc}: ModalActions){
         <form action="">
           <input type="hidden" value={idProduc} />
           <InputField
-            label="Nombre del producto"
-            name="productName"
+            label="Id del producto"
+            name="productId"
             type="text"
             placeholder="Ingrese el nombre del producto"
           />
@@ -95,14 +102,26 @@ function ModalActions({idProduc}: ModalActions){
             value={'Manzana'} // Example value, replace with actual data
           />
           <InputField
-            label="Nombre del producto"
-            name="productName"
+            label="Descripción del producto"
+            name="productDate"
             type="text"
             placeholder="Ingrese el nombre del producto"
           />
           <InputField
-            label="Nombre del producto"
-            name="productName"
+            label="Stock de producto"
+            name="productDate"
+            type="text"
+            placeholder="Ingrese el nombre del producto"
+          />
+          <InputField
+            label="Precio de producto"
+            name="productDate"
+            type="text"
+            placeholder="Ingrese el nombre del producto"
+          />
+          <InputField
+            label="Categoría de producto"
+            name="productDate"
             type="text"
             placeholder="Ingrese el nombre del producto"
           />
@@ -122,7 +141,11 @@ function ModalActions({idProduc}: ModalActions){
         <div className="flex flex-col gap-4">
           <p><strong>ID:</strong> {idProduc}</p>
           <p><strong>Nombre:</strong> Manzana</p>
-          <p><strong>Fecha de modificación:</strong> 10/03/25</p>
+          <p><strong>Descripción:</strong> abcdefg </p>
+          <p><strong>Precio:</strong> S/0.50 </p>
+          <p><strong>Stock:</strong> 20 </p>
+          <p><strong>Categoría:</strong> Fruta </p>
+          <p><strong>Fecha de modificación:</strong>10/03/25</p>
           <p><strong>Estado:</strong> Activo</p>
         </div>
       </ModalBase>
@@ -138,7 +161,7 @@ function ModalActions({idProduc}: ModalActions){
               Cancelar
             </Button>
             <Button color="success" onPress={deleteModal.onClose}>
-              Confirmar eliminación
+              Eliminar
             </Button>
           </>
         }
@@ -178,7 +201,12 @@ function ModalAdd(){
         }
       >
         <form action="">
-
+          <InputField
+            label="ID del producto"
+            name="productName"
+            type="text"
+            placeholder="Ingrese el nombre del producto"
+          />
           <InputField
             label="Nombre del producto"
             name="productName"
@@ -186,25 +214,25 @@ function ModalAdd(){
             placeholder="Ingrese el nombre del producto"
           />
           <InputField
-            label="Descripción"
+            label="Descripción del producto"
             name="productDescription"
             type="text"
             placeholder="Ingrese una descripción del producto"
           />
           <InputField
-            label="Precio"
+            label="Precio del producto"
             name="productPrice"
             type="number"
             placeholder="Ingrese el precio del producto"
           />
           <InputField
-            label="Cantidad en stock"
+            label="Cantidad en stock del producto"
             name="productStock"
             type="number"
             placeholder="Ingrese la cantidad disponible en stock"
           />
           <InputField
-            label="Categoría"
+            label="Categoría del producto"
             name="productCategory"
             type="text"
             placeholder="Ingrese la categoría del producto"

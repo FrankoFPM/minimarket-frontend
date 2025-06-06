@@ -7,7 +7,6 @@ export default function ReportsIndex() {
     { text:'Venta total', className: 'text-left' },
     { text:'Ganancia total', className: 'text-left' },
     { text:'# Productos vendidos', className: 'text-left' },
-    { text:'Metodo de pago', className: 'text-left' },
     { text:'Estado', className: 'text-center' },
     { text:'Acciones', className: 'text-center' },
   ]
@@ -23,7 +22,6 @@ export default function ReportsIndex() {
           <td className="text-center" width={160}>40</td>
           <td>S/.10.00</td>
           <td>13</td>
-          <td>Efectivo</td>
           <td className="">
             <ChipStatus status={1} />
           </td>
