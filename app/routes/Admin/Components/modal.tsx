@@ -28,20 +28,20 @@ export const Modaltest = forwardRef<ModalTestRef>((props, ref) => {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Modal Title
+                <div>Editar reportes</div>
                 <div>Hola mundo header</div>
               </ModalHeader>
               <ModalBody>
                 <form action="">
-                  <input type="text" placeholder="holamundo" />
+                  <input type="text" placeholder="" />
                 </form>
               </ModalBody>
               <ModalFooter>
                 <button color="btn-danger" onClick={onClose}>
-                  Close
+                  Cerrar
                 </button>
                 <button color="btn-success" onClick={onClose}>
-                  Action
+                  Guardar
                 </button>
               </ModalFooter>
             </>
