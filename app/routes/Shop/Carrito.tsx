@@ -38,7 +38,7 @@ export default function Carrito() {
           <div className="grid grid-cols-3 gap-4 border-b-2 border-gray-200 pb-2 mt-2 font-semibold text-lg text-gray-700">
             <h3>Producto</h3>
             <h3 className="text-center">Cantidad</h3>
-            <h3 className="text-right">Total</h3>
+            <h3 className="text-center">Total</h3>
           </div>
           <div className="mt-4 divide-y divide-gray-200">
             {precios.map((precio, i) => (
@@ -50,7 +50,7 @@ export default function Carrito() {
                     setQuantity={q => setQuantities(quantities.map((val, idx) => idx === i ? q : val))}
                   />
                 </div>
-                <p className="text-right font-bold text-primary-1 text-xl">${(precio * quantities[i]).toFixed(2)}</p>
+                <p className="text-center font-bold text-primary-1 text-xl">${(precio * quantities[i]).toFixed(2)}</p>
               </div>
             ))}
           </div>
