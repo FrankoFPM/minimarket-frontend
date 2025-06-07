@@ -1,5 +1,5 @@
 import { addToast } from '@heroui/react'
-import { FacebookAuthProvider, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { createUserWithEmailAndPassword, FacebookAuthProvider, getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth'
 import { FaFacebook, FaGoogle } from 'react-icons/fa'
 import { useNavigate } from 'react-router'
 import { auth } from '~/firebase/firebaseConfig'
@@ -95,4 +95,68 @@ export const LoginSocial = () =>{
       </button>
     </div>
   )
+}
+
+export const registerWithEmail = (
+  email: string,
+  password: string,
+  displayName: string,
+  navigate: (path: string) => void
+) => {
+  const auth = getAuth()
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+    // Signed up
+      const user = userCredential.user
+      updateProfile(user, {
+        displayName: displayName,
+      })
+      addToast({
+        title: 'Registro exitoso',
+        description: 'Usuario registrado correctamente.',
+        color: 'success',
+        shouldShowTimeoutProgress: true,
+      })
+      navigate('/')
+      console.log('Usuario registrado:', user)
+    })
+    .catch((error) => {
+      const errorCode = error.code
+      const errorMessage = error.message
+      addToast({
+        title: 'Error en el registro',
+        description: `Código de error: ${errorCode}. Mensaje: ${errorMessage}`,
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
+      })
+      console.error('Error al registrar usuario:', error)
+    })
+}
+
+export const LoginWithEmail = (email: string, password: string) => {
+  const auth = getAuth()
+  const navigate = useNavigate()
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+    // Signed in
+      const user = userCredential.user
+      addToast({
+        title: 'Inicio de sesión exitoso',
+        description: 'Usuario autenticado correctamente.',
+        color: 'success',
+        shouldShowTimeoutProgress: true,
+      })
+      console.log('Usuario autenticado:', user)
+      navigate('/')
+    }).catch((error) => {
+      const errorCode = error.code
+      const errorMessage = error.message
+      addToast({
+        title: 'Error en el inicio de sesión',
+        description: `Código de error: ${errorCode}. Mensaje: ${errorMessage}`,
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
+      })
+      console.error('Error al iniciar sesión:', error)
+    })
 }

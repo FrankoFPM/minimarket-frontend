@@ -26,7 +26,8 @@ export default [
     route('carrito', 'routes/Shop/Carrito.tsx'), // Ruta de producto dentro del layout de la tienda
     route('terminos', 'routes/Nosotros/Terminos.tsx'), // Ruta de producto dentro del layout de la tienda
     route('politicas', 'routes/Nosotros/PoliticaPrivacidad.tsx'), // Ruta de producto dentro del layout de la tienda
-    route('contacto', 'routes/Nosotros/Contacto.tsx')
+    route('contacto', 'routes/Nosotros/Contacto.tsx'),
+    route('pedidos', 'routes/Shop/Pedidos.tsx'), // Ruta de pedidos dentro del layout de la tienda
   ]),
 
   layout('routes/Admin/Layout.tsx', [
