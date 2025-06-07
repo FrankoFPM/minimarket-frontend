@@ -8,7 +8,8 @@ export default function ModuloSales() {
 
   const headers = [
     { text:'Codigo de venta', className: 'text-center' },
-    { text:'Cajero', className: 'text-center' }, //
+    { text:'Codigo de empleado', className: 'text-center' },
+    { text:'Empleado', className: 'text-center' }, //
     { text:'ID del Producto', className: 'text-center' },
     { text:'Nombre del Producto', className: 'text-center' },
     { text:'Cantidad', className: 'text-center' }, //
@@ -20,13 +21,14 @@ export default function ModuloSales() {
 
   return (
     <div className="flex flex-col bg-background mx-auto my-10 container gap-4">
-      <h1 className="text-3xl font-bold text-center">Bienvenido al panel de administración</h1>
-      <p className="text-center">Aquí puedes gestionar todos los aspectos de tu tienda.</p>
+      <h1 className="text-3xl font-bold text-center">Panel de administración</h1>
+      <p className="text-center">Desde este panel puedes gestionar las ventas.</p>
       <ModalAdd />
       <Table headers={headers}>
 
         <tr className="[&>td]:h-12 [&>td]:px-4 [&>td]:py-1.5">
-          <td className="text-center" width={160}>U001</td>
+          <td className="text-center" width={160}>U101</td>
+          <td className="text-center" width={160}>E300</td>
           <td className="text-center" width={160}>Juan Perez</td>
           <td className="text-center" width={160}>P102</td>
           <td className="text-center" width={160}>Arroz Costeño 1kg</td>
@@ -69,7 +71,7 @@ function ModalActions({codSales}: ModalActions){
       <ModalBase
         isOpen={editModal.isOpen}
         onClose={editModal.onClose}
-        title="Editar producto"
+        title="Editar venta"
         footer={
           <>
             <Button
@@ -91,32 +93,38 @@ function ModalActions({codSales}: ModalActions){
           <input type="hidden" value={codSales} />
           <InputField
             label="Codigo de venta"
-            name="productId"
+            name="salesCod"
             type="text"
             placeholder="Ingrese el codigo del producto"
           />
           <InputField
-            label="Nombre del cajero"
-            name="productName"
+            label="Codigo de empleado"
+            name="salesCod"
             type="text"
-            placeholder="Ingrese el nombre del cajero"
+            placeholder="Ingrese el codigo del empleado"
+          />
+          <InputField
+            label="Nombre del empleado"
+            name="salesName"
+            type="text"
+            placeholder="Ingrese el nombre del empleado"
             value={'Manzana'} // Example value, replace with actual data
           />
           <InputField
             label="ID del producto"
-            name="productDate"
+            name="salesId"
             type="text"
             placeholder="Ingrese la descripción del producto"
           />
           <InputField
             label="Cantidad"
-            name="productDate"
+            name="salesCantidad"
             type="text"
             placeholder="Ingrese la cantidad del producto"
           />
           <InputField
             label="Precio de venta del producto"
-            name="productDate"
+            name="salesPrice"
             type="text"
             placeholder="Ingrese el precio del producto"
           />
@@ -135,7 +143,8 @@ function ModalActions({codSales}: ModalActions){
       >
         <div className="flex flex-col gap-4">
           <p><strong>Código de venta:</strong> {codSales}</p>
-          <p><strong>Cajero:</strong> Manzana</p>
+          <p><strong>Código de empleado:</strong> {codSales}</p>
+          <p><strong>Empleado:</strong> Manzana</p>
           <p><strong>ID del producto:</strong> abcdefg </p>
           <p><strong>Nombre del producto:</strong> abcdefg </p>
           <p><strong>Cantidad:</strong> 1</p>
@@ -150,7 +159,7 @@ function ModalActions({codSales}: ModalActions){
       <ModalBase
         isOpen={deleteModal.isOpen}
         onClose={deleteModal.onClose}
-        title="Eliminar producto"
+        title="Eliminar venta"
         footer={
           <>
             <Button color="danger" onPress={deleteModal.onClose}>
@@ -162,7 +171,7 @@ function ModalActions({codSales}: ModalActions){
           </>
         }
       >
-        <p>¿Estás seguro de que deseas eliminar el producto del ID {codSales}?</p>
+        <p>¿Estás seguro de que deseas eliminar la venta del codigo {codSales}?</p>
       </ModalBase>
 
     </>
@@ -184,54 +193,55 @@ function ModalAdd(){
       <ModalBase
         isOpen={addModal.isOpen}
         onClose={addModal.onClose}
-        title="Agregar producto"
+        title="Agregar ventas"
         footer={
           <>
             <Button color="danger" onPress={addModal.onClose}>
             Cerrar
             </Button>
             <Button color="success" onPress={addModal.onClose}>
-            Guardar producto
+            Guardar
             </Button>
           </>
         }
       >
         <form action="">
           <InputField
-            label="Código de venta"
-            name="productName"
+            label="Codigo de venta"
+            name="salesCod"
             type="text"
-            placeholder="Ingrese el código de venta"
+            placeholder="Ingrese el codigo del producto"
           />
           <InputField
-            label="Cajero"
-            name="productName"
+            label="Codigo de empleado"
+            name="salesCod"
             type="text"
-            placeholder="Ingrese el nombre del ccajero"
+            placeholder="Ingrese el codigo del empleado"
+          />
+          <InputField
+            label="Nombre del empleado"
+            name="salesName"
+            type="text"
+            placeholder="Ingrese el nombre del empleado"
+            value={'Manzana'} // Example value, replace with actual data
           />
           <InputField
             label="ID del producto"
-            name="productName"
+            name="salesId"
             type="text"
-            placeholder="Ingrese el ID del producto"
-          />
-          <InputField
-            label="Nombre del producto"
-            name="productName"
-            type="text"
-            placeholder="Ingrese la cantidad del producto"
+            placeholder="Ingrese la descripción del producto"
           />
           <InputField
             label="Cantidad"
-            name="productName"
+            name="salesCantidad"
             type="text"
             placeholder="Ingrese la cantidad del producto"
           />
           <InputField
-            label="Precio de venta"
-            name="productDescription"
+            label="Precio de venta del producto"
+            name="salesPrice"
             type="text"
-            placeholder="Ingrese el precio d eventa del producto"
+            placeholder="Ingrese el precio del producto"
           />
         </form>
       </ModalBase>
