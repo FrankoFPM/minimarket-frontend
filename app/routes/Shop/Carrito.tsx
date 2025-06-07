@@ -30,19 +30,19 @@ export default function Carrito() {
         <div className='bg-secondary rounded-2xl shadow-lg p-8'>
           <div className="flex items-center gap-3 mb-6">
             <FaShoppingCart className="text-3xl text-primary-1" />
-            <h2 className="text-3xl font-bold">Tu Carrito</h2>
+            <h2 className="text-3xl font-bold text-foreground">Tu Carrito</h2>
             <span className="ml-2 bg-primary-1 text-secondary px-3 py-1 rounded-full text-sm font-semibold">
               {quantities.reduce((a, b) => a + b, 0)} productos
             </span>
           </div>
-          <div className="grid grid-cols-3 gap-4 border-b-2 border-gray-200 pb-2 mt-2 font-semibold text-lg text-gray-700">
-            <h3>Producto</h3>
-            <h3 className="text-center">Cantidad</h3>
-            <h3 className="text-center">Total</h3>
+          <div className="grid grid-cols-3 gap-4 border-b-2 border-gray-200 pb-2 mt-2 font-semibold text-lg text-foreground/50">
+            <h3 className='text-foreground/50'>Producto</h3>
+            <h3 className="text-center text-foreground/50">Cantidad</h3>
+            <h3 className="text-center text-foreground/50">Total</h3>
           </div>
           <div className="mt-4 divide-y divide-gray-200">
             {precios.map((precio, i) => (
-              <div key={i} className="grid grid-cols-3 gap-4 py-6 items-center hover:bg-gray-100 rounded-xl transition">
+              <div key={i} className="grid grid-cols-3 gap-4 py-6 items-center hover:bg-background rounded-xl transition">
                 <ProductMini price={precio} quantity={quantities[i]} />
                 <div className="flex justify-center">
                   <CantidadInput
@@ -70,11 +70,11 @@ export default function Carrito() {
         <article className="bg-secondary rounded-2xl shadow-lg p-8 mb-6">
           <h2 className="text-2xl font-bold mb-6 text-primary-1">Resumen de compra</h2>
           <div className="flex justify-between mb-4">
-            <span className="text-gray-600">Subtotal:</span>
+            <span className="text-foreground/50">Subtotal:</span>
             <span className="font-semibold">${subtotal.toFixed(2)}</span>
           </div>
           <div className="flex justify-between mb-4">
-            <span className="text-gray-600">Envío:</span>
+            <span className="text-foreground/50">Envío:</span>
             <span className="font-semibold">${envio.toFixed(2)}</span>
           </div>
           <div className="flex justify-between mb-6 border-t border-gray-200 pt-4">
@@ -99,8 +99,8 @@ function ProductMini({ price, quantity }: { price: number, quantity: number }) {
     <div className="flex gap-4 items-center">
       <img src="/images/apple.webp" alt="producto" width={60} height={60} className="object-cover rounded-xl shadow" />
       <div>
-        <h3 className="font-semibold text-lg">Producto Ejemplo</h3>
-        <p className="text-gray-600">Precio: <span className="font-bold text-primary-1">${price}</span></p>
+        <h3 className="font-semibold text-lg text-foreground/50">Producto Ejemplo</h3>
+        <p className="text-foreground/50">Precio: <span className="font-bold text-primary-1">${price}</span></p>
         <span className="inline-block bg-primary-1/10 text-primary-1 px-2 py-1 rounded text-xs mt-1">1kg</span>
       </div>
     </div>
@@ -118,12 +118,12 @@ function CantidadInput({ quantity, setQuantity }: { quantity: number, setQuantit
       min={0}
       max={99}
       afterElement={
-        <button className="text-gray-600 min-w-10 h-full flex items-center justify-center bg-primary-1" onClick={() => setQuantity(quantity + 1)}>
+        <button className="text-foreground/50 min-w-10 h-full flex items-center justify-center bg-primary-1" onClick={() => setQuantity(quantity + 1)}>
           <FaPlus className="inline-block text-secondary" />
         </button>
       }
       beforeElement={
-        <button className="text-gray-600 min-w-10 h-full flex items-center justify-center bg-primary-1" onClick={() => setQuantity(quantity - 1)} disabled={quantity <= 0}>
+        <button className="text-foreground/50 min-w-10 h-full flex items-center justify-center bg-primary-1" onClick={() => setQuantity(quantity - 1)} disabled={quantity <= 0}>
           <FaMinus className="inline-block text-secondary rotate-180" />
         </button>
       }
@@ -135,24 +135,24 @@ function PayMethods() {
   return (
     <article className="bg-secondary rounded-xl shadow p-6 flex flex-col gap-4 items-start max-w-xl mx-auto">
       <h3 className="text-base font-bold text-primary-1 mb-1">Métodos de pago</h3>
-      <p className="text-sm text-gray-600 mb-4">
+      <p className="text-sm text-foreground/50 mb-4">
         Elige el método que más te convenga. Aceptamos transferencias, billeteras digitales y pagos en efectivo.
       </p>
 
       <div className="w-full flex flex-col gap-4">
         {/* Transferencias Bancarias */}
         <section>
-          <h4 className="text-sm font-semibold text-gray-700 mb-2 border-l-4 border-primary-1 pl-2">Transferencias Bancarias</h4>
+          <h4 className="text-sm font-semibold text-foreground/50 mb-2 border-l-4 border-primary-1 pl-2">Transferencias Bancarias</h4>
           <div className="flex gap-4 flex-wrap">
             {[
               { src: '/images/pay/bcp.svg', alt: 'BCP', label: 'Banco de Crédito del Perú' },
               { src: '/images/pay/interbank.svg', alt: 'Interbank', label: 'Interbank' },
             ].map(({ src, alt, label }) => (
               <div key={alt} className="flex flex-col items-center group w-20">
-                <div className="bg-white rounded-lg shadow p-2 transition-transform group-hover:scale-105">
+                <div className="bg-secondary rounded-lg shadow p-2 transition-transform group-hover:scale-105">
                   <img src={src} alt={alt} className="w-16 h-10 object-contain grayscale group-hover:grayscale-0 transition" />
                 </div>
-                <span className="mt-1 text-[10px] text-center text-gray-600 group-hover:text-primary-1 transition">{label}</span>
+                <span className="mt-1 text-[10px] text-center text-foreground/50 group-hover:text-primary-1 transition">{label}</span>
               </div>
             ))}
           </div>
@@ -160,17 +160,17 @@ function PayMethods() {
 
         {/* Billeteras Digitales */}
         <section>
-          <h4 className="text-sm font-semibold text-gray-700 mb-2 border-l-4 border-primary-1 pl-2">Billeteras Digitales</h4>
+          <h4 className="text-sm font-semibold text-foreground/50 mb-2 border-l-4 border-primary-1 pl-2">Billeteras Digitales</h4>
           <div className="flex gap-4 flex-wrap">
             {[
               { src: '/images/pay/yape.webp', alt: 'Yape', label: 'Rápido y sin comisiones' },
               { src: '/images/pay/plin.svg', alt: 'Plin', label: 'Desde tu app bancaria' },
             ].map(({ src, alt, label }) => (
               <div key={alt} className="flex flex-col items-center group w-20">
-                <div className="bg-white rounded-lg shadow p-2 transition-transform group-hover:scale-105">
+                <div className="bg-secondary rounded-lg shadow p-2 transition-transform group-hover:scale-105">
                   <img src={src} alt={alt} className="w-16 h-10 object-contain grayscale group-hover:grayscale-0 transition" />
                 </div>
-                <span className="mt-1 text-[10px] text-center text-gray-600 group-hover:text-primary-1 transition">{label}</span>
+                <span className="mt-1 text-[10px] text-center text-foreground/50 group-hover:text-primary-1 transition">{label}</span>
               </div>
             ))}
           </div>
@@ -178,13 +178,13 @@ function PayMethods() {
 
         {/* Pago en efectivo */}
         <section>
-          <h4 className="text-sm font-semibold text-gray-700 mb-2 border-l-4 border-primary-1 pl-2">Pago en Efectivo</h4>
+          <h4 className="text-sm font-semibold text-foreground/50 mb-2 border-l-4 border-primary-1 pl-2">Pago en Efectivo</h4>
           <div className="flex gap-4 flex-wrap">
             <div className="flex flex-col items-center group w-20">
-              <div className="bg-white rounded-lg shadow p-2 transition-transform group-hover:scale-105">
+              <div className="bg-secondary rounded-lg shadow p-2 transition-transform group-hover:scale-105">
                 <img src="/images/pay/pago-efectivo.svg" alt="Pago Efectivo" className="w-16 h-10 object-contain grayscale group-hover:grayscale-0 transition" />
               </div>
-              <span className="mt-1 text-[10px] text-center text-gray-600 group-hover:text-primary-1 transition">Disponible en agentes</span>
+              <span className="mt-1 text-[10px] text-center text-foreground/50 group-hover:text-primary-1 transition">Disponible en agentes</span>
             </div>
           </div>
         </section>
