@@ -1,4 +1,4 @@
-import { FaBox, FaChartPie, FaCog, FaHome, FaShoppingCart,FaClipboardList, FaUser, FaUsers } from 'react-icons/fa'
+import { FaBox, FaChartPie, FaCog, FaHome, FaShoppingCart,FaClipboardList, FaUser, FaUserCog, FaUsers, FaBoxOpen } from 'react-icons/fa'
 import { Link, NavLink, useLocation } from 'react-router'
 import navigationData from '../navigation.json'
 
@@ -42,12 +42,14 @@ export function Header(){
 const icons = {
   home: <FaHome />,
   FaUser: <FaUser />,
+  FaUserCog: <FaUserCog />,
   FaShoppingCart: <FaShoppingCart  />,
   FaBox: <FaBox  />,
   FaChartPie: <FaChartPie  />,
   FaCog: <FaCog  />,
   FaUsers: <FaUsers  />,
   FaClipboardList: <FaClipboardList  />,
+  FaBoxOpen: <FaBoxOpen  />,
 }
 
 type IconKeys = keyof typeof icons;

@@ -31,11 +31,13 @@ export default [
 
   layout('routes/Admin/Layout.tsx', [
     route('dashboard','routes/Admin/index.tsx'), // Ruta principal dentro del layout de administración
-    route('dashboard/sales', 'routes/Admin/sales.tsx'), // Ruta de ventas dentro del layout de administración
-    route('dashboard/user', 'routes/Admin/user.tsx'), // Ruta de usuario dentro del layout de administración
-    route('dashboard/inventory', 'routes/Admin/inventory.tsx'),
-    route('dashboard/suppliers', 'routes/Admin/suppliers.tsx'),
-    route('dashboard/reports', 'routes/Admin/reports.tsx'),
+    route('dashboard/sales', 'routes/Admin/Sales/sales.tsx'), // Ruta de ventas dentro del layout de administración
+    route('dashboard/user', 'routes/Admin/User/user.tsx'), // Ruta de usuario dentro del layout de administración
+    route('dashboard/inventory', 'routes/Admin/Inventory/inventory.tsx'),
+    route('dashboard/administrator', 'routes/Admin/Administrator/administrator.tsx'),
+    route('dashboard/suppliers', 'routes/Admin/Suppliers/suppliers.tsx'),
+    route('dashboard/reports', 'routes/Admin/Reportss/reports.tsx'),
+    route('dashboard/products', 'routes/Admin/Products/Products.tsx'), // Ruta de productos dentro del layout de administración
   ]),
 
   route('test', 'test/appTest.tsx'), // Ruta de prueba
