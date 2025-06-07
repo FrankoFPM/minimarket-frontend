@@ -97,8 +97,12 @@ export const LoginSocial = () =>{
   )
 }
 
-export const registerWithEmail = (email: string, password: string , displayName: string) => {
-  const navigate = useNavigate()
+export const registerWithEmail = (
+  email: string,
+  password: string,
+  displayName: string,
+  navigate: (path: string) => void
+) => {
   const auth = getAuth()
   createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {

@@ -47,7 +47,7 @@ export default function Carrito() {
                 <div className="flex justify-center">
                   <CantidadInput
                     quantity={quantities[i]}
-                    setQuantity={q => setQuantities(quantities.map((val, idx) => idx === i ? q : val))}
+                    setQuantity={q => setQuantities(prev => prev.map((val, idx) => idx === i ? q : val))}
                   />
                 </div>
                 <p className="text-center font-bold text-primary-1 text-xl">${(precio * quantities[i]).toFixed(2)}</p>
