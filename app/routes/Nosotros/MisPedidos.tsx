@@ -2,37 +2,72 @@
 // 💡 Componente interno, definido antes de Pedidos
 interface Props {
     nombre: string;
-    marca: string;
+    descripcion: string;
     precio: number;
     precioAnterior?: number;
     imagen: string;
+    // NOTE: +3 props para completar datos de Pedidos
+    fecha:string;
+    numeroPedido:number;
+    codigoProducto: string;
 }
 
-const CardProducto = ({ nombre, marca, precio, precioAnterior, imagen }: Props) => {
+const CardProducto = ({ nombre, descripcion, precio, precioAnterior, imagen,fecha,numeroPedido,codigoProducto }: Props) => {
     return (
-        <div className='min-h-[500px] flex flex-col justify-center items-stretch px-20'>
-            <picture className="h-fit flex justify-center items-center">
-                <img alt={nombre} className="w-auto h-full object-cover rounded-md bg-secondary" src={imagen} />
-            </picture>
-
-            <div className="p-4">
-                <p className="text-foreground/50 font-bold">{marca}</p>
-                <h3 className="text-primary-1 font-semibold text-lg">{nombre}</h3>
-
-                <div className="flex flex-row justify-start items-center gap-3">
-                    <p className="text-primary-1 font-bold text-xl">S/.{precio}</p>
-                    {precioAnterior && (
-                        <p className="text-gray-500 text-sm line-through">S/.{precioAnterior}</p>
-                    )}
+        <>
+            {/* Caja Actual*/}
+            <div className="border rounded-md p-4 bg-secondary">
+                <div className="flex justify-between text-sm text-(--foreground) ">
+                    <span className="font-bold w-50 sm:w-auto">Finalizado</span>
+                    <div className="text-right">
+                        <p>{fecha}</p>
+                        <p className="text-xs">
+                            Nº de pedido: <span className="underline cursor-pointer">{numeroPedido}</span>
+                        </p>
+                        <button className="text-blue-600 text-xs hover:underline mt-1">Detalles del pedido</button>
+                    </div>
                 </div>
 
-                <div className="flex items-center mt-2">
-                    {Array(5).fill(0).map((_, i) => (
-                        <span key={i} className="text-yellow-500">★</span>
-                    ))}
+                <hr className="my-3" />
+
+                <div className="text-sm text-(--foreground) mb-2">
+                    <span className="font-semibold">🛒 &gt;  Minimarket la Caserita</span> 
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                    <img
+                        src={imagen}
+                        alt="Producto"
+                        className="w-25 h-30 object-cover border"
+                    />
+
+                    <div className="flex-1 text-(--foreground)">
+                        <p className="flex justify-center sm:justify-start font-extrabold">
+                            {nombre} 
+                        </p>
+                        <p>{descripcion}</p>
+                        <p className="text-xs text-gray-500 mt-1 font-bold">{codigoProducto}</p>
+                        <div className="flex justify-center sm:justify-start">
+                            <p className="mt-1 text-base font-semibold">
+                            PEN {precio} 
+                            <span className="text-sm font-normal">x1</span>
+                        </p>
+                        </div>
+                        
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <button className="bg-primary-1 text-white px-4 py-1 text-sm rounded-full hover:bg-primary-2 ">
+                            Añadir a la cesta
+                        </button>
+                        <button className="border text-(--foreground) px-4 py-1 text-sm rounded-full  hover:bg-[#e74c3c] hover:text-white">
+                            Borrar
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+            
+        </>
     );
 };
 
@@ -40,47 +75,42 @@ const CardProducto = ({ nombre, marca, precio, precioAnterior, imagen }: Props) 
 const Pedidos = () => {
     return (
         <>
-            <section className="container my-6 h-fit mx-auto grid grid-cols-3 gap-10">
+            <section className="container h-fit my-5 px-20 grid gap-5 ">
                 {/* Uso de componente definido más arriba */}
                 <CardProducto
                     nombre="Manzana"
-                    marca="Marca 1"
-                    precio={1}
+                    descripcion="Fruta fresca, jugosa y natural, ideal para una alimentación saludable en cualquier momento del día."
+                    precio={8.5}
                     precioAnterior={2}
                     imagen="/images/apple.webp"
+                    fecha="Pedido efectuado el 30 abr. 2025"
+                    numeroPedido = {8200054}
+                    codigoProducto="P-01"
                 />
 
                 <CardProducto
-                    nombre="Frugos"
-                    marca="Marca 2"
+                    nombre="Frugos del Valle"
+                    descripcion="Bebida refrescante elaborada con jugo de fruta, perfecta para acompañar tus comidas o disfrutar como snack"
                     precio={7}
                     imagen="/images/frugos.webp"
+                    fecha="Pedido efectuado el 30 abr. 2025"
+                    numeroPedido = {8200054}
+                    codigoProducto="P-02"
                 />
 
                 <CardProducto
                     nombre="Galleta Oreo"
-                    marca="Oreo"
-                    precio={3}
+                    descripcion="Oreo Clásica,galleta con relleno cremoso, perfecta para compartir"
+                    precio={2.5}
                     imagen="/images/oreo.webp"
+                    fecha="Pedido efectuado el 30 abr. 2025"
+                    numeroPedido = {8200054}
+                    codigoProducto="P-03"
                 />
 
-            </section>
-
-            {/* Apartado adicional */}
-            <section className="container w-100 h-fit mx-auto flex justify-center">
-                <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl shadow-sm">
-                    <h4 className="text-blue-800 font-semibold text-lg mb-2">Productos Agregados</h4>
-                    <ul className="list-disc list-inside text-sm text-blue-700">
-                        <li>Manzana x2</li>
-                        <li>Frugos x1</li>
-                        <li>Galleta Oreo x1</li>
-                    </ul>
-                </div>
             </section>
         </>
     );
 };
 
 export default Pedidos;
-
-
