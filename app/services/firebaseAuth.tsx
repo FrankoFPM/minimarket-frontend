@@ -1,8 +1,11 @@
-import { FacebookAuthProvider, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { addToast } from '@heroui/react'
+import { createUserWithEmailAndPassword, FacebookAuthProvider, getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth'
 import { FaFacebook, FaGoogle } from 'react-icons/fa'
+import { useNavigate } from 'react-router'
 import { auth } from '~/firebase/firebaseConfig'
 
 export const LoginSocial = () =>{
+  const navigate = useNavigate()
   const loginWithProvider = async (providerName: 'google.com' | 'facebook.com') => {
     const provider = providerName === 'google.com'
       ? new GoogleAuthProvider()
@@ -33,21 +36,44 @@ export const LoginSocial = () =>{
       const data = await response.json()
 
       if (data.success) {
-        alert(`Autenticación exitosa con ${providerName}`)
-        // Aquí puedes guardar el usuario, redirigir, etc.
+        addToast({
+          title: 'Autenticación exitosa',
+          description: `Usuario autenticado con ${providerName}.`,
+          color: 'success',
+          shouldShowTimeoutProgress: true,
+        })
+        console.log(`Usuario autenticado con ${providerName}:`, data.user)
+
+        navigate('/')
       } else {
         alert(`Error en la autenticación: ${data.message}`)
         console.error(`Error en la autenticación con ${providerName}:`, data.message)
       }
 
     } catch (error) {
-
       if (error instanceof Error) {
-        console.error('Error al autenticar con el proveedor:', error.message)
-        alert(`Error al autenticar con ${providerName}: ${error.message}`)
+        const firebaseError = error as { code?: string }
+        if (
+          firebaseError.code === 'auth/popup-closed-by-user' ||
+          firebaseError.code === 'auth/cancelled-popup-request' ||
+          firebaseError.code === 'auth/user-cancelled' // <-- Facebook cancelado
+        ) {
+          addToast({
+            title: 'Autenticación cancelada',
+            description: `El usuario canceló o interrumpió la autenticación con ${providerName}.`,
+            color: 'danger',
+            shouldShowTimeoutProgress: true,
+          })
+          return
+        }
       } else {
         console.error('Error desconocido al autenticar con el proveedor:', error)
-        alert(`Error desconocido al autenticar con ${providerName}`)
+        addToast({
+          title: 'Error desconocido',
+          description: `Ocurrió un error desconocido al autenticar con ${providerName}.`,
+          color: 'danger',
+          shouldShowTimeoutProgress: true,
+        })
       }
 
     }
@@ -69,4 +95,68 @@ export const LoginSocial = () =>{
       </button>
     </div>
   )
+}
+
+export const registerWithEmail = (
+  email: string,
+  password: string,
+  displayName: string,
+  navigate: (path: string) => void
+) => {
+  const auth = getAuth()
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+    // Signed up
+      const user = userCredential.user
+      updateProfile(user, {
+        displayName: displayName,
+      })
+      addToast({
+        title: 'Registro exitoso',
+        description: 'Usuario registrado correctamente.',
+        color: 'success',
+        shouldShowTimeoutProgress: true,
+      })
+      navigate('/')
+      console.log('Usuario registrado:', user)
+    })
+    .catch((error) => {
+      const errorCode = error.code
+      const errorMessage = error.message
+      addToast({
+        title: 'Error en el registro',
+        description: `Código de error: ${errorCode}. Mensaje: ${errorMessage}`,
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
+      })
+      console.error('Error al registrar usuario:', error)
+    })
+}
+
+export const LoginWithEmail = (email: string, password: string) => {
+  const auth = getAuth()
+  const navigate = useNavigate()
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+    // Signed in
+      const user = userCredential.user
+      addToast({
+        title: 'Inicio de sesión exitoso',
+        description: 'Usuario autenticado correctamente.',
+        color: 'success',
+        shouldShowTimeoutProgress: true,
+      })
+      console.log('Usuario autenticado:', user)
+      navigate('/')
+    }).catch((error) => {
+      const errorCode = error.code
+      const errorMessage = error.message
+      addToast({
+        title: 'Error en el inicio de sesión',
+        description: `Código de error: ${errorCode}. Mensaje: ${errorMessage}`,
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
+      })
+      console.error('Error al iniciar sesión:', error)
+    })
 }

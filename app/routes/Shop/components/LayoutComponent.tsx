@@ -1,11 +1,43 @@
+import { addToast } from '@heroui/react'
+import { onAuthStateChanged, type User } from 'firebase/auth'
+import { useEffect, useState } from 'react'
 import { AiOutlineShoppingCart, AiOutlineUser, AiOutlineLogout, AiOutlineInfoCircle } from 'react-icons/ai'
 import { FaFacebookF, FaInstagram, FaSearch, FaTiktok, FaTwitter } from 'react-icons/fa'
 import { IoCallSharp, IoLocation, IoMail } from 'react-icons/io5'
 import { Link } from 'react-router'
 import { InputField } from '~/Components/FormComponent'
 import { ThemeToggle } from '~/Components/UiComponentes'
+import { auth } from '~/firebase/firebaseConfig'
 
 export function HeaderShop() {
+
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user)
+    })
+    return () => unsubscribe()
+  }, [])
+
+  function closeSession() {
+    auth.signOut().then(() => {
+      addToast({
+        title: 'Sesión cerrada',
+        description: 'Has cerrado sesión correctamente.',
+        color: 'success',
+        shouldShowTimeoutProgress: true
+      })
+    }).catch((error) => {
+      addToast({
+        title: 'Error al cerrar sesión',
+        description: error.message,
+        color: 'danger',
+        shouldShowTimeoutProgress: true
+      })
+    }
+    )
+  }
 
   return (
     <header className="stuck">
@@ -36,7 +68,11 @@ export function HeaderShop() {
                   <AiOutlineUser size={35}/>
                   <div className='text-sm'>
                 ¡Bienvenido!
-                    <p className='font-bold'>Identifícate / Regístrate</p>
+                    {currentUser ? (
+                      <p className='font-bold'>Hola, {currentUser.displayName || currentUser.email}</p>
+                    ) : (
+                      <p className='font-bold'>Identifícate / Regístrate</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -45,27 +81,44 @@ export function HeaderShop() {
                 {/* Espina del menú */}
                 <div className="absolute right-4 w-3 h-3 top-3 bg-secondary rotate-45"></div>
                 <ul className="py-4 z-10 mt-4 bg-secondary shadow-xl rounded-md  px-2">
-                  <li>
-                    <Link to="/login" className="flex items-center w-60 justify-center rounded-3xl px-4 py-2 btn-success font-bold text-xl">
+                  {currentUser ? (
+                    <li className="w-60 flex items-center justify-start gap-4 px-4 py-2 rounded-md text-foreground hover:opacity-80 hover:bg-background">
+                      <img src={currentUser.photoURL || '/images/user-email.webp'} alt="Avatar" className="w-8 h-8 rounded-full" />
+                      <span className='font-bold'>{currentUser.displayName || currentUser.email}</span>
+                    </li>
+                  ) : (
+                    <>
+                      <li>
+                        <Link to="/login" className="flex items-center w-60 justify-center rounded-3xl px-4 py-2 btn-success font-bold text-xl">
                   Identifícate
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/register" className="flex items-center py-2 justify-center rounded-md text-foreground font-semibold text-md hover:opacity-80 hover:bg-background">
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/register" className="flex items-center py-2 justify-center rounded-md text-foreground font-semibold text-md hover:opacity-80 hover:bg-background">
                   Regístrate
-                    </Link>
-                  </li>
+                        </Link>
+                      </li>
+                    </>
+                  )}
+
                   <li className='border-b border-primary-1 my-2'></li>
                   <li>
                     <Link to="/pedidos" className="flex flex-row items-center justify-start gap-4 px-4 py-2 rounded-md text-foreground hover:opacity-80 hover:bg-background">
                       <AiOutlineShoppingCart size={25} />Mis Pedidos
                     </Link>
                   </li>
-                  <li>
-                    <Link to="/logout" className="flex items-center justify-start gap-4 px-4 py-2 rounded-md text-foreground hover:opacity-80 hover:bg-background">
-                      <AiOutlineLogout size={25} />Cerrar Sesión
-                    </Link>
-                  </li>
+                  {currentUser ?(
+                    <li>
+                      <button onClick={closeSession} className="w-full flex items-center justify-start gap-4 px-4 py-2 rounded-md text-foreground hover:opacity-80 hover:bg-background">
+                        <AiOutlineLogout size={25} />Cerrar Sesión
+                      </button>
+                    </li>
+
+                  ):
+                    (
+                      <></>
+                    )
+                  }
                   <li className='border-b border-primary-1 my-2'></li>
                   <li>
                     <Link to="/nosotros" className="flex items-center justify-start gap-4 px-4 py-2 rounded-md text-foreground hover:opacity-80 hover:bg-background">

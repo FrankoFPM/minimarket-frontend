@@ -1,5 +1,5 @@
-import { FaBox, FaChartPie, FaCog, FaHome, FaShoppingCart,FaClipboardList, FaUser, FaUsers } from 'react-icons/fa'
-import { Link, useLocation } from 'react-router'
+import { FaBox, FaChartPie, FaCog, FaHome, FaShoppingCart,FaClipboardList, FaUser, FaUserCog, FaUsers, FaBoxOpen, FaTags } from 'react-icons/fa'
+import { Link, NavLink, useLocation } from 'react-router'
 import navigationData from '../navigation.json'
 
 export function Header(){
@@ -42,12 +42,15 @@ export function Header(){
 const icons = {
   home: <FaHome />,
   FaUser: <FaUser />,
+  FaUserCog: <FaUserCog />,
   FaShoppingCart: <FaShoppingCart  />,
   FaBox: <FaBox  />,
   FaChartPie: <FaChartPie  />,
   FaCog: <FaCog  />,
   FaUsers: <FaUsers  />,
   FaClipboardList: <FaClipboardList  />,
+  FaBoxOpen: <FaBoxOpen  />,
+  FaTags: <FaTags />,
 }
 
 type IconKeys = keyof typeof icons;
@@ -59,23 +62,33 @@ interface ButtonProps {
     active: boolean;
 }
 
-export function Button({link, icon, text, active}: ButtonProps){
+export function Button({ link, icon, text }: Omit<ButtonProps, 'active'>) {
+  const navButtonBase = 'w-full h-16 cursor-pointer text-foreground p-2 rounded-xl flex items-center gap-3 font-semibold drop-shadow-xs transition-colors'
+  const navButtonActive = 'bg-secondary duration-300'
+  const navButtonInactive = 'hover:bg-secondary duration-200'
   return (
-    <Link to={link} className={`w-full h-16 cursor-pointer text-foreground p-2 rounded-xl 
-             flex items-center gap-3 font-semibold drop-shadow-xs transition-colors
-            ${active ? 'bg-secondary duration-300' : 'hover:bg-secondary duration-200'}`}>
-      <div className={`transition-colors duration-300 h-9 w-9 flex items-center justify-center rounded-xl ${active ? 'bg-primary-1 text-secondary' : 'bg-secondary text-primary-1'}`}>
-        {icon}
-      </div>
-      <p className={`transition-colors duration-300 ${active ? 'text-foreground' : 'text-gray-400'}`}>
-        {text}
-      </p>
-    </Link>
+    <NavLink
+      to={link}
+      className={({ isActive }) =>
+        `${navButtonBase} ${isActive ? navButtonActive : navButtonInactive}`
+      }
+      end
+    >
+      {({ isActive }) => (
+        <>
+          <div className={`transition-colors duration-300 h-9 w-9 flex items-center justify-center rounded-xl ${isActive ? 'bg-primary-1 text-secondary' : 'bg-secondary text-primary-1'}`}>
+            {icon}
+          </div>
+          <p className={`transition-colors duration-300 ${isActive ? 'text-foreground' : 'text-gray-400'}`}>
+            {text}
+          </p>
+        </>
+      )}
+    </NavLink>
   )
 }
 
 export function Navbar(){
-  const path = useLocation().pathname
   return (
     <nav className="w-fit h-full px-6 nav">
       <div className='flex items-center gap-3 my-6 px-4'>
@@ -85,7 +98,7 @@ export function Navbar(){
       </div>
       <div className='flex flex-col gap-2'>
         {navigationData.map((item, index) => (
-          <Button key={index} link={item.link} icon={icons[item.icon as IconKeys]} text={item.text} active={(path == item.link ? true : false)} />
+          <Button key={index} link={item.link} icon={icons[item.icon as IconKeys]} text={item.text} />
         ))}
         <div className='h-0.5 bg-gradient-to-r from-primary-1/25 via-primary-1 to-primary-1/25 w-full rounded-4xl'></div>
 

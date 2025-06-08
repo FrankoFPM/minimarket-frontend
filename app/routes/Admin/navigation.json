@@ -10,6 +10,26 @@
     "text": "Usuarios"
   },
   {
+    "link": "/dashboard/administrator",
+    "icon": "FaUserCog",
+    "text": "Administradores"
+  },
+  {
+    "link": "/dashboard/categories",
+    "icon": "FaTags",
+    "text": "Categorías"
+  },
+  {
+    "link": "/dashboard/products",
+    "icon": "FaBoxOpen",
+    "text": "Productos"
+  },
+  {
+    "link": "/dashboard/suppliers",
+    "icon": "FaUsers",
+    "text": "Proovedores"
+  },
+  {
     "link": "/dashboard/sales",
     "icon": "FaShoppingCart",
     "text": "Ventas"
@@ -23,10 +43,5 @@
     "link": "/dashboard/inventory",
     "icon": "FaBox",
     "text": "Inventario"
-  },
-  {
-    "link": "/dashboard/suppliers",
-    "icon": "FaUsers",
-    "text": "Proovedores"
   }
 ]

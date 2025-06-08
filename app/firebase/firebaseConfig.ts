@@ -8,13 +8,13 @@ import { getAuth } from 'firebase/auth'
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: 'AIzaSyCCgZu6wlppc89DaXbbHxLAR0QAEfyUi-A',
-  authDomain: 'markerapp-60472.firebaseapp.com',
-  projectId: 'markerapp-60472',
-  storageBucket: 'markerapp-60472.firebasestorage.app',
-  messagingSenderId: '274186118858',
-  appId: '1:274186118858:web:a0e6891b9d267ef7b93633',
-  measurementId: 'G-QKBYTY4J6M'
+  apiKey: 'AIzaSyBDBKBxAZaJGYBdrfAd9ZBeLlAZSWqTjJo',
+  authDomain: 'minimarketback.firebaseapp.com',
+  projectId: 'minimarketback',
+  storageBucket: 'minimarketback.firebasestorage.app',
+  messagingSenderId: '634080994170',
+  appId: '1:634080994170:web:2682fe6bb733003847acc3',
+  measurementId: 'G-QQ3J1RMFCZ'
 }
 
 // Initialize Firebase
