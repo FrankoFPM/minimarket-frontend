@@ -15,6 +15,11 @@
     "text": "Administradores"
   },
   {
+    "link": "/dashboard/categories",
+    "icon": "FaTags",
+    "text": "Categorias"
+  },
+  {
     "link": "/dashboard/products",
     "icon": "FaBoxOpen",
     "text": "Productos"
@@ -39,5 +44,4 @@
     "icon": "FaBox",
     "text": "Inventario"
   }
-  
 ]
