@@ -22,6 +22,7 @@ export function ModalBase({ isOpen, onClose, title, children, footer }: ModalBas
       classNames={{
         backdrop: 'backdrop-blur-md'
       }}
+      backdrop='blur'
     >
       <ModalContent className="max-w-lg">
         {() => (
