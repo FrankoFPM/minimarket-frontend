@@ -78,7 +78,8 @@
   input[type='text'],
   input[type='password'],
   input[type='email'],
-  input[type='number'] {
+  input[type='number'],
+  select {
     @apply block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-foreground placeholder:text-gray-400 focus:outline-none sm:text-sm/6;
   }
 
