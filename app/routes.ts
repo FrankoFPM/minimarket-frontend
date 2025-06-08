@@ -37,6 +37,7 @@ export default [
     route('dashboard/inventory', 'routes/Admin/Inventory/inventory.tsx'),
     route('dashboard/administrator', 'routes/Admin/Administrator/administrator.tsx'),
     route('dashboard/suppliers', 'routes/Admin/Suppliers/suppliers.tsx'),
+    route('dashboard/categories', 'routes/Admin/Categories/Categories.tsx'),
     route('dashboard/reports', 'routes/Admin/Reportss/reports.tsx'),
     route('dashboard/products', 'routes/Admin/Products/Products.tsx'), // Ruta de productos dentro del layout de administración
   ]),

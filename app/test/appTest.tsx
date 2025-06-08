@@ -1,5 +1,8 @@
+import { TestCategoria } from './testCategoria'
 import { TestDepartamento } from './testDepartamento'
 import { TestDistritos } from './testDistrito'
+import { TestProductos } from './testProductos'
+import { TestProveedor } from './testProveedor'
 import { TestUsuario } from './testUsuario'
 
 export default function TestApp() {
@@ -12,6 +15,9 @@ export default function TestApp() {
           <TestDistritos />
           <TestDepartamento />
           <TestUsuario />
+          <TestCategoria />
+          <TestProveedor />
+          <TestProductos />
         </div>
       </div>
     </div>
