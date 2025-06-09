@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getCategorias } from '~/services/categoriaService'
+import { getDistritos } from '~/services/distritoService'
 import { getProveedores } from '~/services/proveedorService'
 
 export interface Categoria {
@@ -8,6 +9,11 @@ export interface Categoria {
 }
 
 export interface Proveedor {
+  id: number
+  nombre: string
+}
+
+export interface Distrito {
   id: number
   nombre: string
 }
@@ -50,4 +56,24 @@ export function useProveedores() {
   }, [])
 
   return { proveedores, loadingProveedores: loading }
+}
+
+export function useDistritos() {
+  const [distritos, setDistritos] = useState<Distrito[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    setLoading(true)
+    getDistritos()
+      .then(data => {
+        setDistritos(data)
+        setLoading(false)
+      })
+      .catch(error => {
+        console.error('Error al obtener distritos:', error)
+        setLoading(false)
+      })
+  }, [])
+
+  return { distritos, loadingDistritos: loading }
 }
