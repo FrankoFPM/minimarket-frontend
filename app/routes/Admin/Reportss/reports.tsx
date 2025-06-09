@@ -1,226 +1,91 @@
-import { Button, useDisclosure } from '@heroui/react'
-import { TbEdit, TbEye, TbTrash } from 'react-icons/tb'
-import { InputField } from '~/Components/FormComponent'
-import { ChipStatus, Table } from '../Components/Table'
-import { ModalBase } from '../Components/ModalBase'
+import { Button, Card, CardFooter, CardHeader, Divider, Image } from '@heroui/react'
 
 export default function ModuloSuppliers() {
 
-  const headers = [
-    { text:'#', className: 'text-center' },
-    { text:'ID de reporte', className: 'text-center' },
-    { text:'Productos vendidos', className: 'text-left' },
-    { text:'Fecha de venta', className: 'text-left' },
-    { text:'Precio de venta', className: 'text-left' },
-    { text:'Estado', className: 'text-center' },
-    { text:'Acciones', className: 'text-center' },
+  const downloadExcel = async (endpoint: string, filename: string) => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/excel/${endpoint}`, {
+      method: 'GET',
+    })
+    const blob = await response.blob()
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', filename)
+    document.body.appendChild(link)
+    link.click()
+    link.parentNode?.removeChild(link)
+    window.URL.revokeObjectURL(url)
+  }
+
+  const reports = [
+    {
+      title: 'Productos',
+      endpoint: 'productos',
+      filename: 'productos.xlsx',
+      img: 'https://ix-marketing.imgix.net/bg-remove_before.png?auto=format,compress&w=1946', // Productos
+      description: 'Descarga el reporte de todos los productos.',
+    },
+    {
+      title: 'Proveedores',
+      endpoint: 'proveedores',
+      filename: 'proveedores.xlsx',
+      img: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Proveedores
+      description: 'Descarga el reporte de proveedores.',
+    },
+    {
+      title: 'Clientes',
+      endpoint: 'usuarios/clientes',
+      filename: 'usuarios_clientes.xlsx',
+      img: 'https://images.unsplash.com/photo-1628102491629-778571d893a3?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Clientes
+      description: 'Descarga el reporte de usuarios clientes.',
+    },
+    {
+      title: 'Personal',
+      endpoint: 'usuarios/personal',
+      filename: 'usuarios_personal.xlsx',
+      img: 'https://plus.unsplash.com/premium_photo-1722945652527-d8d7ba9fd0d5?q=80&w=1870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Personal
+      description: 'Descarga el reporte de usuarios personal.',
+    },
   ]
 
   return (
     <div className="flex flex-col bg-background mx-auto my-10 container gap-4">
       <h1 className="text-3xl font-bold text-center">Panel de administración</h1>
       <p className="text-center">Desde este panel puedes gestionar los reportes.</p>
-      <ModalAdd />
-      <Table headers={headers}>
-
-        <tr className="[&>td]:h-12 [&>td]:px-4 [&>td]:py-1.5">
-          <td className="text-center" width={160}>1</td>
-          <td className="text-center" width={160}>R910</td>
-          <td className="text-center" width={160}>Manzana</td>
-          <td className="text-center" width={160}>10/03/25</td>
-          <td className="text-center" width={160}>S/ 1.50</td>
-          <td className="">
-            <ChipStatus status={1} />
-          </td>
-          <td className="">
-            <div className="flex items-center justify-center text-2xl gap-4">
-              <ModalActions idReport='1' />
-            </div>
-          </td>
-        </tr>
-      </ Table>
-    </div>
-  )
-}
-
-interface ModalActions {
-  idReport: string;
-}
-
-function ModalActions({idReport}: ModalActions){
-  const editModal = useDisclosure()
-  const viewModal = useDisclosure()
-  const deleteModal = useDisclosure()
-
-  //fetch product data by idProduc if needed
-  // const fetchProductData = async (id: string) => {
-  idReport = idReport || '1' // Example id, replace with actual data
-
-  return (
-    <>
-      <TbEye className="text-blue-400 drop-shadow-xs cursor-pointer" onClick={viewModal.onOpen} />
-      <TbEdit className="text-amber-400 drop-shadow-xs cursor-pointer" onClick={editModal.onOpen} />
-      <TbTrash className="text-red-600 drop-shadow-xs cursor-pointer" onClick={deleteModal.onOpen} />
-      {/* Edit Modal */}
-      <ModalBase
-        isOpen={editModal.isOpen}
-        onClose={editModal.onClose}
-        title="Editar reporte"
-        footer={
-          <>
-            <Button
-              color="danger"
-              onPress={editModal.onClose}
-            >
-              Cerrar
-            </Button>
-            <Button
-              color="success"
-              onPress={editModal.onClose}
-            >
-              Guardar
-            </Button>
-          </>
-        }
-      >
-        <form action="">
-          <input type="hidden" value={idReport} />
-          <InputField
-            label="ID de reporte"
-            name="idReport"
-            type="text"
-            placeholder="Ingrese el ID de reporte"
-            value={''} // Example value, replace with actual data
-          /><InputField
-            label="Nombre del producto vendido"
-            name="productName"
-            type="text"
-            placeholder="Ingrese el nombre del producto vendido"
-            value={''} // Example value, replace with actual data
-          />
-          <InputField
-            label="Fecha de venta"
-            name="suppliersDateEntry"
-            type="text"
-            placeholder="Ingrese la fecha de venta"
-          />
-          <InputField
-            label="Precio de venta"
-            name="suppliersPriceSale"
-            type="text"
-            placeholder="Ingrese el precio de venta"
-          />
-          <InputField
-            label="Cantidad total"
-            name="Quantity"
-            type="text"
-            placeholder="Ingrese la cantidad total"
-          />
-        </form>
-      </ModalBase>
-      {/* View Modal */}
-      <ModalBase
-        isOpen={viewModal.isOpen}
-        onClose={viewModal.onClose}
-        title="Ver reporte"
-        footer={
-          <Button color="danger" onPress={viewModal.onClose}>
-            Cerrar
-          </Button>
-        }
-      >
-        <div className="flex flex-col gap-4">
-          <p><strong>ID de reporte:</strong> {idReport}</p>
-          <p><strong>Productos vendidos:</strong> Proovedor xyz</p>
-          <p><strong>Fecha de venta: </strong> manzana </p>
-          <p><strong>Precio de venta:</strong>S/.1.50 </p>
+      <div className='bg-secondary p-4 rounded-2xl mt-5'>
+        <h3 className='text-xl font-semibold'>Reportes en Excel disponibles</h3>
+        <Divider className='my-2 bg-primary-1' />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          {reports.map((report) => (
+            <Card key={report.title} isFooterBlurred className="w-full h-[340px]">
+              <CardHeader className="absolute z-10 top-1 flex-col items-start w-full">
+                <div className="bg-black/60 px-3 py-2 rounded-md">
+                  <h4 className="text-white font-medium text-2xl">{report.title}</h4>
+                </div>
+              </CardHeader>
+              <Image
+                removeWrapper
+                alt={`Imagen de ${report.title}`}
+                className="z-0 w-full h-full object-cover"
+                src={report.img}
+              />
+              <CardFooter className="absolute bg-white/30 bottom-0 border-t-1 border-zinc-100/50 z-10 flex-col items-center w-full">
+                <p className="text-black text-tiny mb-2">{report.description}</p>
+                <Button
+                  className="w-full py-4 text-lg font-bold"
+                  color="success"
+                  radius="md"
+                  size="lg"
+                  onPress={() => downloadExcel(report.endpoint, report.filename)}
+                >
+                  Descargar Excel
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
         </div>
-      </ModalBase>
+      </div>
 
-      {/* Delete Modal */}
-      <ModalBase
-        isOpen={deleteModal.isOpen}
-        onClose={deleteModal.onClose}
-        title="Eliminar reporte"
-        footer={
-          <>
-            <Button color="danger" onPress={deleteModal.onClose}>
-              Cancelar
-            </Button>
-            <Button color="success" onPress={deleteModal.onClose}>
-              Eliminar
-            </Button>
-          </>
-        }
-      >
-        <p>¿Estás seguro de que deseas eliminar el proovedor del ID {idReport}?</p>
-      </ModalBase>
-
-    </>
-  )
-}
-
-function ModalAdd(){
-  const addModal = useDisclosure()
-  return(
-    <>
-      <Button
-        color="success"
-        className="w-fit ml-auto"
-        onPress={addModal.onOpen}
-      >
-        Agregar nuevo reporte
-      </Button>
-
-      <ModalBase
-        isOpen={addModal.isOpen}
-        onClose={addModal.onClose}
-        title="Agregar reporte"
-        footer={
-          <>
-            <Button color="danger" onPress={addModal.onClose}>
-            Cerrar
-            </Button>
-            <Button color="success" onPress={addModal.onClose}>
-            Guardar
-            </Button>
-          </>
-        }
-      >
-        <form action="">
-          <InputField
-            label="ID de reporte"
-            name="idReport"
-            type="text"
-            placeholder="Ingrese el ID de reporte"
-            value={''} // Example value, replace with actual data
-          /><InputField
-            label="Nombre del producto vendido"
-            name="productName"
-            type="text"
-            placeholder="Ingrese el nombre del producto vendido"
-            value={''} // Example value, replace with actual data
-          />
-          <InputField
-            label="Fecha de venta"
-            name="suppliersDateEntry"
-            type="text"
-            placeholder="Ingrese la fecha de venta"
-          />
-          <InputField
-            label="Precio de venta"
-            name="suppliersPriceSale"
-            type="text"
-            placeholder="Ingrese el precio de venta"
-          />
-          <InputField
-            label="Cantidad total"
-            name="Quantity"
-            type="text"
-            placeholder="Ingrese la cantidad total"
-          />
-        </form>
-      </ModalBase>
-    </>
+    </div>
   )
 }
