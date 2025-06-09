@@ -42,7 +42,7 @@ export function ListProducts() {
           stars={5}
           marca={producto.proveedorNombre || 'Sin marca'}
           discount={0}
-          src={`/Producto/${producto.idProducto}`}
+          src={`/producto/${producto.idProducto}`}
         />
       ))}
     </div>
