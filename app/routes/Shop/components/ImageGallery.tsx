@@ -11,12 +11,14 @@ export function ImageGallery({images}: { images?: string[] }) {
     '/images/apple.webp'
   ]
 
+  const filteredImages = (images ?? []).filter(img => !!img && img.trim() !== '')
+
   const validImages =
-    images && images.length > 0
-      ? images.length === 1
-        ? Array(4).fill(images[0])
-        : images
-      : imagesAlter
+  filteredImages.length > 0
+    ? filteredImages.length === 1
+      ? Array(4).fill(filteredImages[0])
+      : filteredImages
+    : imagesAlter
 
   const [thumbsSwiper, setThumbsSwiper] = useState(null)
 
