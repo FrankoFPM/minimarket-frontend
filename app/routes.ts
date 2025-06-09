@@ -11,8 +11,8 @@ export default [
   // Define la ruta para la página de registro (register)
   route('register', 'routes/Login/Register.tsx'), // Esta es la página de registro
 
-  // Define la ruta para la página de nosotros (nosotros)
-  route('nosotros', 'routes/Nosotros/Nosotros.tsx'), // Esta es la página de registro
+
+  
 
   // Ejemplo comentado de cómo usar un layout para agrupar rutas relacionadas
   // layout('routes/Login/layout.tsx', [
@@ -29,6 +29,7 @@ export default [
     route('contacto', 'routes/Nosotros/Contacto.tsx'),
     route('pedidos', 'routes/Nosotros/MisPedidos.tsx'), // Define la ruta para la pagina de Mis Pedidos
     route('pedidos', 'routes/Shop/Pedidos.tsx'), // Ruta de pedidos dentro del layout de la tienda
+    route('nosotros', 'routes/Nosotros/Nosotros.tsx'), // Define la ruta para la página de nosotros (nosotros)
   ]),
 
   layout('routes/Admin/Layout.tsx', [
