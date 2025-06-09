@@ -11,9 +11,6 @@ export default [
   // Define la ruta para la página de registro (register)
   route('register', 'routes/Login/Register.tsx'), // Esta es la página de registro
 
-
-  
-
   // Ejemplo comentado de cómo usar un layout para agrupar rutas relacionadas
   // layout('routes/Login/layout.tsx', [
   //   index('routes/Login/index.tsx'), // Ruta principal dentro del layout
