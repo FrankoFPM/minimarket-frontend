@@ -254,3 +254,21 @@ export function MarqueeLogos(){
   )
 
 }
+
+type CardPromoProps = {
+  icon: React.ReactNode
+  title: string
+  description: string
+}
+
+export function CardPromo({ icon, title, description }: CardPromoProps) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-2 bg-gray-400/5 w-fit px-4 py-6 rounded-md shadow-sm">
+      <div className="w-14 h-14 rounded-full bg-secondary flex justify-center items-center text-primary-1">
+        {icon}
+      </div>
+      <h5 className="w-48 font-semibold uppercase text-sm text-wrap text-foreground text-center">{title}</h5>
+      <p className="text-wrap w-72 text-center text-sm text-foreground/50">{description}</p>
+    </div>
+  )
+}
