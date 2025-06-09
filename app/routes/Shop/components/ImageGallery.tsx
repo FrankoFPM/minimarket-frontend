@@ -2,14 +2,21 @@ import { useState } from 'react'
 import { Autoplay, Pagination, Thumbs } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
-export function ImageGallery() {
+export function ImageGallery({images}: { images?: string[] }) {
 
-  const images = [
+  const imagesAlter = [
     '/images/apple.webp',
     '/images/apple.webp',
     '/images/apple.webp',
     '/images/apple.webp'
   ]
+
+  const validImages =
+    images && images.length > 0
+      ? images.length === 1
+        ? Array(4).fill(images[0])
+        : images
+      : imagesAlter
 
   const [thumbsSwiper, setThumbsSwiper] = useState(null)
 
@@ -35,7 +42,7 @@ export function ImageGallery() {
           },
         }}
       >
-        {images.map((src, index) => (
+        {validImages.map((src, index) => (
           <SwiperSlide key={index}>
             <img src={src} alt={`Product image ${index + 1}`} className="object-cover w-full h-full" />
           </SwiperSlide>
@@ -55,7 +62,7 @@ export function ImageGallery() {
           disableOnInteraction: false,
         }}
       >
-        {images.map((src, index) => (
+        {validImages.map((src, index) => (
           <SwiperSlide key={index} className='bg-secondary'>
             <img src={src} alt={`Thumbnail ${index + 1}`} className="object-cover w-full h-full" />
           </SwiperSlide>
