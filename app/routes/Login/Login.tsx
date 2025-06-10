@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { InputField } from '../../Components/FormComponent'
 import { useForm } from 'react-hook-form'
 import { authenticateUser } from '~/services/authService'
@@ -10,6 +10,7 @@ import { LoginSocial, LoginWithEmail } from '~/services/firebaseAuth'
  */
 export default function Login() {
   const { register, handleSubmit, setError, clearErrors, formState: { errors } } = useForm<FormData>({criteriaMode: 'all'})
+  const navigate = useNavigate()
   interface FormData {
     email: string;
     password: string;
@@ -30,10 +31,9 @@ export default function Login() {
 
     try {
       const isAuthenticated = await authenticateUser(email, password)
+      console.log('Autenticación exitosa:', isAuthenticated)
       if (isAuthenticated) {
-        // Redirigir al usuario a la página de inicio o a la página deseada
-        alert('Inicio de sesión exitoso GG')
-        LoginWithEmail(email, password)
+        LoginWithEmail(email, password, navigate)
       }else {
         error()
       }

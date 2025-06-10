@@ -133,30 +133,50 @@ export const registerWithEmail = (
     })
 }
 
-export const LoginWithEmail = (email: string, password: string) => {
+export const LoginWithEmail = (email: string, password: string,navigate: (path: string) => void) => {
   const auth = getAuth()
-  const navigate = useNavigate()
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-    // Signed in
-      const user = userCredential.user
-      addToast({
-        title: 'Inicio de sesión exitoso',
-        description: 'Usuario autenticado correctamente.',
-        color: 'success',
-        shouldShowTimeoutProgress: true,
+  try {
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+      // Signed in
+        const user = userCredential.user
+        addToast({
+          title: 'Inicio de sesión exitoso',
+          description: 'Usuario autenticado correctamente.',
+          color: 'success',
+          shouldShowTimeoutProgress: true,
+        })
+        console.log('Usuario autenticado:', user)
+        navigate('/')
+      }).catch((error) => {
+        const errorCode = error.code
+        const errorMessage = error.message
+        addToast({
+          title: 'Error en el inicio de sesión',
+          description: `Código de error: ${errorCode}. Mensaje: ${errorMessage}`,
+          color: 'danger',
+          shouldShowTimeoutProgress: true,
+        })
+        console.error('Error al iniciar sesión:', error)
       })
-      console.log('Usuario autenticado:', user)
-      navigate('/')
-    }).catch((error) => {
-      const errorCode = error.code
-      const errorMessage = error.message
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Error al iniciar sesión:', error.message)
       addToast({
         title: 'Error en el inicio de sesión',
-        description: `Código de error: ${errorCode}. Mensaje: ${errorMessage}`,
+        description: error.message,
         color: 'danger',
         shouldShowTimeoutProgress: true,
       })
-      console.error('Error al iniciar sesión:', error)
-    })
+    } else {
+      console.error('Error desconocido al iniciar sesión:', error)
+      addToast({
+        title: 'Error desconocido',
+        description: 'Ocurrió un error desconocido al iniciar sesión.',
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
+      })
+    }
+  }
 }
