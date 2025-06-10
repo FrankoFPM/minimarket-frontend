@@ -1,3 +1,4 @@
+import { addToast } from '@heroui/react'
 import axios from 'axios'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
@@ -11,7 +12,26 @@ export const authenticateUser = async (email: string, password: string): Promise
     })
 
     // Retorna true o false según la respuesta del backend
-    return response.data === true
+    if (response.data === true) {
+      addToast({
+        title: 'Inicio de sesión exitoso',
+        description: 'Bienvenido de nuevo',
+        color: 'success',
+        shouldShowTimeoutProgress: true,
+      })
+      return true
+    }
+    if (response.data === false) {
+      addToast({
+        title: 'Inicio de sesión fallido',
+        description: 'Credenciales incorrectas',
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
+      })
+      return false
+    }
+    return false
+
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (!error.response) {
@@ -21,6 +41,12 @@ export const authenticateUser = async (email: string, password: string): Promise
       if (error.response.status === 401) {
         // Error 401: Credenciales incorrectas
         console.error('Credenciales incorrectas')
+        addToast({
+          title: 'Inicio de sesión fallido',
+          description: 'Credenciales incorrectas',
+          color: 'danger',
+          shouldShowTimeoutProgress: true,
+        })
         return false
       }
       console.error('Error al autenticar:', error.response?.data || error.message)

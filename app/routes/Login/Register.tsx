@@ -1,11 +1,12 @@
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { InputField } from '~/Components/FormComponent'
 import { ThemeToggle } from '~/Components/UiComponentes'
 import { useForm } from 'react-hook-form'
 import { registerUserClient } from '~/services/registerUser'
+import { registerWithEmail } from '~/services/firebaseAuth'
 
 const Register = () => {
-
+  const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors }, getValues } = useForm<FormData>()
   interface FormData {
     nombres: string;
@@ -42,12 +43,8 @@ const Register = () => {
       if (user) {
         // Redirigir al usuario a la página de inicio o a la página deseada
         console.log('Registro exitoso')
-        alert('Registro exitoso GG')
-        window.location.href = '/login'
-      } else {
-        console.error('Error en el registro')
+        registerWithEmail(email, password, `${nombres} ${apellidos}`, navigate)
       }
-
     } catch (error) {
       if (error instanceof Error) {
         console.error('Error al registrar:', error.message)

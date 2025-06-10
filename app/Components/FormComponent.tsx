@@ -47,3 +47,30 @@ export function InputField({ label, error = null, beforeElement, afterElement, c
     </div>
   )
 }
+
+interface SelectInputProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+  label?: string
+  error?: string | FieldError | Merge<FieldError, FieldError> | null
+  beforeElement?: React.ReactNode
+  afterElement?: React.ReactNode
+  className?: string
+  children: React.ReactNode
+}
+
+export function SelectInput({ label, error = null, beforeElement, afterElement, className, children, ...props }: SelectInputProps) {
+  return (
+    <div className="flex flex-col w-full">
+      <ContainerInput label={label} color={error ? 'has-[input:focus-within]:outline-red-500 outline-red-500' : ''} className={className}>
+        {beforeElement}
+        <select
+          {...props}
+          className={`h-11 pl-3 w-full bg-transparent ${error ? 'text-red-500' : ''}`}
+        >
+          {children}
+        </select>
+        {afterElement}
+      </ContainerInput>
+      <p className='text-red-500 text-xs font-medium mt-1'>{error ? (typeof error === 'string' ? error : String(error.message)) : ''}</p>
+    </div>
+  )
+}

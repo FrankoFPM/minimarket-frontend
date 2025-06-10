@@ -11,9 +11,6 @@ export default [
   // Define la ruta para la página de registro (register)
   route('register', 'routes/Login/Register.tsx'), // Esta es la página de registro
 
-  // Define la ruta para la página de nosotros (nosotros)
-  route('nosotros', 'routes/Nosotros/Nosotros.tsx'), // Esta es la página de registro
-
   // Ejemplo comentado de cómo usar un layout para agrupar rutas relacionadas
   // layout('routes/Login/layout.tsx', [
   //   index('routes/Login/index.tsx'), // Ruta principal dentro del layout
@@ -26,16 +23,22 @@ export default [
     route('carrito', 'routes/Shop/Carrito.tsx'), // Ruta de producto dentro del layout de la tienda
     route('terminos', 'routes/Nosotros/Terminos.tsx'), // Ruta de producto dentro del layout de la tienda
     route('politicas', 'routes/Nosotros/PoliticaPrivacidad.tsx'), // Ruta de producto dentro del layout de la tienda
-    route('contacto', 'routes/Nosotros/Contacto.tsx')
+    route('contacto', 'routes/Nosotros/Contacto.tsx'),
+    route('pedidos', 'routes/Nosotros/MisPedidos.tsx'), // Define la ruta para la pagina de Mis Pedidos
+    route('pedidos', 'routes/Shop/Pedidos.tsx'), // Ruta de pedidos dentro del layout de la tienda
+    route('nosotros', 'routes/Nosotros/Nosotros.tsx'), // Define la ruta para la página de nosotros (nosotros)
   ]),
 
   layout('routes/Admin/Layout.tsx', [
     route('dashboard','routes/Admin/index.tsx'), // Ruta principal dentro del layout de administración
-    route('dashboard/sales', 'routes/Admin/sales.tsx'), // Ruta de ventas dentro del layout de administración
-    route('dashboard/user', 'routes/Admin/user.tsx'), // Ruta de usuario dentro del layout de administración
-    route('dashboard/inventory', 'routes/Admin/inventory.tsx'),
-    route('dashboard/suppliers', 'routes/Admin/suppliers.tsx'),
-    route('dashboard/reports', 'routes/Admin/reports.tsx'),
+    route('dashboard/sales', 'routes/Admin/Sales/sales.tsx'), // Ruta de ventas dentro del layout de administración
+    route('dashboard/user', 'routes/Admin/User/user.tsx'), // Ruta de usuario dentro del layout de administración
+    route('dashboard/inventory', 'routes/Admin/Inventory/inventory.tsx'),
+    route('dashboard/administrator', 'routes/Admin/Administrator/administrator.tsx'),
+    route('dashboard/suppliers', 'routes/Admin/Suppliers/suppliers.tsx'),
+    route('dashboard/categories', 'routes/Admin/Categories/Categories.tsx'),
+    route('dashboard/reports', 'routes/Admin/Reportss/reports.tsx'),
+    route('dashboard/products', 'routes/Admin/Products/Products.tsx'), // Ruta de productos dentro del layout de administración
   ]),
 
   route('test', 'test/appTest.tsx'), // Ruta de prueba
