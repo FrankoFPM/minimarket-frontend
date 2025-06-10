@@ -39,6 +39,7 @@ export function PaySuccessAnimation({
         onComplete: () => {
           if (onComplete) onComplete()
           gsap.delayedCall(0.1, () => tl.reverse())
+          tl.kill()
         }
       }, '-=1')
   }, [])
