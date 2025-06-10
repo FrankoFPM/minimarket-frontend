@@ -4,15 +4,22 @@ import { FaMinus, FaPlus, FaShoppingCart } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router'
 import { InputField } from '~/Components/FormComponent'
 import { auth } from '~/firebase/firebaseConfig'
+import { PaySuccessAnimation } from './animations/PayAnimation'
 
 export default function Carrito() {
   const navigate = useNavigate()
   const [quantities, setQuantities] = useState([1, 1, 1])
+  const [showSuccess, setShowSuccess] = useState(false)
   const precios = [10, 10, 10]
 
   const subtotal = precios.reduce((acc, precio, i) => acc + precio * quantities[i], 0)
   const envio = 5
   const total = subtotal + envio
+
+  const handleCompra = () => {
+    // Aquí va tu lógica de compra...
+    setShowSuccess(true)
+  }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -81,9 +88,18 @@ export default function Carrito() {
             <span className="text-lg font-bold">Total:</span>
             <span className="text-lg font-bold text-primary-1">${total.toFixed(2)}</span>
           </div>
-          <button className="w-full py-3 rounded-xl bg-primary-1 text-secondary font-bold text-lg shadow hover:bg-primary-2 transition">
+          <button onClick={handleCompra} className="w-full py-3 rounded-xl bg-primary-1 text-secondary font-bold text-lg shadow hover:bg-primary-2 transition">
             Proceder al pago
           </button>
+          {showSuccess && (
+            <PaySuccessAnimation
+              onComplete={() => {
+                // Se llama cuando termina la animación de entrada
+                // El desmontaje lo controlamos desde dentro del componente animación
+              }}
+              onReverseComplete={() => setShowSuccess(false)} // <-- Nuevo prop
+            />
+          )}
         </article>
         <PayMethods />
       </aside>
