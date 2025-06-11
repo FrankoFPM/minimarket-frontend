@@ -12,6 +12,25 @@ import { auth } from '~/firebase/firebaseConfig'
 export function HeaderShop() {
 
   const [currentUser, setCurrentUser] = useState<User | null>(null)
+  const [carritoCount, setCarritoCount] = useState(0)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const carrito = JSON.parse(localStorage.getItem('carrito') || '[]')
+      setCarritoCount(carrito.length)
+    }
+
+    // Escuchar cambios en el carrito con un evento personalizado
+    const actualizarContador = () => {
+      const carrito = JSON.parse(localStorage.getItem('carrito') || '[]')
+      setCarritoCount(carrito.length)
+    }
+    window.addEventListener('carritoActualizado', actualizarContador)
+
+    return () => {
+      window.removeEventListener('carritoActualizado', actualizarContador)
+    }
+  }, [])
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -132,7 +151,9 @@ export function HeaderShop() {
               <div className="flex items-center gap-2">
                 <AiOutlineShoppingCart size={35} />
                 <div className="flex flex-col text-sm font-bold">
-                  <span className={'stuck-span inline-block px-2 w-fit h-5 text-center rounded-full font-bold' }>0</span>
+                  <span className={'stuck-span inline-block px-2 w-fit h-5 text-center rounded-full font-bold'}>
+                    {carritoCount}
+                  </span>
                 Carrito
                 </div>
               </div>

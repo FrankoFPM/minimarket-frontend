@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router'
 import { InputField } from '~/Components/FormComponent'
 import { auth } from '~/firebase/firebaseConfig'
 import { PaySuccessAnimation } from './animations/PayAnimation'
-import { getProductos } from '../../services/productosService'
+//import { getProductos } from '../../services/productosService'
 import type { Producto } from '../../services/productosService'
 
 export default function Carrito() {
@@ -34,14 +34,21 @@ export default function Carrito() {
     return () => unsubscribe()
   }, [navigate])
 
-  // carga de productos desde la BD
-  useEffect(() => {
-    const fetchProductos = async () => {
-      const data = await getProductos() // función que llama a la BD
-      setProductos(data)
-      setQuantities(Array(data.length).fill(0)) // inicializa con ceros
+  type ProductoCarrito = {
+      idProducto: number;
+      nombre: string;
+      cantidad: number;
+      precio: number;
     }
-    fetchProductos()
+
+  useEffect(() => {
+    const carrito = JSON.parse(localStorage.getItem('carrito') || '[]')
+
+    setProductos(carrito.map((item: ProductoCarrito) =>  ({
+      ...item
+    })))
+
+    setQuantities(carrito.map((item: ProductoCarrito) => item.cantidad))
   }, [])
 
   return (
@@ -62,7 +69,9 @@ export default function Carrito() {
             <h3 className="text-center text-foreground/50">Total</h3>
           </div>
           <div className="mt-4 divide-y divide-gray-200">
-            {productos.map((producto, i) => (
+            {productos.length === 0 ? (
+              <p className='text-foreground/50 text-center'>No se han añadido productos.</p>
+            ) :productos.map((producto, i) => (
               <div key={producto.idProducto} className="grid grid-cols-3 gap-4 py-6 items-center hover:bg-background rounded-xl transition">
                 <ProductMini producto={producto} quantity={quantities[i]} />
                 <div className="flex justify-center">
@@ -83,7 +92,12 @@ export default function Carrito() {
             <Link className="btn px-6 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold transition" to={'/'}>
             ← Seguir comprando
             </Link>
-            <button className="btn px-6 py-2 rounded-xl bg-primary-1 text-secondary font-bold shadow hover:bg-primary-2 transition">
+            <button onClick={() => {
+              localStorage.setItem('carrito', JSON.stringify([]))
+              setProductos([]) // si estás usando useState para productos
+              setQuantities([])
+              window.dispatchEvent(new Event('carritoActualizado')) // actualiza el contador
+            }} className="btn px-6 py-2 rounded-xl bg-primary-1 text-secondary font-bold shadow hover:bg-primary-2 transition">
             Vaciar carrito
             </button>
           </div>
