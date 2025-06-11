@@ -17,6 +17,8 @@ export function HomeAnimation() {
 
   const tl = gsap.timeline()
 
+  const DEFAULT_HEADER_HEIGHT = 113.47 // Default header height in pixels
+
   useGSAP(() => {
     const splitTitle = new SplitText(titleRef.current, { type: 'chars' })
     const splitSubtitle = new SplitText(subtitleRef.current, { type: 'lines' })
@@ -92,7 +94,9 @@ export function HomeAnimation() {
           onClick={() => {
             const section = document.getElementById('shopsection')
             if (section) {
-              const offset = section.offsetTop - 113.47
+              const header = document.getElementById('header')
+              const headerHeight = header ? header.offsetHeight : DEFAULT_HEADER_HEIGHT
+              const offset = section.offsetTop - headerHeight
               window.scrollTo({ top: offset, behavior: 'smooth' })
             }
           }}
