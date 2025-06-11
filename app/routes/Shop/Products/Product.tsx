@@ -34,6 +34,33 @@ export default function Product() {
   const { id } = useParams<{ id: string }>()
   const [producto, setProducto] = useState<Producto | null>(null)
   const [loading, setLoading] = useState(true)
+  const handleProductos = () => {
+    const cantidadInput = document.querySelector<HTMLInputElement>('input[name="cantidad"]')
+    const cantidad = parseInt(cantidadInput?.value || '1')
+
+    if (isNaN(cantidad) || cantidad <= 0) {
+      alert('Ingrese una cantidad válida')
+      return
+    }
+
+    const carrito = JSON.parse(localStorage.getItem('carrito') || '[]')
+
+    if (!producto) return null
+    const index = carrito.findIndex((item: Producto) => item.idProducto === producto.idProducto)
+
+    if (index >= 0) {
+      carrito[index].cantidad += cantidad
+    } else {
+      carrito.push({
+        ...producto,
+        cantidad: cantidad
+      })
+    }
+
+    localStorage.setItem('carrito', JSON.stringify(carrito))
+    window.dispatchEvent(new Event('carritoActualizado')) // dispara el evento para que actualice
+    alert('Producto agregado al carrito') // Mensaje de alerta, se puede modificar
+  }
 
   useEffect(() => {
     if (!id) return
@@ -66,7 +93,7 @@ export default function Product() {
             {/* precio */}
             <div className='flex flex-row gap-2 my-2'>
               <span className='text-foreground font-semibold'>Precio:</span>
-              <span className='text-primary-1'>S/ {producto.precio}</span>
+              <span className='text-primary-1'>S/ {producto.precio.toFixed(2)}</span>
             </div>
             {/* descripcion */}
             <div className='flex flex-col gap-2 justify-center my-2'>
@@ -86,7 +113,7 @@ export default function Product() {
                 required
               />
               <div className='grid grid-cols-2 gap-2 my-2'>
-                <button className='bg-primary-1 text-white rounded-md p-2'>Agregar al carrito</button>
+                <button onClick={handleProductos} className='bg-primary-1 text-white rounded-md p-2'>Agregar al carrito</button>
                 <button className='bg-black dark:bg-slate-700 text-white rounded-md p-2'>Comprar ahora</button>
               </div>
               {/* whistlist */}

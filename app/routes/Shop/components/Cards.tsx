@@ -29,9 +29,9 @@ export function CardProduct({ name, price, stars, image, marca, discount, src }:
         <p className='text-foreground/50 font-bold'>{marca}</p>
         <h3 className="text-primary-1 font-semibold text-lg">{name}</h3>
         <div className='flex flex-row justify-start items-center gap-3'>
-          <p className="text-primary-1 font-bold text-xl">S/.{price - price * (discount ?? 0)}</p>
+          <p className="text-primary-1 font-bold text-xl">S/ {(price - price * (discount ?? 0)).toFixed(2)}</p>
           {discount && discount > 0 ? (
-            <p className="text-gray-500 text-sm line-through">S/.{price}</p>
+            <p className="text-gray-500 text-sm line-through">S/ {price.toFixed(2)}</p>
           ): ''}
         </div>
         <div className="flex items-center mt-2">
