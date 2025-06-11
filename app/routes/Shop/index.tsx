@@ -1,5 +1,4 @@
 import { MdOutlineSupportAgent } from 'react-icons/md'
-import { CarruselJS } from './components/Carrusel'
 import { GoShieldCheck } from 'react-icons/go'
 import { PiCarrot } from 'react-icons/pi'
 import { LuTruck } from 'react-icons/lu'
@@ -8,6 +7,7 @@ import { FaHouseLaptop } from 'react-icons/fa6'
 import { BannerHome, InfoCard, Marquee, MarqueeLogos } from './components/Cards'
 import { ListCategorias, ListProducts } from './Products/ListProducts'
 import { HomeAnimation } from './animations/HomeAnimation'
+import { Link } from 'react-router'
 
 export default function Shop() {
 
@@ -15,7 +15,6 @@ export default function Shop() {
     <>
       <HomeAnimation />
       <div className="flex flex-col bg-background mx-auto my-10 container gap-4 min-h-screen">
-        <CarruselJS />
         <Marquee />
         <div className='my-10'>
           <h2 className="text-foreground font-semibold text-3xl text-center">¿Qué nos hace diferentes?</h2>
@@ -29,11 +28,16 @@ export default function Shop() {
           </div>
         </div>
         <BannerHome image='/images/legumbres.webp' />
-        <div className='flex flex-row gap-4'>
+        <div className='flex flex-row gap-4' id='shopsection'>
           <ListCategorias />
           <div className="w-full h-full text-primary-1 p-4">
-            <h2 className='text-foreground text-2xl font-bold'>Nuestros productos</h2>
-            <p className='text-foreground'>Explora nuestra amplia gama de productos frescos y de calidad.</p>
+            <div className='flex flex-row justify-between items-center mb-4'>
+              <div>
+                <h2 className='text-foreground text-2xl font-bold'>Nuestros productos</h2>
+                <p className='text-foreground'>Explora nuestra amplia gama de productos frescos y de calidad.</p>
+              </div>
+              <Link to="/shop" className='btn-success w-fit flex items-center'>Ver todos los productos</Link>
+            </div>
             <ListProducts />
           </div>
         </div>

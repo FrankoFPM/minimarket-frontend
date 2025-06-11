@@ -93,7 +93,7 @@ const Pedidos = () => {
         descripcion="Fruta fresca, jugosa y natural, ideal para una alimentación saludable en cualquier momento del día."
         precio={8.5}
         precioAnterior={12}
-        imagen="/images/apple.webp"
+        imagen="/images/products/apple.webp"
         fecha="Pedido efectuado el 30 abr. 2025"
         numeroPedido={8200054}
         codigoProducto="P-01"
@@ -103,7 +103,7 @@ const Pedidos = () => {
         nombre="Frugos del Valle"
         descripcion="Bebida refrescante elaborada con jugo de fruta, perfecta para acompañar tus comidas o disfrutar como snack"
         precio={7}
-        imagen="/images/frugos.webp"
+        imagen="/images/products/frugos.webp"
         fecha="Pedido efectuado el 30 abr. 2025"
         numeroPedido={8200054}
         codigoProducto="P-02"
@@ -113,7 +113,7 @@ const Pedidos = () => {
         nombre="Galleta Oreo"
         descripcion="Oreo Clásica, galleta con relleno cremoso, perfecta para compartir"
         precio={2.5}
-        imagen="/images/oreo.webp"
+        imagen="/images/products/frugos.webp"
         fecha="Pedido efectuado el 30 abr. 2025"
         numeroPedido={8200054}
         codigoProducto="P-03"

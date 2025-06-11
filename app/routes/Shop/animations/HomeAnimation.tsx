@@ -11,10 +11,13 @@ export function HomeAnimation() {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const manchaRef = useRef<HTMLImageElement>(null)
   const subtitleRef = useRef<HTMLHeadingElement>(null)
+  const buttonAnim = useRef<HTMLButtonElement>(null)
 
   const svgRef = useRef<SVGSVGElement>(null)
 
   const tl = gsap.timeline()
+
+  const DEFAULT_HEADER_HEIGHT = 113.47 // Default header height in pixels
 
   useGSAP(() => {
     const splitTitle = new SplitText(titleRef.current, { type: 'chars' })
@@ -25,6 +28,7 @@ export function HomeAnimation() {
         x: -200,
         opacity: 0,
         ease: 'back.inOut',
+        stagger: 0.1,
       })
       .from(svgRef.current, {
         duration: 1.2,
@@ -47,9 +51,18 @@ export function HomeAnimation() {
         stagger: 0.1,
       }, '-=0.5')
       .from('.draw-me', { duration: 2, drawSVG: 0 }, '<')
+      .from(
+        buttonAnim.current,
+        {
+          duration: 1,
+          x: 500,
+          opacity: 0,
+          ease: 'power3.out',
+        }, '<'
+      )
+
     if (svgRef.current) {
       const paths = svgRef.current.querySelectorAll('path')
-      console.log(paths)
       gsap.from(paths, {
         drawSVG: 0,
         duration: 3,
@@ -62,7 +75,7 @@ export function HomeAnimation() {
 
   return (
     <div
-      className="relative flex flex-col items-center justify-center"
+      className="relative flex flex-col items-center justify-center max-w-screen overflow-hidden"
       style={{ minHeight: 'calc(100vh - 113.47px)' }}
     >
       <div className='z-40 w-[45rem] absolute right-2/7 top-1/2 -translate-y-1/2 translate-x-1/2 '>
@@ -75,13 +88,27 @@ export function HomeAnimation() {
         Haz tus compras de forma rápida, segura y sin salir de casa.
         Frutas frescas, verduras, carnes, pan, productos enlatados y mucho más, directo a tu puerta.
         </h2>
+        <button
+          className=" absolute bg-primary-1 right-0 text-white hover:bg-primary-2 transition-colors w-fit px-20 py-2 mt-4 rounded-md"
+          ref={buttonAnim}
+          onClick={() => {
+            const section = document.getElementById('shopsection')
+            if (section) {
+              const header = document.getElementById('header')
+              const headerHeight = header ? header.offsetHeight : DEFAULT_HEADER_HEIGHT
+              const offset = section.offsetTop - headerHeight
+              window.scrollTo({ top: offset, behavior: 'smooth' })
+            }
+          }}
+        >
+          Comprar ahora
+        </button>
       </div>
       <img
         src="/images/anim/mancha.svg"
         alt="mancha"
         ref={manchaRef}
-        className="absolute -left-20 -bottom-1/2 -translate-y-1/2 w-3/4 h-auto z-0"
-        style={{ display: 'block' }}
+        className="absolute -left-20 -bottom-1/2 -translate-y-1/2 w-3/4 h-auto z-0 block"
       />
 
       <svg ref={svgRef} className="absolute right-1/2 top-1/2 -translate-y-1/2 h-3/4 w-auto z-0" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" id="Capa_2" viewBox="0 0 833.97 809.3">
