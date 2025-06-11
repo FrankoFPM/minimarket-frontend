@@ -54,7 +54,7 @@ export default function Product() {
       <div className='flex flex-row gap-20 items-start justify-center my-10'>
         <div className='flex flex-row gap-6 items-start justify-center w-full'>
           {/* imagen del producto y sub imagenes */}
-          <ImageGallery images={[`/images/${producto.foto}`]}/>
+          <ImageGallery images={[`/images/products/${producto.foto}`]}/>
           <div>
             <h3 className="text-2xl font-bold text-foreground">{producto.nombre}</h3>
             <div className='border-b border-gray-300 w-full my-2'></div>
