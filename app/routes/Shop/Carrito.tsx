@@ -5,19 +5,23 @@ import { Link, useNavigate } from 'react-router'
 import { InputField } from '~/Components/FormComponent'
 import { auth } from '~/firebase/firebaseConfig'
 import { PaySuccessAnimation } from './animations/PayAnimation'
+import { getProductos } from '../../services/productosService'
+import type { Producto } from '../../services/productosService'
 
 export default function Carrito() {
   const navigate = useNavigate()
-  const [quantities, setQuantities] = useState([1, 1, 1])
+  const [quantities, setQuantities] = useState<number[]>([])
   const [showSuccess, setShowSuccess] = useState(false)
-  const precios = [10, 10, 10]
-
-  const subtotal = precios.reduce((acc, precio, i) => acc + precio * quantities[i], 0)
+  const [productos, setProductos] = useState<Producto[]>([])
   const envio = 5
+
+  const subtotal = productos.reduce((acc, producto, i) => {
+    return acc + producto.precio * quantities[i]
+  }, 0)
+
   const total = subtotal + envio
 
   const handleCompra = () => {
-    // Aquí va tu lógica de compra...
     setShowSuccess(true)
   }
 
@@ -29,6 +33,16 @@ export default function Carrito() {
     })
     return () => unsubscribe()
   }, [navigate])
+
+  // carga de productos desde la BD
+  useEffect(() => {
+    const fetchProductos = async () => {
+      const data = await getProductos() // función que llama a la BD
+      setProductos(data)
+      setQuantities(Array(data.length).fill(0)) // inicializa con ceros
+    }
+    fetchProductos()
+  }, [])
 
   return (
     <section className="container mx-auto flex flex-col lg:flex-row gap-8 py-8 min-h-[80vh]">
@@ -48,16 +62,20 @@ export default function Carrito() {
             <h3 className="text-center text-foreground/50">Total</h3>
           </div>
           <div className="mt-4 divide-y divide-gray-200">
-            {precios.map((precio, i) => (
-              <div key={i} className="grid grid-cols-3 gap-4 py-6 items-center hover:bg-background rounded-xl transition">
-                <ProductMini price={precio} quantity={quantities[i]} />
+            {productos.map((producto, i) => (
+              <div key={producto.idProducto} className="grid grid-cols-3 gap-4 py-6 items-center hover:bg-background rounded-xl transition">
+                <ProductMini producto={producto} quantity={quantities[i]} />
                 <div className="flex justify-center">
                   <CantidadInput
                     quantity={quantities[i]}
-                    setQuantity={q => setQuantities(prev => prev.map((val, idx) => idx === i ? q : val))}
+                    setQuantity={q =>
+                      setQuantities(prev => prev.map((val, idx) => (idx === i ? q : val)))
+                    }
                   />
                 </div>
-                <p className="text-center font-bold text-primary-1 text-xl">${(precio * quantities[i]).toFixed(2)}</p>
+                <p className="text-center font-bold text-primary-1 text-xl">
+                  ${(producto.precio * quantities[i]).toFixed(2)}
+                </p>
               </div>
             ))}
           </div>
@@ -76,20 +94,27 @@ export default function Carrito() {
       <aside className="w-full max-w-md">
         <article className="bg-secondary rounded-2xl shadow-lg p-8 mb-6">
           <h2 className="text-2xl font-bold mb-6 text-primary-1">Resumen de compra</h2>
+
           <div className="flex justify-between mb-4">
             <span className="text-foreground/50">Subtotal:</span>
             <span className="font-semibold">${subtotal.toFixed(2)}</span>
           </div>
+
           <div className="flex justify-between mb-4">
             <span className="text-foreground/50">Envío:</span>
             <span className="font-semibold">${envio.toFixed(2)}</span>
           </div>
+
           <div className="flex justify-between mb-6 border-t border-gray-200 pt-4">
             <span className="text-lg font-bold">Total:</span>
             <span className="text-lg font-bold text-primary-1">${total.toFixed(2)}</span>
           </div>
-          <button onClick={handleCompra} className="w-full py-3 rounded-xl bg-primary-1 text-secondary font-bold text-lg shadow hover:bg-primary-2 transition">
-            Proceder al pago
+
+          <button
+            onClick={handleCompra}
+            className="w-full py-3 rounded-xl bg-primary-1 text-secondary font-bold text-lg shadow hover:bg-primary-2 transition"
+          >
+  Proceder al pago
           </button>
           {showSuccess && (
             <PaySuccessAnimation
@@ -107,17 +132,23 @@ export default function Carrito() {
   )
 }
 
-function ProductMini({ price, quantity }: { price: number, quantity: number }) {
-  if (quantity <= 0) return null
-  if (price <= 0) return null
+function ProductMini({ producto, quantity }: { producto: Producto, quantity: number }) {
+  if (quantity < 0 || producto.precio < 0) return null
 
   return (
     <div className="flex gap-4 items-center">
-      <img src="/images/products/apple.webp" alt="producto" width={60} height={60} className="object-cover rounded-xl shadow" />
+      <img
+        src={`/images/products/${producto.foto}`}
+        alt={producto.nombre}
+        width={60}
+        height={60}
+        className="object-cover rounded-xl shadow"
+      />
       <div>
-        <h3 className="font-semibold text-lg text-foreground/50">Producto Ejemplo</h3>
-        <p className="text-foreground/50">Precio: <span className="font-bold text-primary-1">${price}</span></p>
-        <span className="inline-block bg-primary-1/10 text-primary-1 px-2 py-1 rounded text-xs mt-1">1kg</span>
+        <h3 className="font-semibold text-lg text-foreground/50">{producto.nombre}</h3>
+        <p className="text-foreground/50">
+          Precio: <span className="font-bold text-primary-1">${producto.precio.toFixed(2)}</span>
+        </p>
       </div>
     </div>
   )
@@ -126,20 +157,28 @@ function ProductMini({ price, quantity }: { price: number, quantity: number }) {
 function CantidadInput({ quantity, setQuantity }: { quantity: number, setQuantity: (q: number) => void }) {
   return (
     <InputField
-      type="text"
+      type="number" // mejor que "text" si es un campo numérico
       name="cantidad"
       placeholder="1"
       className="rounded-md overflow-hidden h-10 flex max-w-32"
       value={quantity}
       min={0}
       max={99}
+      onChange={(e) => setQuantity(Number(e.target.value))}
       afterElement={
-        <button className="text-foreground/50 min-w-10 h-full flex items-center justify-center bg-primary-1" onClick={() => setQuantity(quantity + 1)}>
+        <button
+          className="text-foreground/50 min-w-10 h-full flex items-center justify-center bg-primary-1"
+          onClick={() => setQuantity(quantity + 1)}
+        >
           <FaPlus className="inline-block text-secondary" />
         </button>
       }
       beforeElement={
-        <button className="text-foreground/50 min-w-10 h-full flex items-center justify-center bg-primary-1" onClick={() => setQuantity(quantity - 1)} disabled={quantity <= 0}>
+        <button
+          className="text-foreground/50 min-w-10 h-full flex items-center justify-center bg-primary-1"
+          onClick={() => setQuantity(quantity - 1)}
+          disabled={quantity <= 0}
+        >
           <FaMinus className="inline-block text-secondary rotate-180" />
         </button>
       }
@@ -162,7 +201,7 @@ function PayMethods() {
           <div className="flex gap-4 flex-wrap">
             {[
               { src: '/images/pay/bcp.svg', alt: 'BCP', label: 'Banco de Crédito del Perú' },
-              { src: '/images/pay/interbank.svg', alt: 'Interbank', label: 'Interbank' },
+              { src: '/images/pay/interbank.png', alt: 'Interbank', label: 'Interbank' },
             ].map(({ src, alt, label }) => (
               <div key={alt} className="flex flex-col items-center group w-20">
                 <div className="bg-secondary rounded-lg shadow p-2 transition-transform group-hover:scale-105">
@@ -180,7 +219,7 @@ function PayMethods() {
           <div className="flex gap-4 flex-wrap">
             {[
               { src: '/images/pay/yape.webp', alt: 'Yape', label: 'Rápido y sin comisiones' },
-              { src: '/images/pay/plin.svg', alt: 'Plin', label: 'Desde tu app bancaria' },
+              { src: '/images/pay/plin.png', alt: 'Plin', label: 'Desde tu app bancaria' },
             ].map(({ src, alt, label }) => (
               <div key={alt} className="flex flex-col items-center group w-20">
                 <div className="bg-secondary rounded-lg shadow p-2 transition-transform group-hover:scale-105">

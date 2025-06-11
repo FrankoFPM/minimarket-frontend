@@ -18,7 +18,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
     private Long idProveedor;
  */
 
-interface Producto {
+export interface Producto {
   idProducto: string,
   nombre: string,
   descripcion: string,
