@@ -29,6 +29,7 @@ export default [
     route('contacto', 'routes/Nosotros/Contacto.tsx'),
     route('pedidos', 'routes/Nosotros/MisPedidos.tsx'), // Define la ruta para la pagina de Mis Pedidos
     route('pedidos', 'routes/Shop/Pedidos.tsx'), // Ruta de pedidos dentro del layout de la tienda
+    route('shop', 'routes/Shop/Shop.tsx'), // Ruta de pedidos dentro del layout de la tienda
   ]),
 
   layout('routes/Admin/Layout.tsx', [

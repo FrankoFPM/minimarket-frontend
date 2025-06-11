@@ -24,11 +24,18 @@ export function PaySuccessAnimation({
 
   useGSAP(() => {
     const splitTitle = new SplitText(textRef.current, { type: 'words' })
-    tl.fromTo(circleRef.current, { r: 0 }, {
-      r: 1200,
-      duration: 1.2,
-      ease: 'power2.inOut',
-    })
+
+    tl
+      .to(containerRef.current, {
+        backdropFilter: 'blur(8px)',
+        duration: 0.1,
+        ease: 'power1.out',
+      })
+      .fromTo(circleRef.current, { r: 0 }, {
+        r: 1200,
+        duration: 1.2,
+        ease: 'power2.inOut',
+      })
       .to(textRef.current, { opacity: 1, duration: 0.1 }, '<')
       .from(splitTitle.words, {
         duration: 1,
@@ -47,7 +54,7 @@ export function PaySuccessAnimation({
   return (
     <div
       ref={containerRef}
-      className="fixed backdrop-blur-sm inset-0 z-50 flex items-center justify-center bg-white/10"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-white/10"
       style={{ pointerEvents: 'none' }}
     >
       <svg width="100vw" height="100vh" viewBox="0 0 100 100" className="absolute inset-0 w-full h-full">
