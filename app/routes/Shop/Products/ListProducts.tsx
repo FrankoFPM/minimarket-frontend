@@ -38,7 +38,7 @@ export function ListProducts() {
           key={producto.idProducto}
           name={producto.nombre}
           price={producto.precio}
-          image={'/images/' + producto.foto}
+          image={'/images/products/' + producto.foto}
           stars={5}
           marca={producto.proveedorNombre || 'Sin marca'}
           discount={0}

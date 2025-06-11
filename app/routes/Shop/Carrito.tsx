@@ -113,7 +113,7 @@ function ProductMini({ price, quantity }: { price: number, quantity: number }) {
 
   return (
     <div className="flex gap-4 items-center">
-      <img src="/images/apple.webp" alt="producto" width={60} height={60} className="object-cover rounded-xl shadow" />
+      <img src="/images/products/apple.webp" alt="producto" width={60} height={60} className="object-cover rounded-xl shadow" />
       <div>
         <h3 className="font-semibold text-lg text-foreground/50">Producto Ejemplo</h3>
         <p className="text-foreground/50">Precio: <span className="font-bold text-primary-1">${price}</span></p>
