@@ -1,4 +1,8 @@
 import { Divider } from '@heroui/react'
+import { onAuthStateChanged } from 'firebase/auth'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router'
+import { auth } from '~/firebase/firebaseConfig'
 
 interface Props {
     nombre: string;
@@ -21,6 +25,15 @@ const CardProducto = ({
   numeroPedido,
   codigoProducto,
 }: Props) => {
+  const navigate = useNavigate()
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        navigate('/login')
+      }
+    })
+    return () => unsubscribe()
+  }, [navigate])
   return (
     <div className="border border-primary-1 rounded-lg p-6 bg-secondary shadow-md">
       <div className="flex justify-between items-center text-sm text-(--foreground)">
