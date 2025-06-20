@@ -23,7 +23,7 @@ export default function AdminLayout() {
   }, [navigate])
 
   return (
-    <div className="dashboard">
+    <div className="dashboard relative">
       <Navbar />
       <Header />
       <main className='main pr-5 pb-5'>

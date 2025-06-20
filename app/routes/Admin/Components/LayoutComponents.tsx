@@ -90,7 +90,7 @@ export function Button({ link, icon, text }: Omit<ButtonProps, 'active'>) {
 
 export function Navbar(){
   return (
-    <nav className="w-fit h-full px-6 nav">
+    <nav className="w-fit h-full px-6 nav sticky top-0 max-h-screen">
       <div className='flex items-center gap-3 my-6 px-4'>
         <img src="/images/Logo.webp" alt="Logo" width={200}  height={70}/>
       </div>
