@@ -8,9 +8,15 @@ export default function AdminLayout() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         navigate('/login')
+        return
+      }
+      const idToken = await user.getIdTokenResult()
+      console.log(idToken.claims.role)
+      if (idToken.claims.role == 'cliente') {
+        navigate('/unauthorized')
       }
     })
     return () => unsubscribe()
