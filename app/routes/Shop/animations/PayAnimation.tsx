@@ -65,7 +65,7 @@ export function PaySuccessAnimation({
         className="relative z-60 text-4xl w-1/2 md:text-7xl uppercase font-lilita font-bold text-white text-center opacity-0"
         style={{ pointerEvents: 'auto' }}
       >
-        ¡Compra completada con éxito!
+        ¡Pedido realizado con éxito!
       </div>
     </div>
   )

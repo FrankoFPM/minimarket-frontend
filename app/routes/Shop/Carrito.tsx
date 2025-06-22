@@ -10,10 +10,12 @@ import type { Producto } from '../../services/productosService'
 import type { Carrito } from '~/Types/Carrito'
 import { useCarrito } from '~/hooks/useCarrito'
 import { useProductosByIds } from '~/hooks/useProducto'
+import { setPedidoFromCarrito } from '~/services/pedidoService'
+import { user } from '@heroui/react'
 
 export default function Carrito() {
 
-  const [ userId, setUserId ] = useState<string | null>(null)
+  const [ userId, setUserId ] = useState<string>('')
   //Custom hook para obtener los productos del carrito
   const {carrito, loading, fetchCarrito} = useCarrito()
   const ids = carrito.map(item => item.idProducto)
@@ -31,8 +33,10 @@ export default function Carrito() {
 
   const total = subtotal + envio
 
-  const handleCompra = () => {
+  const handleCompra = async () => {
+    await setPedidoFromCarrito(userId, userId)
     setShowSuccess(true)
+    fetchCarrito() // Actualiza el carrito después de la compra
   }
 
   useEffect(() => {
@@ -130,7 +134,7 @@ export default function Carrito() {
             onClick={handleCompra}
             className="w-full py-3 rounded-xl bg-primary-1 text-secondary font-bold text-lg shadow hover:bg-primary-2 transition"
           >
-  Proceder al pago
+            Realizar pedido
           </button>
           {showSuccess && (
             <PaySuccessAnimation
