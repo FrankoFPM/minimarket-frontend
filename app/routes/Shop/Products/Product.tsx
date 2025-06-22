@@ -9,57 +9,81 @@ import { InputField } from '~/Components/FormComponent'
 import { ImageGallery } from '../components/ImageGallery'
 import { BannerHome, CardPromo } from '../components/Cards'
 import { ListCategorias, ListProducts } from './ListProducts'
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 import { getProductoById } from '~/services/productosService'
 import type { Producto } from '~/Types/Producto'
+import { addToast } from '@heroui/react'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from '~/firebase/firebaseConfig'
+import { addProductoToCarrito } from '~/services/carritoService'
+import { useCarritoContext } from '~/context/carritoContext'
 
 export default function Product() {
 
-  /**usar
-   * export const getProductoById = async (id: string): Promise<Producto> => {
-  try {
-    const response = await axios.get<Producto>(`${API_URL}/producto/${id}`)
-    return response.data
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error('Error al obtener producto:', error.response?.data || error.message)
-    } else {
-      console.error('Error al obtener producto:', (error as Error).message)
-    }
-    throw new Error('Error al obtener producto.')
-  }
-}
-   */
+  const [userId, setUserId] = useState<string>()
+  const navigate = useNavigate()
+  const { fetchCarrito } = useCarritoContext()
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        return
+      }
+      setUserId(user.uid)
+    })
+    return () => unsubscribe()
+  }, [navigate])
+
   const { id } = useParams<{ id: string }>()
   const [producto, setProducto] = useState<Producto | null>(null)
   const [loading, setLoading] = useState(true)
-  const handleProductos = () => {
+
+  const handleProductos = async () => {
     const cantidadInput = document.querySelector<HTMLInputElement>('input[name="cantidad"]')
     const cantidad = parseInt(cantidadInput?.value || '1')
 
     if (isNaN(cantidad) || cantidad <= 0) {
-      alert('Ingrese una cantidad válida')
+      addToast({
+        title: 'Error',
+        description: 'Cantidad inválida. Debe ser un número positivo.',
+        color: 'warning',
+        shouldShowTimeoutProgress: true,
+      })
+      return
+    }
+    if (!producto) {
+      addToast({
+        title: 'Error',
+        description: 'Producto no encontrado.',
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
+      })
       return
     }
 
-    const carrito = JSON.parse(localStorage.getItem('carrito') || '[]')
-
-    if (!producto) return null
-    const index = carrito.findIndex((item: Producto) => item.idProducto === producto.idProducto)
-
-    if (index >= 0) {
-      carrito[index].cantidad += cantidad
-    } else {
-      carrito.push({
-        ...producto,
-        cantidad: cantidad
+    if (!userId) {
+      addToast({
+        title: 'Error',
+        description: 'Usuario no autenticado.',
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
       })
+      navigate('/login')
+      return
     }
 
-    localStorage.setItem('carrito', JSON.stringify(carrito))
-    window.dispatchEvent(new Event('carritoActualizado')) // dispara el evento para que actualice
-    alert('Producto agregado al carrito') // Mensaje de alerta, se puede modificar
+    console.log('Agregando producto al carrito:', { idProducto: producto.idProducto, cantidad, userId })
+
+    await addProductoToCarrito(userId, producto.idProducto, cantidad)
+    fetchCarrito()
+    addToast({
+      title: 'Éxito',
+      description: `Producto ${producto.nombre} agregado al carrito.`,
+      color: 'primary',
+      shouldShowTimeoutProgress: true,
+    })
+
   }
 
   useEffect(() => {

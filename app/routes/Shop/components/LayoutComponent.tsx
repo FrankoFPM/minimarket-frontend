@@ -7,30 +7,21 @@ import { IoCallSharp, IoLocation, IoMail } from 'react-icons/io5'
 import { Link } from 'react-router'
 import { InputField } from '~/Components/FormComponent'
 import { ThemeToggle } from '~/Components/UiComponentes'
+import { useCarritoContext } from '~/context/carritoContext'
 import { auth } from '~/firebase/firebaseConfig'
 
 export function HeaderShop() {
+
+  const { carrito } = useCarritoContext()
 
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [carritoCount, setCarritoCount] = useState(0)
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const carrito = JSON.parse(localStorage.getItem('carrito') || '[]')
-      setCarritoCount(carrito.length)
-    }
-
-    // Escuchar cambios en el carrito con un evento personalizado
-    const actualizarContador = () => {
-      const carrito = JSON.parse(localStorage.getItem('carrito') || '[]')
-      setCarritoCount(carrito.length)
-    }
-    window.addEventListener('carritoActualizado', actualizarContador)
-
-    return () => {
-      window.removeEventListener('carritoActualizado', actualizarContador)
-    }
-  }, [])
+    // Actualizar el contador del carrito
+    setCarritoCount(carrito.length)
+    console.log('Carrito actualizado count:', carritoCount)
+  }, [carrito])
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
