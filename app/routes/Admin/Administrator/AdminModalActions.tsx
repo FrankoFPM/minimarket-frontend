@@ -66,6 +66,7 @@ export function AdminModalActions({user, onSuccess}: AdminModalActions){
         telefono: user.telefono,
         direccion: user.direccion,
         distritoId: user.distritoId,
+        rol: user.rol,
         password: '' // Dejar en blanco para no cambiar la contraseña
       })
     }
@@ -95,7 +96,7 @@ export function AdminModalActions({user, onSuccess}: AdminModalActions){
         direccion: data.direccion,
         distritoId: data.distritoId,
         distritoNombre: user.distritoNombre,
-        rol: user.rol,
+        rol: data.rol,
         estado: user.estado,
       } as Omit<User, 'id' | 'googleId' | 'facebookId' | 'createdAt' | 'updatedAt'> & { password?: string }
 

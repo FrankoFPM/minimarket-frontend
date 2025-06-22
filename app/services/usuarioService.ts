@@ -68,7 +68,7 @@ export const fetchClientUsers = async (): Promise<User[]> => {
  * @returns
  */
 
-export const createUser = async (user: Omit<User, 'googleId' | 'facebookId' | 'createdAt' | 'updatedAt' | 'distritoNombre' | 'rol'>): Promise<User> => {
+export const createUser = async (user: Omit<User,'googleId' | 'facebookId' | 'createdAt' | 'updatedAt' | 'distritoNombre' | 'rol'>): Promise<User> => {
   try {
     // 1. Registrar en Firebase
     const userCredential = await registerWithEmail(user.email, user.password, `${user.nombre} ${user.apellido}`)
