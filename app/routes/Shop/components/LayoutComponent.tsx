@@ -20,7 +20,7 @@ export function HeaderShop() {
   useEffect(() => {
     // Actualizar el contador del carrito
     setCarritoCount(carrito.length)
-    console.log('Carrito actualizado count:', carritoCount)
+    console.log('Carrito actualizado count:', carrito.length)
   }, [carrito])
 
   useEffect(() => {
