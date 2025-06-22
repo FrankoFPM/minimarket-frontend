@@ -27,8 +27,14 @@ const Register = () => {
     }
 
     try {
+
+      // 1. Registrar en Firebase
+      const userCredential = await registerWithEmail(email, password, `${nombres} ${apellidos}`)
+      const firebaseUser = userCredential.user
+      const firebaseUid = firebaseUser.uid
+
       const user = await registerUserClient({
-        id: '',
+        id: firebaseUid, // ID de Firebase
         nombre: nombres,
         apellido: apellidos,
         email: email,
@@ -38,13 +44,12 @@ const Register = () => {
         direccion: 'falso' //TODO: agregar al formulario
       })
 
-      console.log('Segundo click')
-      console.log('Usuario registrado:', user)
-      if (user) {
-        // Redirigir al usuario a la página de inicio o a la página deseada
-        console.log('Registro exitoso')
-        registerWithEmail(email, password, `${nombres} ${apellidos}`, navigate)
+      if (user === 201) {
+        console.log('Usuario registrado exitosamente')
+        navigate('/')
       }
+
+      console.log('Usuario registrado:', user)
     } catch (error) {
       if (error instanceof Error) {
         console.error('Error al registrar:', error.message)
