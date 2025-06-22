@@ -33,7 +33,7 @@ export default function Product() {
       setUserId(user.uid)
     })
     return () => unsubscribe()
-  }, [navigate])
+  }, [])
 
   const { id } = useParams<{ id: string }>()
   const [producto, setProducto] = useState<Producto | null>(null)
