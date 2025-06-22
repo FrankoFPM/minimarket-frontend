@@ -16,7 +16,7 @@ export default function AdminLayout() {
       const idToken = await user.getIdTokenResult()
       console.log(idToken.claims.role)
       console.log('ID Token Claims:', idToken.claims)
-      if (idToken.claims.role == 'cliente') {
+      if (idToken.claims.role === 'cliente') {
         navigate('/unauthorized')
       }
     })
