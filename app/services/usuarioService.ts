@@ -1,5 +1,6 @@
 import axios from 'axios'
 import type { User } from '~/Types/Usuario'
+import { registerWithEmail } from './firebaseAuth'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
 
@@ -67,8 +68,13 @@ export const fetchClientUsers = async (): Promise<User[]> => {
  * @returns
  */
 
-export const createUser = async (user: Omit<User, 'id' | 'googleId' | 'facebookId' | 'createdAt' | 'updatedAt' | 'distritoNombre' | 'rol'>): Promise<User> => {
+export const createUser = async (user: Omit<User,'googleId' | 'facebookId' | 'createdAt' | 'updatedAt' | 'distritoNombre' | 'rol'>): Promise<User> => {
   try {
+    // 1. Registrar en Firebase
+    const userCredential = await registerWithEmail(user.email, user.password, `${user.nombre} ${user.apellido}`)
+    const firebaseUser = userCredential.user
+    const firebaseUid = firebaseUser.uid
+    user.id = firebaseUid // Asignar el ID de Firebase al usuario
     const response = await axios.post<User>(`${API_URL}/usuario`, user)
     return response.data
   } catch (error: unknown) {

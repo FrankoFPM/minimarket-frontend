@@ -28,7 +28,8 @@ export function AdminModalAdd({onSuccess}: { onSuccess: () => void }) {
         console.log('Datos del nuevo usuario:', data)
         await createUser({
           ...data,
-          estado: 'activo'
+          estado: 'activo',
+          id: '', // El ID se asignará automáticamente por Firebase
         })
 
         addModal.onClose()

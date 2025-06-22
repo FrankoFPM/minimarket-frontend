@@ -97,40 +97,41 @@ export const LoginSocial = () =>{
   )
 }
 
-export const registerWithEmail = (
+export const registerWithEmail = async (
   email: string,
   password: string,
   displayName: string,
-  navigate: (path: string) => void
 ) => {
   const auth = getAuth()
-  createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-    // Signed up
-      const user = userCredential.user
-      updateProfile(user, {
-        displayName: displayName,
-      })
-      addToast({
-        title: 'Registro exitoso',
-        description: 'Usuario registrado correctamente.',
-        color: 'success',
-        shouldShowTimeoutProgress: true,
-      })
-      navigate('/')
-      console.log('Usuario registrado:', user)
+
+  try{
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+    const user = userCredential.user
+    await updateProfile(user, { displayName })
+    addToast({
+      title: 'Registro exitoso',
+      description: 'Usuario registrado correctamente.',
+      color: 'success',
+      shouldShowTimeoutProgress: true,
     })
-    .catch((error) => {
-      const errorCode = error.code
-      const errorMessage = error.message
-      addToast({
-        title: 'Error en el registro',
-        description: `Código de error: ${errorCode}. Mensaje: ${errorMessage}`,
-        color: 'danger',
-        shouldShowTimeoutProgress: true,
-      })
-      console.error('Error al registrar usuario:', error)
+    console.log('Usuario registrado:', user)
+    return userCredential
+  }catch (error: unknown) {
+    let errorCode = 'unknown'
+    let errorMessage = 'Ocurrió un error desconocido'
+    if (typeof error === 'object' && error !== null && 'code' in error && 'message' in error) {
+      errorCode = (error as { code: string }).code
+      errorMessage = (error as { message: string }).message
+    }
+    addToast({
+      title: 'Error en el registro',
+      description: `Código de error: ${errorCode}. Mensaje: ${errorMessage}`,
+      color: 'danger',
+      shouldShowTimeoutProgress: true,
     })
+    console.error('Error al registrar usuario:', error)
+    throw error // <-- Lanza el error para manejarlo en el componente
+  }
 }
 
 export const LoginWithEmail = (email: string, password: string,navigate: (path: string) => void) => {

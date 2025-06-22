@@ -66,6 +66,7 @@ export function AdminModalActions({user, onSuccess}: AdminModalActions){
         telefono: user.telefono,
         direccion: user.direccion,
         distritoId: user.distritoId,
+        rol: user.rol,
         password: '' // Dejar en blanco para no cambiar la contraseña
       })
     }
@@ -77,6 +78,7 @@ export function AdminModalActions({user, onSuccess}: AdminModalActions){
     email: string;
     telefono: string;
     direccion: string;
+    rol: string;
     distritoId: number;
     password?: string; // Si se desea cambiar la contraseña
   }
@@ -94,7 +96,7 @@ export function AdminModalActions({user, onSuccess}: AdminModalActions){
         direccion: data.direccion,
         distritoId: data.distritoId,
         distritoNombre: user.distritoNombre,
-        rol: user.rol,
+        rol: data.rol,
         estado: user.estado,
       } as Omit<User, 'id' | 'googleId' | 'facebookId' | 'createdAt' | 'updatedAt'> & { password?: string }
 
@@ -204,6 +206,20 @@ rol por defecto es cliente, si es admin, entonces rol='admin', el rol es inmutab
             error={errors.direccion?.message}
             className='rounded-md'
           />
+          <SelectInput
+            label="Rol"
+            {...register('rol', {
+              required: 'Debe seleccionar un rol',
+              validate: value => value !== undefined && value !== null && value !== '' || 'Debe seleccionar un rol'
+            })}
+            error={errors.rol?.message}
+            className='rounded-md'
+          >
+            <option value="">Seleccione un rol</option>
+            <option value="admin">Administrador</option>
+            <option value="almacenista">Almacenista</option>
+            <option value="recepcion">Recepcion</option>
+          </SelectInput>
           <SelectInput
             label="Distrito"
             {...register('distritoId', {

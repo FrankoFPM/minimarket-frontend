@@ -7,12 +7,22 @@ import { auth } from '~/firebase/firebaseConfig'
 import { PaySuccessAnimation } from './animations/PayAnimation'
 //import { getProductos } from '../../services/productosService'
 import type { Producto } from '../../services/productosService'
+import type { Carrito } from '~/Types/Carrito'
+import { useCarrito } from '~/hooks/useCarrito'
+import { useProductosByIds } from '~/hooks/useProducto'
 
 export default function Carrito() {
+
+  const [ userId, setUserId ] = useState<string | null>(null)
+  //Custom hook para obtener los productos del carrito
+  const {carrito, loading, fetchCarrito} = useCarrito()
+  const ids = carrito.map(item => item.idProducto)
+  console.log('IDs del carrito:', ids)
+  const { productos, loading: loadingProductos, fetchProductos } = useProductosByIds(ids)
+
   const navigate = useNavigate()
   const [quantities, setQuantities] = useState<number[]>([])
   const [showSuccess, setShowSuccess] = useState(false)
-  const [productos, setProductos] = useState<Producto[]>([])
   const envio = 5
 
   const subtotal = productos.reduce((acc, producto, i) => {
@@ -29,27 +39,19 @@ export default function Carrito() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
         navigate('/login')
+        return
       }
+      setUserId(user.uid)
     })
     return () => unsubscribe()
   }, [navigate])
 
-  type ProductoCarrito = {
-      idProducto: number;
-      nombre: string;
-      cantidad: number;
-      precio: number;
-    }
-
   useEffect(() => {
-    const carrito = JSON.parse(localStorage.getItem('carrito') || '[]')
-
-    setProductos(carrito.map((item: ProductoCarrito) =>  ({
-      ...item
-    })))
-
-    setQuantities(carrito.map((item: ProductoCarrito) => item.cantidad))
-  }, [])
+    setQuantities(carrito.map((item: Carrito) => item.cantidad))
+    console.log('Carrito actualizado:', carrito)
+    console.log('Productos del carrito:', productos)
+    fetchProductos()
+  }, [carrito])
 
   return (
     <section className="container mx-auto flex flex-col lg:flex-row gap-8 py-8 min-h-[80vh]">
@@ -94,8 +96,8 @@ export default function Carrito() {
             </Link>
             <button onClick={() => {
               localStorage.setItem('carrito', JSON.stringify([]))
-              setProductos([]) // si estás usando useState para productos
-              setQuantities([])
+              //setProductos([]) // si estás usando useState para productos //TODO: arreglar esto
+              //setQuantities([])
               window.dispatchEvent(new Event('carritoActualizado')) // actualiza el contador
             }} className="btn px-6 py-2 rounded-xl bg-primary-1 text-secondary font-bold shadow hover:bg-primary-2 transition">
             Vaciar carrito
