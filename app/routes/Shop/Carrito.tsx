@@ -11,7 +11,7 @@ import type { Carrito } from '~/Types/Carrito'
 import { useCarrito } from '~/hooks/useCarrito'
 import { useProductosByIds } from '~/hooks/useProducto'
 import { setPedidoFromCarrito } from '~/services/pedidoService'
-import { user } from '@heroui/react'
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@heroui/react'
 
 export default function Carrito() {
 
@@ -37,6 +37,12 @@ export default function Carrito() {
     await setPedidoFromCarrito(userId, userId)
     setShowSuccess(true)
     fetchCarrito() // Actualiza el carrito después de la compra
+  }
+
+  const vaciarCarrito = () => {
+    // Aquí puedes implementar la lógica para vaciar el carrito
+    console.log('Carrito vaciado')
+    fetchCarrito() // Actualiza el carrito después de vaciarlo
   }
 
   useEffect(() => {
@@ -98,14 +104,7 @@ export default function Carrito() {
             <Link className="btn px-6 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold transition" to={'/'}>
             ← Seguir comprando
             </Link>
-            <button onClick={() => {
-              localStorage.setItem('carrito', JSON.stringify([]))
-              //setProductos([]) // si estás usando useState para productos //TODO: arreglar esto
-              //setQuantities([])
-              window.dispatchEvent(new Event('carritoActualizado')) // actualiza el contador
-            }} className="btn px-6 py-2 rounded-xl bg-primary-1 text-secondary font-bold shadow hover:bg-primary-2 transition">
-            Vaciar carrito
-            </button>
+            <VaciarCarrito vaciarCarrito={vaciarCarrito} disabled={loading || productos.length === 0} />
           </div>
         </div>
       </article>
@@ -130,12 +129,14 @@ export default function Carrito() {
             <span className="text-lg font-bold text-primary-1">${total.toFixed(2)}</span>
           </div>
 
-          <button
-            onClick={handleCompra}
+          <Button
+            isDisabled={loading || productos.length === 0}
+            aria-disabled={loading || productos.length === 0}
+            onPress={handleCompra}
             className="w-full py-3 rounded-xl bg-primary-1 text-secondary font-bold text-lg shadow hover:bg-primary-2 transition"
           >
             Realizar pedido
-          </button>
+          </Button>
           {showSuccess && (
             <PaySuccessAnimation
               onComplete={() => {
@@ -265,5 +266,51 @@ function PayMethods() {
         </section>
       </div>
     </article>
+  )
+}
+
+type VaciarCarritoProps = {
+  vaciarCarrito: () => void
+  disabled?: boolean
+}
+
+function VaciarCarrito({ vaciarCarrito, disabled }: VaciarCarritoProps) {
+  const {isOpen, onOpen, onOpenChange} = useDisclosure()
+
+  return (
+    <>
+      <Button onPress={onOpen} isDisabled={disabled} className="btn px-6 py-2 rounded-xl bg-primary-1 text-secondary font-bold shadow hover:bg-primary-2 transition">
+            Vaciar carrito
+      </Button>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop='blur'>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                <h2 className="text-2xl font-bold text-primary-1 text-center">Vaciar Carrito</h2>
+              </ModalHeader>
+              <ModalBody>
+                <div className="flex flex-col items-center gap-4">
+                  <h3 className="text-lg font-semibold text-foreground">¿Estás seguro de que deseas vaciar el carrito?</h3>
+                  <p className="text-sm text-foreground/50">Esta acción eliminará todos los productos del carrito.</p>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" onPress={onClose}>
+                  Cancelar
+                </Button>
+                <Button color="success" onPress={() => {
+                  vaciarCarrito()
+                  onClose()
+                }
+                }>
+                  Confirmar
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
   )
 }
