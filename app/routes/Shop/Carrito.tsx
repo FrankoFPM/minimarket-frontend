@@ -35,22 +35,40 @@ export default function Carrito() {
   const total = subtotal + envio
 
   const handleCompra = async () => {
-    await setPedidoFromCarrito(userId, userId)
-    setShowSuccess(true)
-    fetchCarrito() // Actualiza el carrito después de la compra
+    try {
+      await setPedidoFromCarrito(userId, userId)
+      setShowSuccess(true)
+      fetchCarrito() // Actualiza el carrito después de la compra
+    } catch (error) {
+      console.error('Error al realizar la compra:', error)
+      addToast({
+        title: 'Error al realizar la compra',
+        description: 'Ocurrió un problema al procesar tu compra. Por favor, inténtalo de nuevo más tarde.',
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
+      })
+    }
   }
 
   const vaciarCarrito = async () => {
-    // Aquí puedes implementar la lógica para vaciar el carrito
-    console.log('Carrito vaciado')
-    await removeAllProductosFromCarrito(userId)
-    await fetchCarrito() // Actualiza el carrito después de vaciarlo
-    addToast({
-      title: 'Carrito vaciado',
-      description: 'Todos los productos han sido eliminados del carrito.',
-      color: 'secondary',
-      shouldShowTimeoutProgress: true,
-    })
+    try {
+      await removeAllProductosFromCarrito(userId)
+      await fetchCarrito() // Actualiza el carrito después de vaciarlo
+      addToast({
+        title: 'Carrito vaciado',
+        description: 'Todos los productos han sido eliminados del carrito.',
+        color: 'secondary',
+        shouldShowTimeoutProgress: true,
+      })
+    } catch (error) {
+      console.error('Error al vaciar el carrito:', error)
+      addToast({
+        title: 'Error',
+        description: 'No se pudo vaciar el carrito. Por favor, inténtalo de nuevo.',
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
+      })
+    }
   }
 
   useEffect(() => {
