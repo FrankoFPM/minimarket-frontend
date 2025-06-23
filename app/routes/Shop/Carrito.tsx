@@ -11,7 +11,8 @@ import type { Carrito } from '~/Types/Carrito'
 import { useCarrito } from '~/hooks/useCarrito'
 import { useProductosByIds } from '~/hooks/useProducto'
 import { setPedidoFromCarrito } from '~/services/pedidoService'
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@heroui/react'
+import { addToast, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@heroui/react'
+import { removeAllProductosFromCarrito } from '~/services/carritoService'
 
 export default function Carrito() {
 
@@ -39,10 +40,17 @@ export default function Carrito() {
     fetchCarrito() // Actualiza el carrito después de la compra
   }
 
-  const vaciarCarrito = () => {
+  const vaciarCarrito = async () => {
     // Aquí puedes implementar la lógica para vaciar el carrito
     console.log('Carrito vaciado')
-    fetchCarrito() // Actualiza el carrito después de vaciarlo
+    await removeAllProductosFromCarrito(userId)
+    await fetchCarrito() // Actualiza el carrito después de vaciarlo
+    addToast({
+      title: 'Carrito vaciado',
+      description: 'Todos los productos han sido eliminados del carrito.',
+      color: 'secondary',
+      shouldShowTimeoutProgress: true,
+    })
   }
 
   useEffect(() => {

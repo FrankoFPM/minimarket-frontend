@@ -34,3 +34,20 @@ export const addProductoToCarrito = async (idUsuario: string, idProducto: string
     throw new Error('Error al agregar producto al carrito.')
   }
 }
+
+export const removeAllProductosFromCarrito = async (idUsuario: string): Promise<void> => {
+  try {
+    if (!idUsuario) {
+      throw new Error('ID de usuario inválido para eliminar productos del carrito.')
+    }
+    const response = await axios.delete(`${API_URL}/carrito/usuario/${idUsuario}/vaciar`)
+    console.log('Todos los productos eliminados del carrito:', response.data)
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error('Error al eliminar productos del carrito:', error.response?.data || error.message)
+    } else {
+      console.error('Error al eliminar productos del carrito:', (error as Error).message)
+    }
+    throw new Error('Error al eliminar productos del carrito.')
+  }
+}
