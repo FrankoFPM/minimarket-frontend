@@ -16,10 +16,13 @@ export const setPedidoFromCarrito = async (idUsuario: string, createdBy?: string
     return response.data
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
-      console.error('Error al crear el pedido:', error.response?.data || error.message)
+      const errorDetails = error.response?.data || error.message
+      console.error('Error al crear el pedido:', errorDetails)
+      throw new Error(`Error al crear el pedido: ${errorDetails}`)
     } else {
-      console.error('Error al crear el pedido:', (error as Error).message)
+      const errorMessage = (error as Error).message
+      console.error('Error al crear el pedido:', errorMessage)
+      throw new Error(`Error al crear el pedido: ${errorMessage}`)
     }
-    throw new Error('Error al crear el pedido.')
   }
 }
