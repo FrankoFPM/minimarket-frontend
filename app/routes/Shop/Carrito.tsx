@@ -326,10 +326,18 @@ function VaciarCarrito({ vaciarCarrito, disabled }: VaciarCarritoProps) {
                   Cancelar
                 </Button>
                 <Button color="success" onPress={() => {
-                  vaciarCarrito()
-                  onClose()
-                }
-                }>
+                  try {
+                    vaciarCarrito()
+                    onClose()
+                  } catch (error) {
+                    console.error('Failed to empty the cart:', error)
+                    addToast({
+                      title: 'Error',
+                      description: 'No se pudo vaciar el carrito. Por favor, inténtalo de nuevo.',
+                      color: 'danger',
+                    })
+                  }
+                }}>
                   Confirmar
                 </Button>
               </ModalFooter>
