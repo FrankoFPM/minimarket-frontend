@@ -80,8 +80,8 @@ const CardProducto = ({ detalle, pedido }: Props) => {
 
 const Pedidos = () => {
 
-  const { pedido, loading, fetchPedido, usuarioId }  = usePedido()
-  const { detallePedidos, loading: loadingDetalle } = useDetallePedidoByUser()
+  const { pedido, loading }  = usePedido()
+  const { detallePedidos } = useDetallePedidoByUser()
 
   const navigate = useNavigate()
   useEffect(() => {
@@ -92,8 +92,7 @@ const Pedidos = () => {
     })
     return () => unsubscribe()
   }, [navigate])
-  console.log(pedido)
-  console.log(detallePedidos)
+
   return (
     <section>
       { loading ? (
@@ -102,7 +101,7 @@ const Pedidos = () => {
         </div>
       ) : (
         <div className="container mx-auto p-6">
-          <h1 className="text-3xl font-bold mb-6">Mis Pedidos</h1>
+          <h1 className="text-3xl text-foreground font-bold mb-6">Mis Pedidos</h1>
           {pedido.length === 0 ? (
             <p className="text-lg text-gray-500">No tienes pedidos realizados.</p>
           ) : (
@@ -129,8 +128,8 @@ function PedidosDetalles({ pedido, productos }: { pedido: Pedido, productos: Det
   console.log('Detalles filtrados:', detallesFiltrados)
 
   return (
-    <div className="grid grid-cols-3 items-center justify-center gap-3">
-      <div className="p-6 bg-secondary rounded-md shadow-xs h-full">
+    <div className="grid grid-cols-3 items-center justify-center gap-1">
+      <div className="p-6 bg-secondary rounded-l-md shadow-xs h-full">
         <div className='flex justify-between items-center mb-4 border-b-1 border-primary-1 pb-2'>
           <h2 className='font-bold text-2xl text-primary-1'>{pedido.estado}</h2>
           <p className='font-semibold text-foreground'>Fecha: <span className='font-normal text-sm text-gray-400/90'>{fecha.format('DD/MM/YYYY HH:mm')}</span></p>
@@ -149,7 +148,7 @@ function PedidosDetalles({ pedido, productos }: { pedido: Pedido, productos: Det
           <div className="font-semibold text-primary-1">{pedido.idUsuarioNombre + ' ' + pedido.idUsuarioApellido}</div>
         </div>
       </div>
-      <section className='w-full bg-secondary col-span-2 p-6'>
+      <section className='w-full bg-secondary rounded-r-md shadow-xs col-span-2 p-6'>
         <h3 className='text-lg font-semibold text-primary-1 mb-4'>Productos del Pedido</h3>
         <ScrollShadow hideScrollBar className='h-56'>
           <div className='grid grid-cols-2 gap-6'>
