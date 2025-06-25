@@ -26,3 +26,21 @@ export const setPedidoFromCarrito = async (idUsuario: string, createdBy?: string
     }
   }
 }
+
+//Get pedidos by user - GET http://localhost:8080/api/pedido/usuario/LNsUIsfYWnM5GGqkILyQlfzYlGR2
+export const getPedidosByUsuario = async (idUsuario: string): Promise<Pedido[]> => {
+  try {
+    const response = await axios.get<Pedido[]>(`${API_URL}/pedido/usuario/${idUsuario}`)
+    return response.data
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorDetails = error.response?.data || error.message
+      console.error('Error al obtener los pedidos:', errorDetails)
+      throw new Error(`Error al obtener los pedidos: ${errorDetails}`)
+    } else {
+      const errorMessage = (error as Error).message
+      console.error('Error al obtener los pedidos:', errorMessage)
+      throw new Error(`Error al obtener los pedidos: ${errorMessage}`)
+    }
+  }
+}
