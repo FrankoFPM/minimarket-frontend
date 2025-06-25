@@ -156,7 +156,7 @@ function PedidosDetalles({ pedido, productos }: { pedido: Pedido, productos: Det
               <p className='text-gray-500'>No hay productos en este pedido.</p>
             ) : (
               detallesFiltrados.map((detalle: DetallePedido) => (
-                <CardProducto key={detalle.idPedidoId} detalle={detalle} pedido={pedido} />
+                <CardProducto key={detalle.id} detalle={detalle} pedido={pedido} />
               ))
             )}
           </div>
