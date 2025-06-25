@@ -34,7 +34,6 @@ export default function Carrito() {
 
   const total = subtotal + envio
 
-  console.log('Carrito', carrito)
   console.log('Productos del carrito:', productos)
   const handleCompra = async () => {
     try {
