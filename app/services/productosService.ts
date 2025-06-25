@@ -110,10 +110,10 @@ export const getProductosLowStock = async (): Promise<Producto[]> => {
     return response.data
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
-      console.error('Error al obtener productos sin stock:', error.response?.data || error.message)
+      console.error('Error al obtener productos de bajo stock:', error.response?.data || error.message)
     } else {
       console.error('Error al obtener productos sin stock:', (error as Error).message)
     }
-    throw new Error('Error al obtener productos sin stock.')
+    throw new Error('Error al obtener productos de bajo stock.')
   }
 }
