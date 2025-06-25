@@ -41,7 +41,9 @@ export default [
     route('dashboard/reports', 'routes/Admin/Reportss/reports.tsx'),
     route('dashboard/products', 'routes/Admin/Products/Products.tsx'), // Ruta de productos dentro del layout de administración
   ]),
-
+  
+  route('unauthorized','routes/Admin/unauthorized.tsx'), // Ruta de Desautorización
+  
   route('test', 'test/appTest.tsx'), // Ruta de prueba
 
   // Ejemplo de uso de prefix para agrupar rutas relacionadas con usuarios
