@@ -1,5 +1,6 @@
 import { CardsReport } from './Components/Cards'
 import { PieChartCategorias, PieChartUsuariosPorRol } from './Components/Charts'
+import { TableDashboard } from './Components/TableDashboard'
 
 export default function AdminIndex() {
 
@@ -11,6 +12,7 @@ export default function AdminIndex() {
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
         <PieChartCategorias />
         <PieChartUsuariosPorRol />
+        <TableDashboard />
       </div>
     </div>
   )
