@@ -2,11 +2,11 @@ import { FaBox, FaChartPie, FaCog, FaHome, FaShoppingCart,FaClipboardList, FaUse
 import { Link, NavLink, useLocation } from 'react-router'
 import navigationData from '../navigation.json'
 
-export function Header(){
+export function Header({ user }: { user: string }) {
 
   const path = useLocation().pathname
 
-  let title = 'Bienvenido de nuevo, USER'
+  let title = 'Bienvenido de nuevo,  ' + user
   let subtitle: React.ReactNode = 'Revise el balance que tenemos preparado para ti'
 
   if(path !== '/dashboard'){
@@ -88,7 +88,7 @@ export function Button({ link, icon, text }: Omit<ButtonProps, 'active'>) {
   )
 }
 
-export function Navbar(){
+export function Navbar() {
   return (
     <nav className="w-fit h-full px-6 nav sticky top-0 max-h-screen">
       <div className='flex items-center gap-3 my-6 px-4'>

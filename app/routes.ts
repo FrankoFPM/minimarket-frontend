@@ -24,7 +24,7 @@ export default [
     route('terminos', 'routes/Nosotros/Terminos.tsx'), // Ruta de producto dentro del layout de la tienda
     route('politicas', 'routes/Nosotros/PoliticaPrivacidad.tsx'), // Ruta de producto dentro del layout de la tienda
     route('contacto', 'routes/Nosotros/Contacto.tsx'),
-    route('pedidos', 'routes/Nosotros/MisPedidos.tsx'), // Define la ruta para la pagina de Mis Pedidos
+    route('pedidos', 'routes/Shop/User/MisPedidos.tsx'), // Define la ruta para la pagina de Mis Pedidos
     route('pedidos', 'routes/Shop/Pedidos.tsx'), // Ruta de pedidos dentro del layout de la tienda
     route('shop', 'routes/Shop/Shop.tsx'), // Ruta de pedidos dentro del layout de la tienda
     route('nosotros', 'routes/Nosotros/Nosotros.tsx'), // Define la ruta para la página de nosotros (nosotros)

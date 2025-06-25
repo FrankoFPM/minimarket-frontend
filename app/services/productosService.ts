@@ -102,3 +102,18 @@ export const deleteProducto = async (id: string): Promise<void> => {
     throw new Error('Error al eliminar producto.')
   }
 }
+
+//get Productos with low stock - GET http://localhost:8080/api/producto/alerta-stock
+export const getProductosLowStock = async (): Promise<Producto[]> => {
+  try {
+    const response = await axios.get<Producto[]>(`${API_URL}/producto/alerta-stock`)
+    return response.data
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error('Error al obtener productos de bajo stock:', error.response?.data || error.message)
+    } else {
+      console.error('Error al obtener productos sin stock:', (error as Error).message)
+    }
+    throw new Error('Error al obtener productos de bajo stock.')
+  }
+}

@@ -89,7 +89,7 @@ export default function Product() {
   useEffect(() => {
     if (!id) return
     setLoading(true)
-    getProductoById(id.toUpperCase())
+    getProductoById(id)
       .then((producto) => {
         setProducto(producto)
         console.log('Producto obtenido:', producto) // Verifica que el producto se haya obtenido correctamente

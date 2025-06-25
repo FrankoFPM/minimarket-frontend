@@ -1,6 +1,6 @@
 import { addToast } from '@heroui/react'
-import { useState } from 'react'
-import { getProductoById } from '~/services/productosService'
+import { useEffect, useState } from 'react'
+import { getProductoById, getProductos, getProductosLowStock } from '~/services/productosService'
 import type { Producto } from '~/Types/Producto'
 
 export function useProducto(idProducto: string) {
@@ -52,4 +52,61 @@ export function useProductosByIds(ids: string[]) {
   }
 
   return { productos, loading, fetchProductos }
+}
+
+export function useAllProductos() {
+  const [productos, setProductos] = useState<Producto[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const fetchAllProductos = async () => {
+    setLoading(true)
+    try {
+      const response = await getProductos()
+      setProductos(response)
+    } catch (error) {
+      addToast({
+        title: 'Error',
+        description: 'No se pudieron obtener los productos.' + (error instanceof Error ? error.message : ''),
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+  useEffect(() => {
+    fetchAllProductos()
+  }, [])
+
+  return { productos, loading, fetchAllProductos }
+}
+
+//useProductos without stock
+export function useProductosLowStock() {
+  const [productos, setProductos] = useState<Producto[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const fetchProductosLowStock = async () => {
+    setLoading(true)
+    try {
+      const allProductos = await getProductosLowStock()
+      console.log('Productos de bajo stock:', allProductos)
+      setProductos(allProductos)
+    } catch (error) {
+      addToast({
+        title: 'Error',
+        description: 'No se pudieron obtener los productos con bajo stock.' + (error instanceof Error ? error.message : ''),
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchProductosLowStock()
+  }, [])
+
+  return { productos, loading, fetchProductosLowStock }
 }

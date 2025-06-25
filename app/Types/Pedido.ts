@@ -1,10 +1,14 @@
 export interface Pedido {
-  id_pedido: number;
-  id_usuario: string;
-  fecha_pedido: string;
+  id: number;
+  idUsuarioNombre: string;
+  idUsuarioApellido: string;
+  fechaPedido: string;
   estado: string;
-  metodo_pago: string;
+  metodoPago: string;
   total: number;
-  descuento_aplicado: number;
+  descuentoAplicado: number;
   impuesto: number;
+  createdAt: string;
+  updatedAt: string;
+  comprobanteId: number | null;
 }
