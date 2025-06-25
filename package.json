@@ -12,6 +12,8 @@
     "@fontsource/lilita-one": "^5.2.6",
     "@gsap/react": "^2.1.2",
     "@heroui/react": "^2.8.0-beta.7",
+    "@nivo/core": "^0.99.0",
+    "@nivo/pie": "^0.99.0",
     "@react-router/node": "^7.5.0",
     "@react-router/serve": "^7.5.0",
     "axios": "^1.9.0",

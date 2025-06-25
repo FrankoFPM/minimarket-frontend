@@ -2,7 +2,7 @@ import { addToast } from '@heroui/react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { useEffect, useState } from 'react'
 import { auth } from '~/firebase/firebaseConfig'
-import { getPedidosByUsuario } from '~/services/pedidoService'
+import { getAllPedidos, getPedidosByUsuario } from '~/services/pedidoService'
 import type { Pedido } from '~/Types/Pedido'
 
 export function usePedido() {
@@ -50,4 +50,27 @@ export function usePedido() {
   }, [usuarioId])
 
   return { pedido, loading, fetchPedido, usuarioId }
+}
+
+export function useAllPedidos() {
+  const [pedidos, setPedidos] = useState<Pedido[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const fetchAllPedidos = async () => {
+    setLoading(true)
+    try {
+      const data = await getAllPedidos() // Implementar un servicio para obtener todos los pedidos
+      setPedidos(data)
+    } catch (error) {
+      console.error('Error al obtener todos los pedidos:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchAllPedidos()
+  }, [])
+
+  return { pedidos, loading, refetchPedidos: fetchAllPedidos }
 }

@@ -44,3 +44,21 @@ export const getPedidosByUsuario = async (idUsuario: string): Promise<Pedido[]> 
     }
   }
 }
+
+// Get all pedidos - GET http://localhost:8080/api/pedido
+export const getAllPedidos = async (): Promise<Pedido[]> => {
+  try {
+    const response = await axios.get<Pedido[]>(`${API_URL}/pedido`)
+    return response.data
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorDetails = error.response?.data || error.message
+      console.error('Error al obtener todos los pedidos:', errorDetails)
+      throw new Error(`Error al obtener todos los pedidos: ${errorDetails}`)
+    } else {
+      const errorMessage = (error as Error).message
+      console.error('Error al obtener todos los pedidos:', errorMessage)
+      throw new Error(`Error al obtener todos los pedidos: ${errorMessage}`)
+    }
+  }
+}
