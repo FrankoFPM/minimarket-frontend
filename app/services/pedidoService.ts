@@ -62,3 +62,24 @@ export const getAllPedidos = async (): Promise<Pedido[]> => {
     }
   }
 }
+
+// Cancela un pedido - PATCH http://localhost:8080/api/pedido/{id}/cancelar?updatedBy=usuarioId
+export const cancelarPedido = async (id: number, updatedBy: string): Promise<void> => {
+  try {
+    await axios.patch(
+      `${API_URL}/pedido/${id}/cancelar`,
+      null, // No hay body
+      { params: { updatedBy } }
+    )
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorDetails = error.response?.data || error.message
+      console.error('Error al cancelar el pedido:', errorDetails)
+      throw new Error(`Error al cancelar el pedido: ${errorDetails}`)
+    } else {
+      const errorMessage = (error as Error).message
+      console.error('Error al cancelar el pedido:', errorMessage)
+      throw new Error(`Error al cancelar el pedido: ${errorMessage}`)
+    }
+  }
+}
