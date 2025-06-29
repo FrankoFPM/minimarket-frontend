@@ -217,7 +217,7 @@ export function TitleStatus({ estado }: TitleStatusProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <h2 className="text-2xl font-bold text-primary-1 capitalize">{estado.replace('_', ' ')}</h2>
+      <h2 className="text-2xl font-bold text-primary-1 capitalize">{estado.replaceAll('_', ' ')}</h2>
       <Tooltip
         showArrow
         color="warning"
