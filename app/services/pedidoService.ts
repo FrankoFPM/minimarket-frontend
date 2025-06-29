@@ -62,3 +62,45 @@ export const getAllPedidos = async (): Promise<Pedido[]> => {
     }
   }
 }
+
+// Cancela un pedido - PATCH http://localhost:8080/api/pedido/{id}/cancelar?updatedBy=usuarioId
+export const cancelarPedido = async (id: number, updatedBy: string): Promise<void> => {
+  try {
+    await axios.patch(
+      `${API_URL}/pedido/${id}/cancelar`,
+      null, // No hay body
+      { params: { updatedBy } }
+    )
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorDetails = error.response?.data || error.message
+      console.error('Error al cancelar el pedido:', errorDetails)
+      throw new Error(`Error al cancelar el pedido: ${errorDetails}`)
+    } else {
+      const errorMessage = (error as Error).message
+      console.error('Error al cancelar el pedido:', errorMessage)
+      throw new Error(`Error al cancelar el pedido: ${errorMessage}`)
+    }
+  }
+}
+
+//Mostrar boleta GET http://localhost:8080/api/pedido/boleta/1/LNsUIsfYWnM5GGqkILyQlfzYlGR2
+export const getBoleta = async (idPedido: number, idUsuario: string): Promise<string> => {
+  try {
+    const response = await axios.get(`${API_URL}/pedido/boleta/${idPedido}/${idUsuario}`, {
+      responseType: 'arraybuffer'
+    })
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+    return URL.createObjectURL(blob)
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorDetails = error.response?.data || error.message
+      console.error('Error al obtener la boleta:', errorDetails)
+      throw new Error(`Error al obtener la boleta: ${errorDetails}`)
+    } else {
+      const errorMessage = (error as Error).message
+      console.error('Error al obtener la boleta:', errorMessage)
+      throw new Error(`Error al obtener la boleta: ${errorMessage}`)
+    }
+  }
+}
