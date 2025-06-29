@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router'
 import { auth } from '~/firebase/firebaseConfig'
 import { useDetallePedidoByUser } from '~/hooks/useDetallePedido'
 import { usePedido } from '~/hooks/usePedido'
-import { cancelarPedido } from '~/services/pedidoService'
+import { cancelarPedido, getBoleta } from '~/services/pedidoService'
 import type { DetallePedido } from '~/Types/DetallePedido'
 import type { Pedido } from '~/Types/Pedido'
 
@@ -267,14 +267,25 @@ export function PedidoActions({ estado, pedido, uid }: PedidoActionsProps) {
 
   }
 
-  const handlePago = () => {
-    console.log(`Proceder al pago del pedido ${pedido.id}.`)
-    // Aquí podrías redirigir al usuario a la pasarela de pago
-  }
-
-  const handleVerBoleta = () => {
-    console.log(`Ver boleta del pedido ${pedido.id}.`)
-    // Aquí podrías abrir o descargar la boleta
+  const handleVerBoleta = async () => {
+    try {
+      const url = await getBoleta(pedido.id, uid)
+      // Para abrir en una nueva pestaña:
+      window.open(url, '_blank')
+      /* pa descargar el PDF:
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `boleta_${pedido.id}.pdf`
+      a.click()
+      window.URL.revokeObjectURL(url)*/
+    } catch (error) {
+      console.error('Error al obtener la boleta:', error)
+      addToast({
+        title: 'Error',
+        description: 'No se pudo obtener la boleta.',
+        color: 'danger',
+      })
+    }
   }
 
   if (estado === 'cancelado') {
@@ -292,7 +303,7 @@ export function PedidoActions({ estado, pedido, uid }: PedidoActionsProps) {
           variant="solid"
           color="primary"
           className="w-full"
-          onPress={handlePago}
+          onPress={handleVerBoleta}
         >
           Proceder al Pago
         </Button>
