@@ -1,250 +1,372 @@
-import { Button, useDisclosure } from '@heroui/react'
-import { TbEdit, TbEye, TbTrash } from 'react-icons/tb'
-import { InputField } from '~/Components/FormComponent'
-import { ChipStatus, Table } from '../Components/Table'
-import { ModalBase } from '../Components/ModalBase'
+import { useState, useMemo } from 'react'
+import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, addToast } from '@heroui/react'
+import { TbEye, TbEdit } from 'react-icons/tb'
+import { Table } from '../Components/Table'
+import { SelectInput } from '~/Components/FormComponent'
+import { useAllPedidos } from '~/hooks/usePedido'
+import { getDetallePedidoById } from '~/services/detallePedidoService'
+import { updatePedidoEstado } from '~/services/pedidoService'
+import type { Pedido } from '~/Types/Pedido'
+import type { DetallePedido } from '~/Types/DetallePedido'
 
-export default function ModuloSales() {
+// Componente para mostrar el estado de los pedidos
+function ChipEstadoPedido({ estado }: { estado: string }) {
+  const getEstiloEstado = (estado: string) => {
+    switch (estado) {
+    case 'solicitado':
+      return 'bg-blue-500/25 text-blue-800 dark:text-blue-500'
+    case 'pendiente_pago':
+      return 'bg-yellow-500/25 text-yellow-800 dark:text-yellow-500'
+    case 'pagado':
+      return 'bg-green-500/25 text-green-800 dark:text-green-500'
+    case 'completado':
+      return 'bg-emerald-500/25 text-emerald-800 dark:text-emerald-500'
+    case 'cancelado':
+      return 'bg-red-500/25 text-red-800 dark:text-red-500'
+    default:
+      return 'bg-gray-500/25 text-gray-800 dark:text-gray-500'
+    }
+  }
 
-  const headers = [
-    { text:'Codigo de venta', className: 'text-center' },
-    { text:'Codigo de empleado', className: 'text-center' },
-    { text:'Empleado', className: 'text-center' }, //
-    { text:'ID del Producto', className: 'text-center' },
-    { text:'Nombre del Producto', className: 'text-center' },
-    { text:'Cantidad', className: 'text-center' }, //
-    { text:'Precio de venta', className: 'text-center' },
-    { text:'Fecha de modificacion', className: 'text-center' },
-    { text:'Estado', className: 'text-center' },
-    { text:'Acciones', className: 'text-center' },
-  ]
+  const getTextoEstado = (estado: string) => {
+    switch (estado) {
+    case 'solicitado': return 'Solicitado'
+    case 'pendiente_pago': return 'Pendiente pago'
+    case 'pagado': return 'Pagado'
+    case 'completado': return 'Completado'
+    case 'cancelado': return 'Cancelado'
+    default: return 'Desconocido'
+    }
+  }
 
   return (
-    <div className="flex flex-col bg-background mx-auto my-10 container gap-4">
-      <h1 className="text-3xl font-bold text-center">Panel de administración</h1>
-      <p className="text-center">Desde este panel puedes gestionar las ventas.</p>
-      <ModalAdd />
-      <Table headers={headers}>
-
-        <tr className="[&>td]:h-12 [&>td]:px-4 [&>td]:py-1.5">
-          <td className="text-center" width={160}>U101</td>
-          <td className="text-center" width={160}>E300</td>
-          <td className="text-center" width={160}>Juan Perez</td>
-          <td className="text-center" width={160}>P102</td>
-          <td className="text-center" width={160}>Arroz Costeño 1kg</td>
-          <td className="text-center" width={160}>2</td>
-          <td className="text-center" width={160}>S/ 3.50</td>
-          <td className="text-center" width={160}>10/03/25</td>
-          <td className="">
-            <ChipStatus status={1} />
-          </td>
-          <td className="">
-            <div className="flex items-center justify-center text-2xl gap-4">
-              <ModalActions codSales='1' />
-            </div>
-          </td>
-        </tr>
-      </ Table>
+    <div className={`mx-auto w-24 text-center py-1 px-2 rounded-full text-xs font-semibold ${getEstiloEstado(estado)}`}>
+      {getTextoEstado(estado)}
     </div>
   )
 }
 
-interface ModalActions {
-  codSales: string;
-}
+export default function ModuloSales() {
+  // Estados posibles
+  const ESTADOS = [
+    { value: '', label: 'Todos' },
+    { value: 'solicitado', label: 'Solicitado' },
+    { value: 'pendiente_pago', label: 'Pendiente de pago' },
+    { value: 'pagado', label: 'Pagado' },
+    { value: 'completado', label: 'Completado' },
+    { value: 'cancelado', label: 'Cancelado' },
+  ]
 
-function ModalActions({codSales}: ModalActions){
+  const headers = [
+    { text:'Código de venta', className: 'text-center' },
+    { text:'Cliente', className: 'text-center' },
+    { text:'Fecha', className: 'text-center' },
+    { text:'Estado', className: 'text-center' },
+    { text:'Total', className: 'text-center' },
+    { text:'Acciones', className: 'text-center' },
+  ]
+
+  // Filtros
+  const [estado, setEstado] = useState('')
+  const [cliente, setCliente] = useState('')
+
+  // Pedidos y loading
+  const { pedidos, loading, refetchPedidos } = useAllPedidos()
+  // Para modal de detalles
+  const [detalleOpen, setDetalleOpen] = useState(false)
+  const [detallePedido, setDetallePedido] = useState<DetallePedido[] | null>(null)
+  const [pedidoSeleccionado, setPedidoSeleccionado] = useState<Pedido | null>(null)
+  const [detalleLoading, setDetalleLoading] = useState(false)
+
+  // Para modal de edición
   const editModal = useDisclosure()
-  const viewModal = useDisclosure()
-  const deleteModal = useDisclosure()
+  const [pedidoParaEditar, setPedidoParaEditar] = useState<Pedido | null>(null)
+  const [nuevoEstado, setNuevoEstado] = useState('')
 
-  //fetch product data by idProduc if needed
-  // const fetchProductData = async (id: string) => {
-  codSales = codSales || '1' // Example id, replace with actual data
+  // Obtener lista de clientes únicos
+  const clientesUnicos = useMemo(() => {
+    const map = new Map<string, string>()
+    pedidos.forEach(p => {
+      const nombre = `${p.idUsuarioNombre} ${p.idUsuarioApellido}`.trim()
+      if (nombre && !map.has(nombre)) map.set(nombre, nombre)
+    })
+    return Array.from(map.values())
+  }, [pedidos])
+
+  // Filtrar pedidos
+  const pedidosFiltrados = useMemo(() => {
+    return pedidos.filter(p => {
+      const coincideEstado = estado ? p.estado === estado : true
+      const coincideCliente = cliente ? (`${p.idUsuarioNombre} ${p.idUsuarioApellido}`.trim() === cliente) : true
+      return coincideEstado && coincideCliente
+    })
+  }, [pedidos, estado, cliente])
+
+  // Abrir modal de detalles
+  const handleVerDetalle = async (pedido: Pedido) => {
+    setDetalleLoading(true)
+    setPedidoSeleccionado(pedido)
+    try {
+      // El servicio retorna un array de detalles
+      const detalles = await getDetallePedidoById(pedido.id)
+      setDetallePedido(Array.isArray(detalles) ? detalles : [detalles])
+      setDetalleOpen(true)
+    } catch {
+      setDetallePedido(null)
+      setDetalleOpen(false)
+    } finally {
+      setDetalleLoading(false)
+    }
+  }
+
+  // Abrir modal de edición
+  const handleEditarPedido = (pedido: Pedido) => {
+    setPedidoParaEditar(pedido)
+    setNuevoEstado(pedido.estado)
+    editModal.onOpen()
+  }  // Obtener estados válidos para la transición
+  const getEstadosValidos = (estadoActual: string) => {
+    const transicionesValidas: Record<string, string[]> = {
+      'solicitado': ['pendiente_pago', 'cancelado'],
+      'pendiente_pago': ['pagado', 'cancelado'],
+      'pagado': ['completado', 'cancelado'],
+      'completado': [], // Estado final - no se puede cambiar
+      'cancelado': [] // Estado final - no se puede cambiar
+    }
+
+    return ESTADOS.filter(estado => {
+      if (estado.value === '') return false // Excluir "Todos"
+      if (estado.value === estadoActual) return false // Excluir el estado actual
+      return transicionesValidas[estadoActual]?.includes(estado.value) || false
+    })
+  }
+  const handleActualizarEstado = async () => {
+    if (!pedidoParaEditar) return
+
+    // Validar que se haya seleccionado un nuevo estado
+    if (!nuevoEstado || nuevoEstado === pedidoParaEditar.estado) {
+      addToast({
+        title: 'Error de validación',
+        description: 'Debe seleccionar un estado diferente al actual.',
+        color: 'warning',
+        shouldShowTimeoutProgress: true,
+      })
+      return
+    }
+
+    // Validar transición
+    const estadosValidos = getEstadosValidos(pedidoParaEditar.estado)
+    const esTransicionValida = estadosValidos.some(estado => estado.value === nuevoEstado)
+
+    if (!esTransicionValida) {
+      addToast({
+        title: 'Transición no válida',
+        description: `No se puede cambiar de '${pedidoParaEditar.estado}' a '${nuevoEstado}'.`,
+        color: 'warning',
+        shouldShowTimeoutProgress: true,
+      })
+      return
+    }
+
+    try {
+      await updatePedidoEstado(pedidoParaEditar.id, nuevoEstado)
+
+      // Mostrar mensaje de éxito
+      addToast({
+        title: 'Estado actualizado',
+        description: `El estado del pedido #${pedidoParaEditar.id} se actualizó correctamente a '${nuevoEstado}'.`,
+        color: 'success',
+        shouldShowTimeoutProgress: true,
+      })
+
+      // Actualizar la lista de pedidos
+      await refetchPedidos()
+      editModal.onClose()
+    } catch (error) {
+      console.error('Error al actualizar el estado:', error)
+
+      // Mostrar mensaje de error
+      addToast({
+        title: 'Error al actualizar estado',
+        description: error instanceof Error ? error.message : 'No se pudo actualizar el estado del pedido.',
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
+      })
+    }
+  }
 
   return (
-    <>
-      <TbEye className="text-blue-400 drop-shadow-xs cursor-pointer" onClick={viewModal.onOpen} />
-      <TbEdit className="text-amber-400 drop-shadow-xs cursor-pointer" onClick={editModal.onOpen} />
-      <TbTrash className="text-red-600 drop-shadow-xs cursor-pointer" onClick={deleteModal.onOpen} />
-      {/* Edit Modal */}
-      <ModalBase
+    <div className="flex flex-col bg-background mx-auto my-10 container gap-4">
+      <h1 className="text-3xl font-bold text-center">Panel de administración de ventas</h1>
+      <p className="text-center">Desde este panel puedes gestionar y revisar todas las ventas realizadas.</p>
+
+      {/* Filtros */}
+      <div className="flex gap-4 w-fit mx-auto items-center justify-center mb-4">
+        <SelectInput
+          label="Estado"
+          value={estado}
+          onChange={e => setEstado(e.target.value)}
+          className="w-48 rounded-md"
+        >
+          {ESTADOS.map(opt => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
+        </SelectInput>
+        <SelectInput
+          label="Cliente"
+          value={cliente}
+          onChange={e => setCliente(e.target.value)}
+          className="w-64 rounded-md"
+        >
+          <option value="">Todos</option>
+          {clientesUnicos.map(nombre => (
+            <option key={nombre} value={nombre}>{nombre}</option>
+          ))}
+        </SelectInput>
+        <Button onPress={refetchPedidos} color="primary">Actualizar</Button>
+      </div>
+
+      <Table headers={headers}>
+        {loading ? (
+          <tr><td colSpan={headers.length} className="text-center py-8">Cargando...</td></tr>
+        ) : pedidosFiltrados.length === 0 ? (
+          <tr><td colSpan={headers.length} className="text-center py-8">No hay ventas para mostrar.</td></tr>
+        ) : (
+          pedidosFiltrados.map(pedido => (
+            <tr key={pedido.id} className="[&>td]:h-12 [&>td]:px-4 [&>td]:py-1.5">
+              <td className="text-center">{pedido.id}</td>
+              <td className="text-center">{pedido.idUsuarioNombre} {pedido.idUsuarioApellido}</td>
+              <td className="text-center">{new Date(pedido.fechaPedido).toLocaleDateString()}</td>
+              <td className="text-center"><ChipEstadoPedido estado={pedido.estado} /></td>
+              <td className="text-center">S/ {pedido.total?.toFixed(2)}</td>
+              <td className="text-center flex gap-2 items-center justify-center">
+                <TbEye className="text-blue-400 drop-shadow-xs cursor-pointer size-6" onClick={() => handleVerDetalle(pedido)} />
+                <TbEdit className="text-amber-400 drop-shadow-xs cursor-pointer size-6" onClick={() => handleEditarPedido(pedido)} />
+              </td>
+            </tr>
+          ))
+        )}
+      </Table>
+
+      {/* Modal de detalles de venta */}
+      <Modal
+        isOpen={detalleOpen}
+        onOpenChange={() => setDetalleOpen(false)}
+        size="5xl"
+        classNames={{
+          backdrop: 'backdrop-blur-md'
+        }}
+        backdrop='blur'
+      >
+        <ModalContent>
+          {() => (
+            <>
+              <ModalHeader>
+                {pedidoSeleccionado ? `Detalle de venta #${pedidoSeleccionado.id}` : 'Detalle de venta'}
+              </ModalHeader>
+              <ModalBody>
+                {detalleLoading ? (
+                  <div className="text-center py-8">Cargando detalles...</div>
+                ) : detallePedido && pedidoSeleccionado ? (
+                  <div>
+                    <div className="mb-2 font-semibold">Cliente: {pedidoSeleccionado.idUsuarioNombre} {pedidoSeleccionado.idUsuarioApellido}</div>
+                    <div className="mb-2">Fecha: {new Date(pedidoSeleccionado.fechaPedido).toLocaleString()}</div>
+                    <div className="mb-2">Estado: <ChipEstadoPedido estado={pedidoSeleccionado.estado} /></div>
+                    <div className="mb-2">Total: <span className="font-bold">S/ {pedidoSeleccionado.total?.toFixed(2)}</span></div>
+                    <div className="mb-2">Productos:</div>
+                    <table className="w-full text-sm border">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="p-2 border">ID</th>
+                          <th className="p-2 border">Nombre</th>
+                          <th className="p-2 border">Cantidad</th>
+                          <th className="p-2 border">Precio unitario</th>
+                          <th className="p-2 border">Subtotal</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {detallePedido.map(det => (
+                          <tr key={det.id}>
+                            <td className="p-2 border">{det.idProducto}</td>
+                            <td className="p-2 border">{det.idProductoNombre}</td>
+                            <td className="p-2 border">{det.cantidad}</td>
+                            <td className="p-2 border">S/ {det.precioUnitario?.toFixed(2)}</td>
+                            <td className="p-2 border">S/ {det.subtotal?.toFixed(2)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">No se encontraron detalles para este pedido.</div>
+                )}
+              </ModalBody>
+              <ModalFooter>
+                <Button onPress={() => setDetalleOpen(false)}>Cerrar</Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      {/* Modal de edición de estado */}
+      <Modal
         isOpen={editModal.isOpen}
-        onClose={editModal.onClose}
-        title="Editar venta"
-        footer={
-          <>
-            <Button
-              color="danger"
-              onPress={editModal.onClose}
-            >
-              Cerrar
-            </Button>
-            <Button
-              color="success"
-              onPress={editModal.onClose}
-            >
-              Guardar
-            </Button>
-          </>
-        }
+        onOpenChange={editModal.onOpenChange}
+        size="md"
+        classNames={{
+          backdrop: 'backdrop-blur-md'
+        }}
+        backdrop='blur'
       >
-        <form action="">
-          <input type="hidden" value={codSales} />
-          <InputField
-            label="Codigo de venta"
-            name="salesCod"
-            type="text"
-            placeholder="Ingrese el codigo del producto"
-          />
-          <InputField
-            label="Codigo de empleado"
-            name="salesCod"
-            type="text"
-            placeholder="Ingrese el codigo del empleado"
-          />
-          <InputField
-            label="Nombre del empleado"
-            name="salesName"
-            type="text"
-            placeholder="Ingrese el nombre del empleado"
-            value={'Manzana'} // Example value, replace with actual data
-          />
-          <InputField
-            label="ID del producto"
-            name="salesId"
-            type="text"
-            placeholder="Ingrese la descripción del producto"
-          />
-          <InputField
-            label="Cantidad"
-            name="salesCantidad"
-            type="text"
-            placeholder="Ingrese la cantidad del producto"
-          />
-          <InputField
-            label="Precio de venta del producto"
-            name="salesPrice"
-            type="text"
-            placeholder="Ingrese el precio del producto"
-          />
-        </form>
-      </ModalBase>
-      {/* View Modal */}
-      <ModalBase
-        isOpen={viewModal.isOpen}
-        onClose={viewModal.onClose}
-        title="Ver producto"
-        footer={
-          <Button color="danger" onPress={viewModal.onClose}>
-            Cerrar
-          </Button>
-        }
-      >
-        <div className="flex flex-col gap-4">
-          <p><strong>Código de venta:</strong> {codSales}</p>
-          <p><strong>Código de empleado:</strong> {codSales}</p>
-          <p><strong>Empleado:</strong> Manzana</p>
-          <p><strong>ID del producto:</strong> abcdefg </p>
-          <p><strong>Nombre del producto:</strong> abcdefg </p>
-          <p><strong>Cantidad:</strong> 1</p>
-          <p><strong>Precio de venta:</strong> S/3.50 </p>
-          <p><strong>Cantidad:</strong> 20 </p>
-          <p><strong>Fecha de modificación:</strong>10/03/25</p>
-          <p><strong>Estado:</strong> Activo</p>
-        </div>
-      </ModalBase>
-
-      {/* Delete Modal */}
-      <ModalBase
-        isOpen={deleteModal.isOpen}
-        onClose={deleteModal.onClose}
-        title="Eliminar venta"
-        footer={
-          <>
-            <Button color="danger" onPress={deleteModal.onClose}>
-              Cancelar
-            </Button>
-            <Button color="success" onPress={deleteModal.onClose}>
-              Eliminar
-            </Button>
-          </>
-        }
-      >
-        <p>¿Estás seguro de que deseas eliminar la venta del codigo {codSales}?</p>
-      </ModalBase>
-
-    </>
-  )
-}
-
-function ModalAdd(){
-  const addModal = useDisclosure()
-  return(
-    <>
-      <Button
-        color="success"
-        className="w-fit ml-auto"
-        onPress={addModal.onOpen}
-      >
-        Agregar nueva venta
-      </Button>
-
-      <ModalBase
-        isOpen={addModal.isOpen}
-        onClose={addModal.onClose}
-        title="Agregar ventas"
-        footer={
-          <>
-            <Button color="danger" onPress={addModal.onClose}>
-            Cerrar
-            </Button>
-            <Button color="success" onPress={addModal.onClose}>
-            Guardar
-            </Button>
-          </>
-        }
-      >
-        <form action="">
-          <InputField
-            label="Codigo de venta"
-            name="salesCod"
-            type="text"
-            placeholder="Ingrese el codigo del producto"
-          />
-          <InputField
-            label="Codigo de empleado"
-            name="salesCod"
-            type="text"
-            placeholder="Ingrese el codigo del empleado"
-          />
-          <InputField
-            label="Nombre del empleado"
-            name="salesName"
-            type="text"
-            placeholder="Ingrese el nombre del empleado"
-            value={'Manzana'} // Example value, replace with actual data
-          />
-          <InputField
-            label="ID del producto"
-            name="salesId"
-            type="text"
-            placeholder="Ingrese la descripción del producto"
-          />
-          <InputField
-            label="Cantidad"
-            name="salesCantidad"
-            type="text"
-            placeholder="Ingrese la cantidad del producto"
-          />
-          <InputField
-            label="Precio de venta del producto"
-            name="salesPrice"
-            type="text"
-            placeholder="Ingrese el precio del producto"
-          />
-        </form>
-      </ModalBase>
-    </>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>
+                {pedidoParaEditar ? `Editar estado de venta #${pedidoParaEditar.id}` : 'Editar estado de venta'}
+              </ModalHeader>
+              <ModalBody>
+                {pedidoParaEditar && (
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm text-gray-600 mb-2">
+                        Cliente: {pedidoParaEditar.idUsuarioNombre} {pedidoParaEditar.idUsuarioApellido}
+                      </p>
+                      <div className="text-sm text-gray-600 mb-2">
+                        Estado actual: <ChipEstadoPedido estado={pedidoParaEditar.estado} />
+                      </div>
+                      {getEstadosValidos(pedidoParaEditar.estado).length === 0 && (
+                        <p className="text-sm text-red-600 mb-2">
+                          ⚠️ No se pueden realizar cambios de estado desde &apos;{pedidoParaEditar.estado}&apos;
+                        </p>
+                      )}
+                    </div>
+                    <SelectInput
+                      label="Nuevo estado"
+                      value={nuevoEstado}
+                      onChange={e => setNuevoEstado(e.target.value)}
+                      className="rounded-md"
+                    >
+                      <option value="">Seleccione un estado</option>
+                      {getEstadosValidos(pedidoParaEditar.estado).map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </SelectInput>
+                  </div>
+                )}
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Cancelar
+                </Button>
+                <Button color="primary" onPress={handleActualizarEstado}>
+                  Actualizar Estado
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    </div>
   )
 }

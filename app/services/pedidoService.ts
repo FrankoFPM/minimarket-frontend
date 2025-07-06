@@ -84,6 +84,45 @@ export const cancelarPedido = async (id: number, updatedBy: string): Promise<voi
   }
 }
 
+// Actualiza el estado de un pedido - PATCH http://localhost:8080/api/pedido/{id}/estado?nuevoEstado=ESTADO_DESEADO
+export const updatePedidoEstado = async (id: number, nuevoEstado: string): Promise<Pedido> => {
+  try {
+    const response = await axios.patch<Pedido>(
+      `${API_URL}/pedido/${id}/estado`,
+      null, // No hay body
+      { params: { nuevoEstado } }
+    )
+    return response.data
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorDetails = error.response?.data || error.message
+      const status = error.response?.status
+
+      // Agregar más información sobre el error
+      console.error('Error al actualizar el estado del pedido:', {
+        status,
+        data: error.response?.data,
+        pedidoId: id,
+        nuevoEstado,
+        url: `${API_URL}/pedido/${id}/estado?nuevoEstado=${nuevoEstado}`
+      })
+
+      // Mensajes de error más específicos
+      if (status === 400) {
+        throw new Error(`Error de validación: No se puede cambiar el estado a '${nuevoEstado}'. Verifique las reglas de transición de estados.`)
+      } else if (status === 404) {
+        throw new Error(`Pedido con ID ${id} no encontrado.`)
+      } else {
+        throw new Error(`Error al actualizar el estado del pedido: ${errorDetails}`)
+      }
+    } else {
+      const errorMessage = (error as Error).message
+      console.error('Error al actualizar el estado del pedido:', errorMessage)
+      throw new Error(`Error al actualizar el estado del pedido: ${errorMessage}`)
+    }
+  }
+}
+
 //Mostrar boleta GET http://localhost:8080/api/pedido/boleta/1/LNsUIsfYWnM5GGqkILyQlfzYlGR2
 export const getBoleta = async (idPedido: number, idUsuario: string): Promise<string> => {
   try {
