@@ -5,7 +5,7 @@ import { Table } from '../Components/Table'
 import { SelectInput } from '~/Components/FormComponent'
 import { useAllPedidos } from '~/hooks/usePedido'
 import { getDetallePedidoById } from '~/services/detallePedidoService'
-import { updatePedidoEstado } from '~/services/pedidoService'
+import { updatePedidoEstado, getBoleta } from '~/services/pedidoService'
 import type { Pedido } from '~/Types/Pedido'
 import type { DetallePedido } from '~/Types/DetallePedido'
 
@@ -66,6 +66,15 @@ export default function ModuloSales() {
     { text:'Acciones', className: 'text-center' },
   ]
 
+  // Headers para la tabla de productos en el modal
+  const productHeaders = [
+    { text: 'ID Producto', className: 'text-center' },
+    { text: 'Nombre', className: 'text-left' },
+    { text: 'Cantidad', className: 'text-center' },
+    { text: 'Precio Unit.', className: 'text-right' },
+    { text: 'Subtotal', className: 'text-right' },
+  ]
+
   // Filtros
   const [estado, setEstado] = useState('')
   const [cliente, setCliente] = useState('')
@@ -82,6 +91,9 @@ export default function ModuloSales() {
   const editModal = useDisclosure()
   const [pedidoParaEditar, setPedidoParaEditar] = useState<Pedido | null>(null)
   const [nuevoEstado, setNuevoEstado] = useState('')
+
+  // Para descarga de boleta
+  const [boletaLoading, setBoletaLoading] = useState(false)
 
   // Obtener lista de clientes únicos
   const clientesUnicos = useMemo(() => {
@@ -124,6 +136,44 @@ export default function ModuloSales() {
     setPedidoParaEditar(pedido)
     setNuevoEstado(pedido.estado)
     editModal.onOpen()
+  }
+
+  // Descargar boleta
+  const handleDescargarBoleta = async (pedido: Pedido) => {
+    setBoletaLoading(true)
+    try {
+      // TODO: Necesitamos el idUsuario para la boleta. Por ahora usaremos un placeholder
+      // En una implementación real, deberías obtener el idUsuario del pedido o del contexto
+      const boletaUrl = await getBoleta(pedido.id, 'placeholder-user-id')
+
+      // Crear enlace temporal para descarga
+      const link = document.createElement('a')
+      link.href = boletaUrl
+      link.download = `boleta-pedido-${pedido.id}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      // Liberar el objeto URL
+      URL.revokeObjectURL(boletaUrl)
+
+      addToast({
+        title: 'Boleta descargada',
+        description: 'La boleta se ha descargado correctamente.',
+        color: 'success',
+        shouldShowTimeoutProgress: true,
+      })
+    } catch (error) {
+      console.error('Error al descargar la boleta:', error)
+      addToast({
+        title: 'Error al descargar boleta',
+        description: error instanceof Error ? error.message : 'No se pudo descargar la boleta.',
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
+      })
+    } finally {
+      setBoletaLoading(false)
+    }
   }  // Obtener estados válidos para la transición
   const getEstadosValidos = (estadoActual: string) => {
     const transicionesValidas: Record<string, string[]> = {
@@ -253,56 +303,131 @@ export default function ModuloSales() {
         isOpen={detalleOpen}
         onOpenChange={() => setDetalleOpen(false)}
         size="5xl"
+        hideCloseButton
         classNames={{
           backdrop: 'backdrop-blur-md'
         }}
         backdrop='blur'
+        scrollBehavior='outside'
       >
         <ModalContent>
           {() => (
             <>
-              <ModalHeader>
-                {pedidoSeleccionado ? `Detalle de venta #${pedidoSeleccionado.id}` : 'Detalle de venta'}
+              <ModalHeader className="border-b">
+                <div className="flex items-center justify-between w-full">
+                  <h2 className="text-xl font-bold">
+                    {pedidoSeleccionado ? `Detalle de venta #${pedidoSeleccionado.id}` : 'Detalle de venta'}
+                  </h2>
+                  {pedidoSeleccionado && (
+                    <Button
+                      size="sm"
+                      color="success"
+                      variant="flat"
+                      isLoading={boletaLoading}
+                      onPress={() => handleDescargarBoleta(pedidoSeleccionado)}
+                    >
+                      📄 Descargar Boleta
+                    </Button>
+                  )}
+                </div>
               </ModalHeader>
-              <ModalBody>
+              <ModalBody className="p-6">
                 {detalleLoading ? (
-                  <div className="text-center py-8">Cargando detalles...</div>
+                  <div className="text-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-gray-600">Cargando detalles...</p>
+                  </div>
                 ) : detallePedido && pedidoSeleccionado ? (
-                  <div>
-                    <div className="mb-2 font-semibold">Cliente: {pedidoSeleccionado.idUsuarioNombre} {pedidoSeleccionado.idUsuarioApellido}</div>
-                    <div className="mb-2">Fecha: {new Date(pedidoSeleccionado.fechaPedido).toLocaleString()}</div>
-                    <div className="mb-2">Estado: <ChipEstadoPedido estado={pedidoSeleccionado.estado} /></div>
-                    <div className="mb-2">Total: <span className="font-bold">S/ {pedidoSeleccionado.total?.toFixed(2)}</span></div>
-                    <div className="mb-2">Productos:</div>
-                    <table className="w-full text-sm border">
-                      <thead>
-                        <tr className="bg-gray-100">
-                          <th className="p-2 border">ID</th>
-                          <th className="p-2 border">Nombre</th>
-                          <th className="p-2 border">Cantidad</th>
-                          <th className="p-2 border">Precio unitario</th>
-                          <th className="p-2 border">Subtotal</th>
-                        </tr>
-                      </thead>
-                      <tbody>
+                  <div className="space-y-6">
+                    {/* Información del pedido */}
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h3 className="font-semibold text-lg mb-3 text-gray-800">Información del Pedido</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <span className="text-sm font-medium text-gray-600">Cliente:</span>
+                          <p className="text-base font-semibold text-gray-900">
+                            {pedidoSeleccionado.idUsuarioNombre} {pedidoSeleccionado.idUsuarioApellido}
+                          </p>
+                        </div>
+                        <div>
+                          <span className="text-sm font-medium text-gray-600">Fecha del pedido:</span>
+                          <p className="text-base text-gray-900">
+                            {new Date(pedidoSeleccionado.fechaPedido).toLocaleString()}
+                          </p>
+                        </div>
+                        <div>
+                          <span className="text-sm font-medium text-gray-600">Estado:</span>
+                          <div className="mt-1">
+                            <ChipEstadoPedido estado={pedidoSeleccionado.estado} />
+                          </div>
+                        </div>
+                        <div>
+                          <span className="text-sm font-medium text-gray-600">Total:</span>
+                          <p className="text-xl font-bold text-green-600">
+                            S/ {pedidoSeleccionado.total?.toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Tabla de productos */}
+                    <div>
+                      <h3 className="font-semibold text-lg mb-3 text-gray-800">Productos</h3>
+                      <Table headers={productHeaders}>
                         {detallePedido.map(det => (
-                          <tr key={det.id}>
-                            <td className="p-2 border">{det.idProducto}</td>
-                            <td className="p-2 border">{det.idProductoNombre}</td>
-                            <td className="p-2 border">{det.cantidad}</td>
-                            <td className="p-2 border">S/ {det.precioUnitario?.toFixed(2)}</td>
-                            <td className="p-2 border">S/ {det.subtotal?.toFixed(2)}</td>
+                          <tr key={det.id} className="[&>td]:h-12 [&>td]:px-4 [&>td]:py-1.5">
+                            <td className="text-center font-mono text-sm">{det.idProducto}</td>
+                            <td className="text-left">{det.idProductoNombre}</td>
+                            <td className="text-center font-semibold">{det.cantidad}</td>
+                            <td className="text-right">S/ {det.precioUnitario?.toFixed(2)}</td>
+                            <td className="text-right font-semibold">S/ {det.subtotal?.toFixed(2)}</td>
                           </tr>
                         ))}
-                      </tbody>
-                    </table>
+                      </Table>
+                    </div>
+
+                    {/* Resumen Financiero */}
+                    <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                      <h3 className="font-semibold text-lg mb-3 text-green-800">Resumen Financiero</h3>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium text-green-700">Subtotal (sin impuesto):</span>
+                          <span className="text-lg font-semibold text-green-600">
+                            S/ {((pedidoSeleccionado.total || 0) - (pedidoSeleccionado.impuesto || 0)).toFixed(2)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium text-green-700">Impuesto (IGV):</span>
+                          <span className="text-lg font-semibold text-green-600">
+                            S/ {pedidoSeleccionado.impuesto?.toFixed(2) || '0.00'}
+                          </span>
+                        </div>
+                        <div className="border-t border-green-300 pt-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-lg font-bold text-green-800">Total del Pedido:</span>
+                            <span className="text-2xl font-bold text-green-600">
+                              S/ {pedidoSeleccionado.total?.toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ) : (
-                  <div className="text-center py-8">No se encontraron detalles para este pedido.</div>
+                  <div className="text-center py-12">
+                    <div className="text-6xl mb-4">📦</div>
+                    <p className="text-gray-600 text-lg">No se encontraron detalles para este pedido.</p>
+                  </div>
                 )}
               </ModalBody>
-              <ModalFooter>
-                <Button onPress={() => setDetalleOpen(false)}>Cerrar</Button>
+              <ModalFooter className="border-t">
+                <Button
+                  color="primary"
+                  variant="flat"
+                  onPress={() => setDetalleOpen(false)}
+                >
+                  Cerrar
+                </Button>
               </ModalFooter>
             </>
           )}
