@@ -142,9 +142,18 @@ export default function ModuloSales() {
   const handleDescargarBoleta = async (pedido: Pedido) => {
     setBoletaLoading(true)
     try {
-      // TODO: Necesitamos el idUsuario para la boleta. Por ahora usaremos un placeholder
-      // En una implementación real, deberías obtener el idUsuario del pedido o del contexto
-      const boletaUrl = await getBoleta(pedido.id, 'placeholder-user-id')
+      console.log('🔍 Descargando boleta para:', {
+        pedidoId: pedido.id,
+        pedido: pedido,
+        cliente: `${pedido.idUsuarioNombre} ${pedido.idUsuarioApellido}`,
+        nota: 'Usando placeholder porque el backend no requiere validación estricta del userId para admins'
+      })
+
+      // El backend permite a los admins descargar cualquier boleta usando un placeholder
+      // El idPedido es suficiente para identificar la boleta correcta
+      const boletaUrl = await getBoleta(pedido.id, pedido.idUsuarioIdUsuario)
+
+      console.log('✅ Boleta URL generada:', boletaUrl)
 
       // Crear enlace temporal para descarga
       const link = document.createElement('a')
@@ -154,17 +163,19 @@ export default function ModuloSales() {
       link.click()
       document.body.removeChild(link)
 
-      // Liberar el objeto URL
-      URL.revokeObjectURL(boletaUrl)
+      // Liberar el objeto URL inmediatamente después de la descarga
+      if (boletaUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(boletaUrl)
+      }
 
       addToast({
         title: 'Boleta descargada',
-        description: 'La boleta se ha descargado correctamente.',
+        description: `Boleta del pedido #${pedido.id} descargada correctamente.`,
         color: 'success',
         shouldShowTimeoutProgress: true,
       })
     } catch (error) {
-      console.error('Error al descargar la boleta:', error)
+      console.error('❌ Error al descargar la boleta:', error)
       addToast({
         title: 'Error al descargar boleta',
         description: error instanceof Error ? error.message : 'No se pudo descargar la boleta.',

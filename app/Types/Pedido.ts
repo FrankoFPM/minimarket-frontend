@@ -1,5 +1,6 @@
 export interface Pedido {
   id: number;
+  idUsuarioIdUsuario: string;
   idUsuarioNombre: string;
   idUsuarioApellido: string;
   fechaPedido: string;
