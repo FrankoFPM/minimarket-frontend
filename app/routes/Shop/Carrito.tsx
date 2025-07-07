@@ -10,7 +10,7 @@ import { useCarrito } from '~/hooks/useCarrito'
 import { useProductosByIds } from '~/hooks/useProducto'
 import { setPedidoFromCarrito } from '~/services/pedidoService'
 import { addToast, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@heroui/react'
-import { removeAllProductosFromCarrito } from '~/services/carritoService'
+import { removeAllProductosFromCarrito, updateProductoQuantityInCarrito, removeProductoFromCarrito } from '~/services/carritoService'
 
 export default function Carrito() {
 
@@ -24,6 +24,8 @@ export default function Carrito() {
   const navigate = useNavigate()
   const [quantities, setQuantities] = useState<number[]>([])
   const [showSuccess, setShowSuccess] = useState(false)
+  const [pendingUpdates, setPendingUpdates] = useState<Map<string, number>>(new Map())
+  const [updatingProducts, setUpdatingProducts] = useState<Set<string>>(new Set())
   const contraentrega = 0 // Contraentrega gratuita
 
   const subtotal = productos.reduce((acc, producto, i) => {
@@ -48,6 +50,71 @@ export default function Carrito() {
       })
     }
   }
+
+  const handleQuantityUpdate = async (idProducto: string, newQuantity: number) => {
+    try {
+      setUpdatingProducts(prev => new Set(prev.add(idProducto)))
+
+      if (newQuantity === 0) {
+        // Eliminar producto del carrito
+        await removeProductoFromCarrito(userId, idProducto)
+        addToast({
+          title: 'Producto eliminado',
+          description: 'El producto ha sido eliminado del carrito.',
+          color: 'secondary',
+          shouldShowTimeoutProgress: true,
+        })
+      } else {
+        // Actualizar cantidad
+        await updateProductoQuantityInCarrito(userId, idProducto, newQuantity)
+        addToast({
+          title: 'Cantidad actualizada',
+          description: 'La cantidad del producto ha sido actualizada.',
+          color: 'success',
+          shouldShowTimeoutProgress: true,
+        })
+      }
+
+      // Actualizar el carrito después del cambio
+      await fetchCarrito()
+    } catch (error) {
+      console.error('Error al actualizar la cantidad:', error)
+      addToast({
+        title: 'Error',
+        description: 'No se pudo actualizar la cantidad. Por favor, inténtalo de nuevo.',
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
+      })
+      // Revertir el cambio local si hay error
+      setQuantities(carrito.map((item: Carrito) => item.cantidad))
+    } finally {
+      setUpdatingProducts(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(idProducto)
+        return newSet
+      })
+      setPendingUpdates(prev => {
+        const newMap = new Map(prev)
+        newMap.delete(idProducto)
+        return newMap
+      })
+    }
+  }
+
+  // Effect para manejar el debounce de las actualizaciones
+  useEffect(() => {
+    if (pendingUpdates.size === 0) return
+
+    const timeoutId = setTimeout(async () => {
+      const updates = Array.from(pendingUpdates.entries())
+
+      for (const [idProducto, newQuantity] of updates) {
+        await handleQuantityUpdate(idProducto, newQuantity)
+      }
+    }, 3000) // 3 segundos de debounce
+
+    return () => clearTimeout(timeoutId)
+  }, [pendingUpdates, userId, fetchCarrito])
 
   const vaciarCarrito = async () => {
     try {
@@ -145,9 +212,13 @@ export default function Carrito() {
                 <div className="flex justify-center">
                   <CantidadInput
                     quantity={quantities[i]}
-                    setQuantity={q =>
+                    setQuantity={q => {
                       setQuantities(prev => prev.map((val, idx) => (idx === i ? q : val)))
-                    }
+                      // Agregar a pendingUpdates
+                      setPendingUpdates(prev => new Map(prev.set(producto.idProducto, q)))
+                    }}
+                    isUpdating={updatingProducts.has(producto.idProducto)}
+                    hasPendingUpdate={pendingUpdates.has(producto.idProducto)}
                   />
                 </div>
                 <p className="text-center font-bold text-primary-1 text-lg">
@@ -268,52 +339,90 @@ function ProductMini({ producto, quantity }: { producto: Producto, quantity: num
   )
 }
 
-function CantidadInput({ quantity, setQuantity }: { quantity: number, setQuantity: (q: number) => void }) {
+function CantidadInput({
+  quantity,
+  setQuantity,
+  isUpdating = false,
+  hasPendingUpdate = false
+}: {
+  quantity: number
+  setQuantity: (q: number) => void
+  isUpdating?: boolean
+  hasPendingUpdate?: boolean
+}) {
   const handleDecrease = () => {
-    if (quantity > 1) {
+    if (quantity > 0 && !isUpdating) {
       setQuantity(quantity - 1)
     }
   }
 
   const handleIncrease = () => {
-    if (quantity < 99) {
+    if (quantity < 99 && !isUpdating) {
       setQuantity(quantity + 1)
     }
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value) || 1
-    if (value >= 1 && value <= 99) {
+    if (isUpdating) return
+    const value = parseInt(e.target.value) || 0
+    if (value >= 0 && value <= 99) {
       setQuantity(value)
     }
   }
 
   return (
-    <div className="flex items-center bg-white border-2 border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:border-primary-1/30 transition-all duration-200">
-      <button
-        onClick={handleDecrease}
-        disabled={quantity <= 1}
-        className="w-12 h-12 flex items-center justify-center bg-gradient-to-r from-gray-50 to-gray-100 hover:from-primary-1/10 hover:to-primary-1/20 disabled:from-gray-100 disabled:to-gray-100 disabled:text-gray-300 text-gray-600 hover:text-primary-1 transition-all duration-200 border-r border-gray-200"
-      >
-        <FaMinus size={14} />
-      </button>
+    <div className="flex flex-col items-center gap-2">
+      <div className={`flex items-center bg-white border-2 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 ${
+        isUpdating ? 'border-yellow-300 bg-yellow-50' :
+          hasPendingUpdate ? 'border-orange-300 bg-orange-50' :
+            'border-gray-200 hover:border-primary-1/30'
+      }`}>
+        <button
+          onClick={handleDecrease}
+          disabled={quantity <= 0 || isUpdating}
+          className="w-12 h-12 flex items-center justify-center bg-gradient-to-r from-gray-50 to-gray-100 hover:from-primary-1/10 hover:to-primary-1/20 disabled:from-gray-100 disabled:to-gray-100 disabled:text-gray-300 text-gray-600 hover:text-primary-1 transition-all duration-200 border-r border-gray-200 disabled:cursor-not-allowed"
+        >
+          <FaMinus size={14} />
+        </button>
 
-      <input
-        type="number"
-        value={quantity}
-        onChange={handleInputChange}
-        min={1}
-        max={99}
-        className="w-16 h-12 text-center font-bold text-lg text-foreground bg-transparent border-0 outline-none focus:bg-primary-1/5 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-      />
+        <input
+          type="number"
+          value={quantity}
+          onChange={handleInputChange}
+          min={0}
+          max={99}
+          disabled={isUpdating}
+          className="w-16 h-12 text-center font-bold text-lg text-foreground bg-transparent border-0 outline-none focus:bg-primary-1/5 transition-colors disabled:cursor-not-allowed disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
 
-      <button
-        onClick={handleIncrease}
-        disabled={quantity >= 99}
-        className="w-12 h-12 flex items-center justify-center bg-gradient-to-r from-gray-50 to-gray-100 hover:from-primary-1/10 hover:to-primary-1/20 disabled:from-gray-100 disabled:to-gray-100 disabled:text-gray-300 text-gray-600 hover:text-primary-1 transition-all duration-200 border-l border-gray-200"
-      >
-        <FaPlus size={14} />
-      </button>
+        <button
+          onClick={handleIncrease}
+          disabled={quantity >= 99 || isUpdating}
+          className="w-12 h-12 flex items-center justify-center bg-gradient-to-r from-gray-50 to-gray-100 hover:from-primary-1/10 hover:to-primary-1/20 disabled:from-gray-100 disabled:to-gray-100 disabled:text-gray-300 text-gray-600 hover:text-primary-1 transition-all duration-200 border-l border-gray-200 disabled:cursor-not-allowed"
+        >
+          <FaPlus size={14} />
+        </button>
+      </div>
+
+      {/* Indicador de estado */}
+      {isUpdating && (
+        <div className="flex items-center gap-2 text-xs text-yellow-600">
+          <div className="animate-spin w-3 h-3 border border-yellow-600 border-t-transparent rounded-full"></div>
+          <span>Actualizando...</span>
+        </div>
+      )}
+
+      {hasPendingUpdate && !isUpdating && (
+        <div className="text-xs text-orange-600 text-center">
+          <span>Cambios pendientes (3s)</span>
+        </div>
+      )}
+
+      {quantity === 0 && hasPendingUpdate && (
+        <div className="text-xs text-red-600 text-center font-medium">
+          <span>Se eliminará del carrito</span>
+        </div>
+      )}
     </div>
   )
 }
