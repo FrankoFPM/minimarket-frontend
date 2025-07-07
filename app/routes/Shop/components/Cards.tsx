@@ -9,36 +9,75 @@ interface CardProductProps {
   stars: number
   image: string,
   marca?: string,
-  discount?: number,
+  discount?: number, // TODO: Activar cuando el backend esté listo
   src: string
 }
 
-export function CardProduct({ name, price, stars, image, marca, discount, src }: CardProductProps) {
-  return (
-    <Link to={src} className="relative flex flex-col bg-secondary rounded-md hover:shadow-md transition-shadow duration-300 cursor-pointer">
-      {discount && discount > 0 ? (
-        <span className="absolute bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-md right-3 top-3">
-              -{Math.round((discount) * 100)}%
-        </span>
-      ) : ''}
+export function CardProduct({ name, price, stars, image, marca, src }: CardProductProps) {
+  // TODO: Implementar sistema de descuentos cuando el backend esté listo
+  // const discountedPrice = price - price * (discount ?? 0)
+  // const hasDiscount = discount && discount > 0
 
-      <picture className='h-fit flex justify-center items-center'>
-        <img src={image} alt={name} className="w-auto h-full object-cover rounded-md bg-secondary" />
-      </picture>
-      <div className='p-4 '>
-        <p className='text-foreground/50 font-bold'>{marca}</p>
-        <h3 className="text-primary-1 font-semibold text-lg">{name}</h3>
-        <div className='flex flex-row justify-start items-center gap-3'>
-          <p className="text-primary-1 font-bold text-xl">S/ {(price - price * (discount ?? 0)).toFixed(2)}</p>
-          {discount && discount > 0 ? (
-            <p className="text-gray-500 text-sm line-through">S/ {price.toFixed(2)}</p>
-          ): ''}
+  return (
+    <Link
+      to={src}
+      className="group relative flex flex-col bg-secondary rounded-xl hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-200/20 overflow-hidden hover:scale-[1.02] hover:border-primary-1/30"
+    >
+      {/* TODO: Descuentos - Activar cuando el backend esté listo */}
+      {/* {hasDiscount && (
+        <div className="absolute bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold px-3 py-1 rounded-full right-3 top-3 z-10 shadow-md">
+          -{Math.round(discount * 100)}%
         </div>
-        <div className="flex items-center mt-2">
-          {[...Array(stars)].map((_, index) => (
-            <span key={index} className="text-yellow-500">★</span>
-          ))}
+      )} */}
+
+      {/* Product image */}
+      <div className='relative h-48 flex justify-center items-center p-4 bg-gradient-to-br from-secondary to-gray-100 group-hover:from-secondary group-hover:to-gray-200 transition-all duration-300'>
+        <img
+          src={image}
+          alt={name}
+          className="w-full h-full object-contain rounded-lg transition-transform duration-300 group-hover:scale-105"
+        />
+      </div>
+
+      {/* Product info */}
+      <div className='p-4 flex flex-col gap-2'>
+        <p className='text-primary-1/70 font-semibold text-sm uppercase tracking-wide'>{marca}</p>
+        <h3 className="text-foreground font-bold text-lg line-clamp-2 group-hover:text-primary-1 transition-colors duration-300">
+          {name}
+        </h3>
+
+        {/* Price section */}
+        <div className='flex flex-row justify-between items-center'>
+          <div className='flex flex-col'>
+            <p className="text-primary-1 font-bold text-xl">
+              S/ {price.toFixed(2)}
+            </p>
+            {/* TODO: Precio con descuento - Activar cuando el backend esté listo */}
+            {/* {hasDiscount && (
+              <p className="text-gray-500 text-sm line-through">
+                S/ {price.toFixed(2)}
+              </p>
+            )} */}
+          </div>
+
+          {/* Stars rating */}
+          <div className="flex items-center gap-1">
+            {[...Array(5)].map((_, index) => (
+              <span
+                key={index}
+                className={index < stars ? 'text-yellow-400 text-sm' : 'text-gray-300 text-sm'}
+              >
+                ★
+              </span>
+            ))}
+          </div>
         </div>
+
+        {/* Add to cart button */}
+        <button className="mt-2 w-full bg-primary-1 text-secondary font-semibold py-2 px-4 rounded-lg hover:bg-primary-1/90 transition-colors duration-300 flex items-center justify-center gap-2">
+          <FiShoppingBag size={16} />
+          Ver producto
+        </button>
       </div>
     </Link>
   )
