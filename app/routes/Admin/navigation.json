@@ -38,10 +38,5 @@
     "link": "/dashboard/reports",
     "icon": "FaClipboardList",
     "text": "Reportes"
-  },
-  {
-    "link": "/dashboard/inventory",
-    "icon": "FaBox",
-    "text": "Inventario"
   }
 ]

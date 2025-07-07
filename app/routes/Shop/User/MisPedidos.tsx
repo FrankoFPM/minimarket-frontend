@@ -364,9 +364,9 @@ export function PedidoActions({ estado, pedido, uid }: PedidoActionsProps) {
                 <Button color="primary" variant="flat" onPress={onClose}>
                   Cancelar
                 </Button>
-                <Button color="danger" onPress={async () => { 
-                  await handleCancelar(); 
-                  onClose(); 
+                <Button color="danger" onPress={async () => {
+                  await handleCancelar()
+                  onClose()
                 }}>
                   Confirmar Cancelación
                 </Button>
