@@ -2,17 +2,15 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { useEffect, useState } from 'react'
 import { FaMinus, FaPlus, FaShoppingCart } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router'
-import { InputField } from '~/Components/FormComponent'
 import { auth } from '~/firebase/firebaseConfig'
 import { PaySuccessAnimation } from './animations/PayAnimation'
-//import { getProductos } from '../../services/productosService'
 import type { Producto } from '../../services/productosService'
 import type { Carrito } from '~/Types/Carrito'
 import { useCarrito } from '~/hooks/useCarrito'
 import { useProductosByIds } from '~/hooks/useProducto'
 import { setPedidoFromCarrito } from '~/services/pedidoService'
 import { addToast, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@heroui/react'
-import { removeAllProductosFromCarrito } from '~/services/carritoService'
+import { removeAllProductosFromCarrito, updateProductoQuantityInCarrito, removeProductoFromCarrito } from '~/services/carritoService'
 
 export default function Carrito() {
 
@@ -21,18 +19,20 @@ export default function Carrito() {
   const {carrito, loading, fetchCarrito} = useCarrito()
   const ids = carrito.map(item => item.idProducto)
   console.log('IDs del carrito:', ids)
-  const { productos, loading: loadingProductos, fetchProductos } = useProductosByIds(ids)
+  const { productos, fetchProductos } = useProductosByIds(ids)
 
   const navigate = useNavigate()
   const [quantities, setQuantities] = useState<number[]>([])
   const [showSuccess, setShowSuccess] = useState(false)
-  const envio = 5
+  const [pendingUpdates, setPendingUpdates] = useState<Map<string, number>>(new Map())
+  const [updatingProducts, setUpdatingProducts] = useState<Set<string>>(new Set())
+  const contraentrega = 0 // Contraentrega gratuita
 
   const subtotal = productos.reduce((acc, producto, i) => {
     return acc + producto.precio * quantities[i]
   }, 0)
 
-  const total = subtotal + envio
+  const total = subtotal + contraentrega // Total es igual al subtotal ya que contraentrega es gratis
 
   console.log('Productos del carrito:', productos)
   const handleCompra = async () => {
@@ -50,6 +50,71 @@ export default function Carrito() {
       })
     }
   }
+
+  const handleQuantityUpdate = async (idProducto: string, newQuantity: number) => {
+    try {
+      setUpdatingProducts(prev => new Set(prev.add(idProducto)))
+
+      if (newQuantity === 0) {
+        // Eliminar producto del carrito
+        await removeProductoFromCarrito(userId, idProducto)
+        addToast({
+          title: 'Producto eliminado',
+          description: 'El producto ha sido eliminado del carrito.',
+          color: 'secondary',
+          shouldShowTimeoutProgress: true,
+        })
+      } else {
+        // Actualizar cantidad
+        await updateProductoQuantityInCarrito(userId, idProducto, newQuantity)
+        addToast({
+          title: 'Cantidad actualizada',
+          description: 'La cantidad del producto ha sido actualizada.',
+          color: 'success',
+          shouldShowTimeoutProgress: true,
+        })
+      }
+
+      // Actualizar el carrito después del cambio
+      await fetchCarrito()
+    } catch (error) {
+      console.error('Error al actualizar la cantidad:', error)
+      addToast({
+        title: 'Error',
+        description: 'No se pudo actualizar la cantidad. Por favor, inténtalo de nuevo.',
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
+      })
+      // Revertir el cambio local si hay error
+      setQuantities(carrito.map((item: Carrito) => item.cantidad))
+    } finally {
+      setUpdatingProducts(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(idProducto)
+        return newSet
+      })
+      setPendingUpdates(prev => {
+        const newMap = new Map(prev)
+        newMap.delete(idProducto)
+        return newMap
+      })
+    }
+  }
+
+  // Effect para manejar el debounce de las actualizaciones
+  useEffect(() => {
+    if (pendingUpdates.size === 0) return
+
+    const timeoutId = setTimeout(async () => {
+      const updates = Array.from(pendingUpdates.entries())
+
+      for (const [idProducto, newQuantity] of updates) {
+        await handleQuantityUpdate(idProducto, newQuantity)
+      }
+    }, 3000) // 3 segundos de debounce
+
+    return () => clearTimeout(timeoutId)
+  }, [pendingUpdates, userId, fetchCarrito])
 
   const vaciarCarrito = async () => {
     try {
@@ -91,45 +156,84 @@ export default function Carrito() {
   }, [carrito])
 
   return (
-    <section className="container mx-auto flex flex-col lg:flex-row gap-8 py-8 min-h-[80vh]">
+    <section className="container mx-auto flex flex-col lg:flex-row gap-8 py-8 min-h-[80vh] px-4">
       {/* Carrito */}
       <article className="flex-1">
-        <div className='bg-secondary rounded-2xl shadow-lg p-8'>
-          <div className="flex items-center gap-3 mb-6">
-            <FaShoppingCart className="text-3xl text-primary-1" />
-            <h2 className="text-3xl font-bold text-foreground">Tu Carrito</h2>
-            <span className="ml-2 bg-primary-1 text-secondary px-3 py-1 rounded-full text-sm font-semibold">
-              {quantities.reduce((a, b) => a + b, 0)} productos
+        <div className='bg-white rounded-2xl shadow-lg border border-gray-100 p-6 lg:p-8'>
+          <div className="flex items-center gap-4 mb-6">
+            <div className="bg-gradient-to-r from-primary-1/10 to-primary-2/10 p-3 rounded-xl">
+              <FaShoppingCart className="text-2xl text-primary-1" />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-1">Tu Carrito</h2>
+              <p className="text-gray-500 text-sm">
+                {quantities.reduce((a, b) => a + b, 0) === 0 ? 'Carrito vacío' : `${quantities.reduce((a, b) => a + b, 0)} producto${quantities.reduce((a, b) => a + b, 0) > 1 ? 's' : ''} seleccionado${quantities.reduce((a, b) => a + b, 0) > 1 ? 's' : ''}`}
+              </p>
+            </div>
+            <span className="bg-gradient-to-r from-primary-1 to-primary-2 text-white px-4 py-2 rounded-full text-sm font-bold shadow-md">
+              {quantities.reduce((a, b) => a + b, 0)} items
             </span>
           </div>
-          <div className="grid grid-cols-3 gap-4 border-b-2 border-gray-200 pb-2 mt-2 font-semibold text-lg text-foreground/50">
-            <h3 className='text-foreground/50'>Producto</h3>
-            <h3 className="text-center text-foreground/50">Cantidad</h3>
-            <h3 className="text-center text-foreground/50">Total</h3>
+
+          {/* Banner de contraentrega gratuita */}
+          <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl p-4 mb-6 shadow-lg">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/20 backdrop-blur-sm rounded-full p-2">
+                <span className="text-2xl">🚚</span>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-lg">¡Contraentrega Gratuita!</h3>
+                <p className="text-green-100 text-sm">Paga al recoger tu pedido • Sin costo adicional</p>
+              </div>
+              <div className="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
+                <span className="text-sm font-bold">GRATIS</span>
+              </div>
+            </div>
           </div>
-          <div className="mt-4 divide-y divide-gray-200">
+
+          <div className="grid grid-cols-3 gap-6 border-b border-gray-200 pb-3 mb-6 font-semibold text-sm text-gray-600 uppercase tracking-wide">
+            <h3>Producto</h3>
+            <h3 className="text-center">Cantidad</h3>
+            <h3 className="text-center">Total</h3>
+          </div>
+
+          <div className="space-y-3">
             {productos.length === 0 ? (
-              <p className='text-foreground/50 text-center'>No se han añadido productos.</p>
-            ) :productos.map((producto, i) => (
-              <div key={producto.idProducto} className="grid grid-cols-3 gap-4 py-6 items-center hover:bg-background rounded-xl transition">
+              <div className="text-center py-12">
+                <div className="bg-gray-50 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                  <FaShoppingCart className="text-2xl text-gray-400" />
+                </div>
+                <p className='text-gray-500 text-lg font-medium'>No hay productos en el carrito</p>
+                <p className='text-gray-400 text-sm mt-2'>Agrega algunos productos para comenzar</p>
+              </div>
+            ) : productos.map((producto, i) => (
+              <div key={producto.idProducto} className="grid grid-cols-3 gap-6 py-4 items-center hover:bg-gradient-to-r hover:from-primary-1/5 hover:to-transparent rounded-xl transition-all duration-200 px-3 border border-transparent hover:border-primary-1/20 hover:shadow-sm">
                 <ProductMini producto={producto} quantity={quantities[i]} />
                 <div className="flex justify-center">
                   <CantidadInput
                     quantity={quantities[i]}
-                    setQuantity={q =>
+                    setQuantity={q => {
                       setQuantities(prev => prev.map((val, idx) => (idx === i ? q : val)))
-                    }
+                      // Agregar a pendingUpdates
+                      setPendingUpdates(prev => new Map(prev.set(producto.idProducto, q)))
+                    }}
+                    isUpdating={updatingProducts.has(producto.idProducto)}
+                    hasPendingUpdate={pendingUpdates.has(producto.idProducto)}
                   />
                 </div>
-                <p className="text-center font-bold text-primary-1 text-xl">
-                  ${(producto.precio * quantities[i]).toFixed(2)}
+                <p className="text-center font-bold text-primary-1 text-lg">
+                  S/ {(producto.precio * quantities[i]).toFixed(2)}
                 </p>
               </div>
             ))}
           </div>
-          <div className="flex justify-between mt-8">
-            <Link className="btn px-6 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold transition" to={'/'}>
-            ← Seguir comprando
+
+          <div className="flex flex-col sm:flex-row justify-between gap-4 mt-6 pt-6 border-t border-gray-200">
+            <Link
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-semibold transition-all duration-200 hover:shadow-sm border border-gray-200"
+              to={'/'}
+            >
+              ← Seguir comprando
             </Link>
             <VaciarCarrito vaciarCarrito={vaciarCarrito} disabled={loading || productos.length === 0} />
           </div>
@@ -138,31 +242,59 @@ export default function Carrito() {
 
       {/* Resumen */}
       <aside className="w-full max-w-md">
-        <article className="bg-secondary rounded-2xl shadow-lg p-8 mb-6">
-          <h2 className="text-2xl font-bold mb-6 text-primary-1">Resumen de compra</h2>
+        <article className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-6">
+          <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+            <span className="bg-gradient-to-r from-primary-1 to-primary-2 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">
+              💰
+            </span>
+            Resumen de compra
+          </h2>
 
-          <div className="flex justify-between mb-4">
-            <span className="text-foreground/50">Subtotal:</span>
-            <span className="font-semibold">${subtotal.toFixed(2)}</span>
+          <div className="flex justify-between mb-4 text-gray-600">
+            <span>Subtotal:</span>
+            <span className="font-semibold text-gray-800">S/ {subtotal.toFixed(2)}</span>
           </div>
 
-          <div className="flex justify-between mb-4">
-            <span className="text-foreground/50">Envío:</span>
-            <span className="font-semibold">${envio.toFixed(2)}</span>
+          <div className="flex justify-between mb-4 text-gray-600">
+            <div className="flex items-center gap-2">
+              <span>Contraentrega:</span>
+              <div className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold">
+                GRATIS
+              </div>
+            </div>
+            <span className="font-semibold text-green-600">S/ {contraentrega.toFixed(2)}</span>
           </div>
 
-          <div className="flex justify-between mb-6 border-t border-gray-200 pt-4">
-            <span className="text-lg font-bold">Total:</span>
-            <span className="text-lg font-bold text-primary-1">${total.toFixed(2)}</span>
+          <div className="flex justify-between mb-6 border-t-2 border-gray-100 pt-4">
+            <span className="text-lg font-bold text-gray-800">Total:</span>
+            <span className="text-xl font-bold text-primary-1">S/ {total.toFixed(2)}</span>
+          </div>
+
+          {/* Información de contraentrega */}
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 mb-6">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center">
+                <span className="text-sm font-bold">🚚</span>
+              </div>
+              <div>
+                <h3 className="font-bold text-green-800">Contraentrega Gratuita</h3>
+                <p className="text-green-600 text-sm">Paga al recoger tu pedido</p>
+              </div>
+            </div>
+            <ul className="text-xs text-green-700 space-y-1 ml-11">
+              <li>• Sin costo adicional de envío</li>
+              <li>• Pago en efectivo al momento del recojo</li>
+              <li>• Recojo en nuestro local</li>
+            </ul>
           </div>
 
           <Button
             isDisabled={loading || productos.length === 0}
             aria-disabled={loading || productos.length === 0}
             onPress={handleCompra}
-            className="w-full py-3 rounded-xl bg-primary-1 text-secondary font-bold text-lg shadow hover:bg-primary-2 transition"
+            className="w-full py-4 rounded-xl bg-gradient-to-r from-primary-1 to-primary-2 text-white font-bold text-lg shadow-lg hover:shadow-xl hover:from-primary-2 hover:to-primary-1 transition-all duration-300 disabled:opacity-50"
           >
-            Realizar pedido
+            {loading ? 'Procesando...' : 'Realizar pedido'}
           </Button>
           {showSuccess && (
             <PaySuccessAnimation
@@ -185,112 +317,246 @@ function ProductMini({ producto, quantity }: { producto: Producto, quantity: num
 
   return (
     <div className="flex gap-4 items-center">
-      <img
-        src={`/images/products/${producto.foto}`}
-        alt={producto.nombre}
-        width={60}
-        height={60}
-        className="object-cover rounded-xl shadow"
-      />
-      <div>
-        <h3 className="font-semibold text-lg text-foreground/50">{producto.nombre}</h3>
-        <p className="text-foreground/50">
-          Precio: <span className="font-bold text-primary-1">${producto.precio.toFixed(2)}</span>
+      <div className="relative">
+        <img
+          src={`/images/products/${producto.foto}`}
+          alt={producto.nombre}
+          width={60}
+          height={60}
+          className="object-cover rounded-xl shadow-sm border border-gray-100"
+        />
+        <div className="absolute -top-2 -right-2 bg-primary-1 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+          {quantity}
+        </div>
+      </div>
+      <div className="flex-1">
+        <h3 className="font-semibold text-base text-gray-800 line-clamp-2">{producto.nombre}</h3>
+        <p className="text-gray-500 text-sm mt-1">
+          Precio: <span className="font-bold text-primary-1">S/ {producto.precio.toFixed(2)}</span>
         </p>
       </div>
     </div>
   )
 }
 
-function CantidadInput({ quantity, setQuantity }: { quantity: number, setQuantity: (q: number) => void }) {
+function CantidadInput({
+  quantity,
+  setQuantity,
+  isUpdating = false,
+  hasPendingUpdate = false
+}: {
+  quantity: number
+  setQuantity: (q: number) => void
+  isUpdating?: boolean
+  hasPendingUpdate?: boolean
+}) {
+  const handleDecrease = () => {
+    if (quantity > 0 && !isUpdating) {
+      setQuantity(quantity - 1)
+    }
+  }
+
+  const handleIncrease = () => {
+    if (quantity < 99 && !isUpdating) {
+      setQuantity(quantity + 1)
+    }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isUpdating) return
+    const value = parseInt(e.target.value) || 0
+    if (value >= 0 && value <= 99) {
+      setQuantity(value)
+    }
+  }
+
   return (
-    <InputField
-      type="number" // mejor que "text" si es un campo numérico
-      name="cantidad"
-      placeholder="1"
-      className="rounded-md overflow-hidden h-10 flex max-w-32"
-      value={quantity}
-      min={0}
-      max={99}
-      onChange={(e) => setQuantity(Number(e.target.value))}
-      afterElement={
+    <div className="flex flex-col items-center gap-2">
+      <div className={`flex items-center bg-white border-2 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 ${
+        isUpdating ? 'border-yellow-300 bg-yellow-50' :
+          hasPendingUpdate ? 'border-orange-300 bg-orange-50' :
+            'border-gray-200 hover:border-primary-1/30'
+      }`}>
         <button
-          className="text-foreground/50 min-w-10 h-full flex items-center justify-center bg-primary-1"
-          onClick={() => setQuantity(quantity + 1)}
+          onClick={handleDecrease}
+          disabled={quantity <= 0 || isUpdating}
+          className="w-12 h-12 flex items-center justify-center bg-gradient-to-r from-gray-50 to-gray-100 hover:from-primary-1/10 hover:to-primary-1/20 disabled:from-gray-100 disabled:to-gray-100 disabled:text-gray-300 text-gray-600 hover:text-primary-1 transition-all duration-200 border-r border-gray-200 disabled:cursor-not-allowed"
         >
-          <FaPlus className="inline-block text-secondary" />
+          <FaMinus size={14} />
         </button>
-      }
-      beforeElement={
+
+        <input
+          type="number"
+          value={quantity}
+          onChange={handleInputChange}
+          min={0}
+          max={99}
+          disabled={isUpdating}
+          className="w-16 h-12 text-center font-bold text-lg text-foreground bg-transparent border-0 outline-none focus:bg-primary-1/5 transition-colors disabled:cursor-not-allowed disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
+
         <button
-          className="text-foreground/50 min-w-10 h-full flex items-center justify-center bg-primary-1"
-          onClick={() => setQuantity(quantity - 1)}
-          disabled={quantity <= 0}
+          onClick={handleIncrease}
+          disabled={quantity >= 99 || isUpdating}
+          className="w-12 h-12 flex items-center justify-center bg-gradient-to-r from-gray-50 to-gray-100 hover:from-primary-1/10 hover:to-primary-1/20 disabled:from-gray-100 disabled:to-gray-100 disabled:text-gray-300 text-gray-600 hover:text-primary-1 transition-all duration-200 border-l border-gray-200 disabled:cursor-not-allowed"
         >
-          <FaMinus className="inline-block text-secondary rotate-180" />
+          <FaPlus size={14} />
         </button>
-      }
-    />
+      </div>
+
+      {/* Indicador de estado */}
+      {isUpdating && (
+        <div className="flex items-center gap-2 text-xs text-yellow-600">
+          <div className="animate-spin w-3 h-3 border border-yellow-600 border-t-transparent rounded-full"></div>
+          <span>Actualizando...</span>
+        </div>
+      )}
+
+      {hasPendingUpdate && !isUpdating && (
+        <div className="text-xs text-orange-600 text-center">
+          <span>Cambios pendientes (3s)</span>
+        </div>
+      )}
+
+      {quantity === 0 && hasPendingUpdate && (
+        <div className="text-xs text-red-600 text-center font-medium">
+          <span>Se eliminará del carrito</span>
+        </div>
+      )}
+    </div>
   )
 }
 
 function PayMethods() {
   return (
-    <article className="bg-secondary rounded-xl shadow p-6 flex flex-col gap-4 items-start max-w-xl mx-auto">
-      <h3 className="text-base font-bold text-primary-1 mb-1">Métodos de pago</h3>
-      <p className="text-sm text-foreground/50 mb-4">
+    <article className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 max-w-xl mx-auto">
+      <h3 className="text-lg font-bold text-gray-800 mb-2 flex items-center gap-2">
+        <span className="bg-gradient-to-r from-primary-1 to-primary-2 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">
+          💳
+        </span>
+        Métodos de pago
+      </h3>
+      <p className="text-sm text-gray-500 mb-6">
         Elige el método que más te convenga. Aceptamos transferencias, billeteras digitales y pagos en efectivo.
       </p>
 
       <div className="w-full flex flex-col gap-4">
+        {/* Pago en efectivo - Contraentrega (Principal) */}
+        <section className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-4">
+          <h4 className="text-base font-bold text-green-800 mb-3 flex items-center gap-2">
+            <span className="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">
+              ⭐
+            </span>
+            Pago en Efectivo - Contraentrega
+          </h4>
+          <div className="flex items-center gap-4 mb-3">
+            <div className="bg-white rounded-xl shadow-sm border border-green-200 p-3">
+              <img src="/images/pay/pago-efectivo.svg" alt="Pago en Efectivo" className="w-16 h-10 object-contain" />
+            </div>
+            <div className="flex-1">
+              <h5 className="font-semibold text-green-800">Pago al recibir</h5>
+              <p className="text-green-600 text-sm">Sin costo adicional • Recomendado</p>
+            </div>
+          </div>
+          <div className="bg-white/50 rounded-lg p-3">
+            <ul className="text-xs text-green-700 space-y-1">
+              <li>• Paga cuando recibas tu pedido</li>
+              <li>• Recojo en nuestro local</li>
+              <li>• Sin comisiones ni gastos adicionales</li>
+              <li>• Verifica tu pedido antes de pagar</li>
+            </ul>
+          </div>
+        </section>
+
         {/* Transferencias Bancarias */}
-        <section>
-          <h4 className="text-sm font-semibold text-foreground/50 mb-2 border-l-4 border-primary-1 pl-2">Transferencias Bancarias</h4>
-          <div className="flex gap-4 flex-wrap">
+        <section className="bg-gradient-to-r from-blue-50 to-sky-50 border-2 border-blue-200 rounded-xl p-4">
+          <h4 className="text-base font-bold text-blue-800 mb-3 flex items-center gap-2">
+            <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">
+              🏦
+            </span>
+            Transferencias Bancarias
+          </h4>
+          <div className="flex gap-4 flex-wrap mb-3">
             {[
               { src: '/images/pay/bcp.svg', alt: 'BCP', label: 'Banco de Crédito del Perú' },
               { src: '/images/pay/interbank.png', alt: 'Interbank', label: 'Interbank' },
             ].map(({ src, alt, label }) => (
-              <div key={alt} className="flex flex-col items-center group w-20">
-                <div className="bg-secondary rounded-lg shadow p-2 transition-transform group-hover:scale-105">
-                  <img src={src} alt={alt} className="w-16 h-10 object-contain grayscale group-hover:grayscale-0 transition" />
+              <div key={alt} className="flex flex-col items-center group">
+                <div className="bg-white rounded-xl shadow-sm border border-blue-200 p-3 transition-all duration-200 group-hover:shadow-md group-hover:border-blue-300">
+                  <img src={src} alt={alt} className="w-16 h-10 object-contain filter grayscale group-hover:grayscale-0 transition-all duration-200" />
                 </div>
-                <span className="mt-1 text-[10px] text-center text-foreground/50 group-hover:text-primary-1 transition">{label}</span>
+                <span className="mt-2 text-[10px] text-center text-blue-700 group-hover:text-blue-800 transition-colors duration-200 font-medium">{label}</span>
               </div>
             ))}
+          </div>
+          <div className="bg-white/50 rounded-lg p-3">
+            <ul className="text-xs text-blue-700 space-y-1">
+              <li>• Realiza tu transferencia bancaria</li>
+              <li>• Envía el comprobante a nuestros números autorizados</li>
+              <li>• O acércate presencialmente al local</li>
+              <li>• Procesamiento inmediato del pedido</li>
+            </ul>
           </div>
         </section>
 
         {/* Billeteras Digitales */}
-        <section>
-          <h4 className="text-sm font-semibold text-foreground/50 mb-2 border-l-4 border-primary-1 pl-2">Billeteras Digitales</h4>
-          <div className="flex gap-4 flex-wrap">
+        <section className="bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-4">
+          <h4 className="text-base font-bold text-purple-800 mb-3 flex items-center gap-2">
+            <span className="bg-purple-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">
+              📱
+            </span>
+            Billeteras Digitales
+          </h4>
+          <div className="flex gap-4 flex-wrap mb-3">
             {[
               { src: '/images/pay/yape.webp', alt: 'Yape', label: 'Rápido y sin comisiones' },
               { src: '/images/pay/plin.png', alt: 'Plin', label: 'Desde tu app bancaria' },
             ].map(({ src, alt, label }) => (
-              <div key={alt} className="flex flex-col items-center group w-20">
-                <div className="bg-secondary rounded-lg shadow p-2 transition-transform group-hover:scale-105">
-                  <img src={src} alt={alt} className="w-16 h-10 object-contain grayscale group-hover:grayscale-0 transition" />
+              <div key={alt} className="flex flex-col items-center group">
+                <div className="bg-white rounded-xl shadow-sm border border-purple-200 p-3 transition-all duration-200 group-hover:shadow-md group-hover:border-purple-300">
+                  <img src={src} alt={alt} className="w-16 h-10 object-contain filter grayscale group-hover:grayscale-0 transition-all duration-200" />
                 </div>
-                <span className="mt-1 text-[10px] text-center text-foreground/50 group-hover:text-primary-1 transition">{label}</span>
+                <span className="mt-2 text-[10px] text-center text-purple-700 group-hover:text-purple-800 transition-colors duration-200 font-medium">{label}</span>
               </div>
             ))}
           </div>
-        </section>
-
-        {/* Pago en efectivo */}
-        <section>
-          <h4 className="text-sm font-semibold text-foreground/50 mb-2 border-l-4 border-primary-1 pl-2">Pago en Efectivo</h4>
-          <div className="flex gap-4 flex-wrap">
-            <div className="flex flex-col items-center group w-20">
-              <div className="bg-secondary rounded-lg shadow p-2 transition-transform group-hover:scale-105">
-                <img src="/images/pay/pago-efectivo.svg" alt="Pago Efectivo" className="w-16 h-10 object-contain grayscale group-hover:grayscale-0 transition" />
-              </div>
-              <span className="mt-1 text-[10px] text-center text-foreground/50 group-hover:text-primary-1 transition">Disponible en agentes</span>
-            </div>
+          <div className="bg-white/50 rounded-lg p-3">
+            <ul className="text-xs text-purple-700 space-y-1">
+              <li>• Realiza tu pago por Yape o Plin</li>
+              <li>• Envía el comprobante a nuestros números autorizados</li>
+              <li>• O acércate presencialmente al local</li>
+              <li>• Confirmación rápida del pago</li>
+            </ul>
           </div>
         </section>
+
+        {/* Números autorizados */}
+        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 border-2 border-indigo-200 rounded-xl p-4">
+          <h4 className="text-base font-bold text-indigo-800 mb-3 flex items-center gap-2">
+            <span className="bg-indigo-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">
+              📞
+            </span>
+            Números Autorizados
+          </h4>
+          <div className="bg-white/50 rounded-lg p-3">
+            <p className="text-sm text-indigo-700 font-medium mb-2">Envía tu comprobante de pago a:</p>
+            <ul className="text-xs text-indigo-700 space-y-1">
+              <li>• WhatsApp: <span className="font-semibold">+51 999 888 777</span></li>
+              <li>• Telegram: <span className="font-semibold">+51 999 888 777</span></li>
+              <li>• SMS: <span className="font-semibold">+51 999 888 777</span></li>
+            </ul>
+            <p className="text-xs text-indigo-600 mt-2 font-medium">
+              Incluye tu nombre completo y número de pedido
+            </p>
+          </div>
+        </div>
+
+        {/* Nota informativa */}
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+          <p className="text-xs text-amber-700 text-center">
+            <span className="font-semibold">Recuerda:</span> Todos los pedidos son para recojo en nuestro local. El pago en efectivo se realiza al momento del recojo.
+          </p>
+        </div>
       </div>
     </article>
   )
@@ -306,7 +572,7 @@ function VaciarCarrito({ vaciarCarrito, disabled }: VaciarCarritoProps) {
 
   return (
     <>
-      <Button onPress={onOpen} isDisabled={disabled} className="btn px-6 py-2 rounded-xl bg-primary-1 text-secondary font-bold shadow hover:bg-primary-2 transition">
+      <Button onPress={onOpen} isDisabled={disabled} className="px-6 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
             Vaciar carrito
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop='blur'>

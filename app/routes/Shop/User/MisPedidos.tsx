@@ -13,10 +13,9 @@ import type { Pedido } from '~/Types/Pedido'
 
 interface Props {
   detalle: DetallePedido;
-  pedido: Pedido;
 }
 
-const CardProducto = ({ detalle, pedido }: Props) => {
+const CardProducto = ({ detalle }: Props) => {
   const {
     cantidad,
     idProductoDescripcion,
@@ -27,54 +26,48 @@ const CardProducto = ({ detalle, pedido }: Props) => {
     idProducto,
   } = detalle
 
-  const {
-    id,
-    fechaPedido,
-    idUsuarioNombre,
-    idUsuarioApellido,
-  } = pedido
-
   return (
-    <div className="border border-primary-1 rounded-md p-3 bg-secondary shadow-sm text-sm">
-      <div className="flex justify-between items-center mb-2">
-        <div>
-          <p className="font-medium">{new Date(fechaPedido).toLocaleDateString()}</p>
-          <p className="text-xs text-gray-600">Pedido #{id}</p>
-        </div>
-        <p className="text-xs text-gray-600 text-right">
-          Cliente: {idUsuarioNombre} {idUsuarioApellido}
-        </p>
-      </div>
-
-      <div className="flex items-center gap-3">
-        <img
-          src={'/images/products/' + idProductoFoto}
-          alt={idProductoNombre}
-          className="w-20 h-20 object-cover border border-primary-1 rounded-md"
-        />
-
-        <div className="flex-1">
-          <p className="font-semibold text-[15px]">{idProductoNombre}</p>
-          <p className="text-xs text-gray-600 mb-1">{idProductoDescripcion}</p>
-          <p className="text-xs text-gray-500">Código: {idProducto}</p>
-
-          <div className="flex flex-wrap items-center gap-3 mt-2 text-xs">
-            <span>Cant: {cantidad}</span>
-            <span>Unit: PEN {precioUnitario.toFixed(2)}</span>
-            <span className="font-semibold">
-              Subtotal: PEN {subtotal.toFixed(2)}
-            </span>
+    <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
+      <div className="flex items-start gap-3">
+        <div className="relative">
+          <img
+            src={'/images/products/' + idProductoFoto}
+            alt={idProductoNombre}
+            className="w-16 h-16 object-cover rounded-lg border border-gray-200"
+          />
+          <div className="absolute -top-1 -right-1 bg-primary-1 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
+            {cantidad}
           </div>
         </div>
-      </div>
 
-      <div className="mt-2 text-right">
-        <a
-          href={`/producto/${idProducto}`}
-          className="text-primary-1 text-xs underline hover:text-primary-2 transition"
-        >
-          Ver producto
-        </a>
+        <div className="flex-1 min-w-0">
+          <h4 className="font-semibold text-gray-900 text-sm leading-5 mb-1 truncate">
+            {idProductoNombre}
+          </h4>
+          <p className="text-xs text-gray-600 mb-2 line-clamp-2">
+            {idProductoDescripcion}
+          </p>
+          <p className="text-xs text-gray-500 mb-2">
+            SKU: {idProducto.slice(-8)}
+          </p>
+
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-gray-600">
+                S/ {precioUnitario.toFixed(2)} × {cantidad}
+              </span>
+              <span className="font-semibold text-sm text-primary-1">
+                S/ {subtotal.toFixed(2)}
+              </span>
+            </div>
+            <a
+              href={`/producto/${idProducto}`}
+              className="text-primary-1 text-xs font-medium hover:text-primary-2 transition-colors underline-offset-2 hover:underline"
+            >
+              Ver producto
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -98,18 +91,41 @@ const Pedidos = () => {
   }, [navigate])
 
   return (
-    <section>
+    <section className="min-h-screen bg-gray-50">
       { loading ? (
-        <div className="flex justify-center items-center h-screen">
-          <p className="text-lg text-gray-500">Cargando pedidos...</p>
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-1 mx-auto mb-4"></div>
+            <p className="text-lg text-gray-600">Cargando pedidos...</p>
+          </div>
         </div>
       ) : (
-        <div className="container mx-auto p-6">
-          <h1 className="text-3xl text-foreground font-bold mb-6">Mis Pedidos</h1>
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">Mis Pedidos</h1>
+            <p className="text-gray-600">Gestiona y revisa el estado de tus pedidos</p>
+          </div>
+
           {pedido.length === 0 ? (
-            <p className="text-lg text-gray-500">No tienes pedidos realizados.</p>
+            <div className="text-center py-16">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 max-w-md mx-auto">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">No hay pedidos aún</h3>
+                <p className="text-gray-600 mb-6">Cuando realices tu primera compra, aparecerá aquí</p>
+                <a
+                  href="/shop"
+                  className="inline-flex items-center px-6 py-3 bg-primary-1 text-white font-medium rounded-lg hover:bg-primary-2 transition-colors"
+                >
+                  Comenzar a comprar
+                </a>
+              </div>
+            </div>
           ) : (
-            <div className="flex flex-col gap-6">
+            <div className="space-y-6">
               {pedido.map((item: Pedido) => (
                 <PedidosDetalles key={item.id} pedido={item} productos={detallePedidos} uid={idUsuario}/>
               ))}
@@ -132,45 +148,78 @@ function PedidosDetalles({ pedido, productos, uid }: { pedido: Pedido, productos
   console.log('Detalles filtrados:', detallesFiltrados)
 
   return (
-    <div className="grid grid-cols-3 items-center justify-center gap-1">
-      <div className="p-6 bg-secondary rounded-l-md shadow-xs h-full">
-        <div className='flex justify-between items-center mb-4 border-b-1 border-primary-1 pb-2'>
-          <TitleStatus estado={pedido.estado as TitleStatusProps['estado']} />
-          <p className='font-semibold text-foreground'>Fecha: <span className='font-normal text-sm text-gray-400/90'>{fecha.format('DD/MM/YYYY HH:mm')}</span></p>
-        </div>
-        <div className="mt-4 grid grid-cols-2 gap-y-2 gap-x-4 text-sm text-gray-400/90">
-          <div>ID del Pedido:</div>
-          <div className="font-semibold text-primary-1">{pedido.id}</div>
-          <div>Método de pago:</div>
-          <div className="font-semibold text-primary-1">{pedido.metodoPago}</div>
-          <div>Total:</div>
-          <div className="font-semibold text-primary-1">PEN {pedido.total}</div>
-          <div>Fecha de actualizacion</div>
-          <div className="font-semibold text-primary-1">{dayjs(pedido.updatedAt).format('DD/MM/YYYY HH:mm')}</div>
-          <div className="col-span-2 w-full border-b-1 border-primary-1 my-2"></div>
-          <div>Nombre del cliente:</div>
-          <div className="font-semibold text-primary-1">{pedido.idUsuarioNombre + ' ' + pedido.idUsuarioApellido}</div>
-          <div className="col-span-2 w-full border-b-1 border-primary-1 my-2"></div>
-          <PedidoActions estado={pedido.estado as PedidoActionsProps['estado']} pedido={pedido} uid={uid} />
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+      {/* Header del pedido */}
+      <div className="bg-gradient-to-r from-primary-1 to-primary-2 px-6 py-4 text-white">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <TitleStatus estado={pedido.estado as TitleStatusProps['estado']} />
+          </div>
+          <div className="text-right">
+            <p className="text-sm opacity-90">Pedido #{pedido.id}</p>
+            <p className="text-sm opacity-90">{fecha.format('DD/MM/YYYY HH:mm')}</p>
+          </div>
         </div>
       </div>
-      <section className='w-full h-full bg-secondary rounded-r-md shadow-xs col-span-2 p-6'>
-        <h3 className='text-lg font-semibold text-primary-1 mb-4'>Productos del Pedido</h3>
-        <ScrollShadow hideScrollBar className='h-56'>
-          <div className='grid grid-cols-2 gap-6'>
-            {detallesFiltrados.length === 0 ? (
-              <p className='text-gray-500'>No hay productos en este pedido.</p>
-            ) : (
-              detallesFiltrados.map((detalle: DetallePedido) => (
-                <CardProducto key={detalle.id} detalle={detalle} pedido={pedido} />
-              ))
-            )}
+
+      {/* Contenido del pedido */}
+      <div className="p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Información del pedido */}
+          <div className="space-y-4">
+            <div className="bg-gray-50 rounded-xl p-4">
+              <h3 className="font-semibold text-gray-900 mb-3">Información del Pedido</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Método de pago:</span>
+                  <span className="font-medium text-gray-900">{pedido.metodoPago}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Total:</span>
+                  <span className="font-bold text-primary-1">S/ {pedido.total.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Actualizado:</span>
+                  <span className="font-medium text-gray-900">{dayjs(pedido.updatedAt).format('DD/MM/YYYY HH:mm')}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4">
+              <h3 className="font-semibold text-gray-900 mb-3">Cliente</h3>
+              <p className="text-sm text-gray-800 font-medium">
+                {pedido.idUsuarioNombre} {pedido.idUsuarioApellido}
+              </p>
+            </div>
+
+            {/* Acciones del pedido */}
+            <div className="bg-gray-50 rounded-xl p-4">
+              <h3 className="font-semibold text-gray-900 mb-3">Acciones</h3>
+              <PedidoActions estado={pedido.estado as PedidoActionsProps['estado']} pedido={pedido} uid={uid} />
+            </div>
           </div>
-        </ScrollShadow>
-      </section>
+
+          {/* Productos del pedido */}
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-4">Productos ({detallesFiltrados.length})</h3>
+            <div className="bg-gray-50 rounded-xl p-4">
+              <ScrollShadow hideScrollBar className="max-h-96">
+                <div className="space-y-3">
+                  {detallesFiltrados.length === 0 ? (
+                    <p className="text-gray-500 text-center py-8">No hay productos en este pedido.</p>
+                  ) : (
+                    detallesFiltrados.map((detalle: DetallePedido) => (
+                      <CardProducto key={detalle.id} detalle={detalle} />
+                    ))
+                  )}
+                </div>
+              </ScrollShadow>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
-
 }
 
 interface TitleStatusProps {
@@ -215,21 +264,40 @@ const getEstadoMensaje = (estado: TitleStatusProps['estado']) => {
 export function TitleStatus({ estado }: TitleStatusProps) {
   const { titulo, descripcion } = getEstadoMensaje(estado)
 
+  const getEstadoColor = (estado: TitleStatusProps['estado']) => {
+    switch (estado) {
+    case 'solicitado':
+      return 'text-blue-100'
+    case 'pendiente_pago':
+      return 'text-yellow-100'
+    case 'pagado':
+      return 'text-green-100'
+    case 'completado':
+      return 'text-emerald-100'
+    case 'cancelado':
+      return 'text-red-100'
+    default:
+      return 'text-gray-100'
+    }
+  }
+
   return (
     <div className="flex items-center gap-2">
-      <h2 className="text-2xl font-bold text-primary-1 capitalize">{estado.replaceAll('_', ' ')}</h2>
+      <h2 className={`text-xl font-bold capitalize ${getEstadoColor(estado)}`}>
+        {estado.replaceAll('_', ' ')}
+      </h2>
       <Tooltip
         showArrow
         color="warning"
         closeDelay={2000}
         content={
-          <div className="text-sm w-52">
-            <p className="font-semibold">{titulo}</p>
-            <p>{descripcion}</p>
+          <div className="text-sm w-64 p-1">
+            <p className="font-semibold text-gray-800">{titulo}</p>
+            <p className="text-gray-600 mt-1">{descripcion}</p>
           </div>
         }
       >
-        <FaQuestionCircle className="text-yellow-400 cursor-pointer" />
+        <FaQuestionCircle className="text-white/80 hover:text-white cursor-pointer transition-colors" />
       </Tooltip>
     </div>
   )
@@ -290,19 +358,20 @@ export function PedidoActions({ estado, pedido, uid }: PedidoActionsProps) {
 
   if (estado === 'cancelado') {
     return (
-      <div className="text-red-500 font-semibold col-span-2">
-        Este pedido ha sido cancelado.
+      <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+        <span className="text-red-700 font-medium text-sm">Este pedido ha sido cancelado</span>
       </div>
     )
   }
 
   return (
-    <div className="grid grid-cols-2 gap-x-4 col-span-2 items-center">
+    <div className="flex flex-col gap-3">
       {(estado === 'solicitado' || estado === 'pendiente_pago') && (
         <Button
           variant="solid"
           color="primary"
-          className="w-full"
+          className="w-full font-medium"
           onPress={handleVerBoleta}
         >
           Proceder al Pago
@@ -313,10 +382,10 @@ export function PedidoActions({ estado, pedido, uid }: PedidoActionsProps) {
         <Button
           variant="solid"
           color="primary"
-          className="w-full"
+          className="w-full font-medium"
           onPress={handleVerBoleta}
         >
-        Ver Boleta de Venta
+          Ver Boleta de Venta
         </Button>
       )}
 
@@ -324,51 +393,77 @@ export function PedidoActions({ estado, pedido, uid }: PedidoActionsProps) {
         <Button
           variant="flat"
           color="danger"
-          className="w-full col-start-2"
+          className="w-full font-medium"
           onPress={onOpen}
         >
-        Cancelar Pedido
+          Cancelar Pedido
         </Button>
       )}
+
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         backdrop='blur'
         hideCloseButton
+        size="md"
       >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader>
-                <h3 className="text-lg font-semibold mb-3 text-gray-800 text-center">
-                    ¿Estás seguro de que deseas cancelar este pedido?
+              <ModalHeader className="flex flex-col gap-1">
+                <h3 className="text-xl font-bold text-gray-900">
+                  ¿Cancelar pedido?
                 </h3>
+                <p className="text-sm text-gray-600 font-normal">
+                  Esta acción no se puede deshacer
+                </p>
               </ModalHeader>
               <ModalBody>
-                <div className="text-center">
-
-                  <p className="text-gray-600 mb-4">
-                    Esta acción es irreversible. El pedido será cancelado y no podrás realizar más acciones sobre él.
+                <div className="space-y-4">
+                  <p className="text-gray-700">
+                    Una vez cancelado, el pedido no podrá ser procesado ni entregado.
                   </p>
-                  <div className="bg-gray-100 p-4 rounded-md text-sm text-left">
-                    <p><span className="font-semibold">Pedido:</span> #{pedido.id}</p>
-                    <p><span className="font-semibold">Cliente:</span> {pedido.idUsuarioNombre} {pedido.idUsuarioApellido}</p>
-                    <p><span className="font-semibold">Fecha:</span> {new Date(pedido.fechaPedido).toLocaleDateString()}</p>
-                    <p><span className="font-semibold">Total:</span> S/. {pedido.total.toFixed(2)}</p>
-                    <p className="text-red-500 font-semibold mt-2">Esta acción no se puede deshacer.</p>
+
+                  <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Pedido:</span>
+                      <span className="font-medium text-gray-900">#{pedido.id}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Cliente:</span>
+                      <span className="font-medium text-gray-900">{pedido.idUsuarioNombre} {pedido.idUsuarioApellido}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Fecha:</span>
+                      <span className="font-medium text-gray-900">{new Date(pedido.fechaPedido).toLocaleDateString()}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Total:</span>
+                      <span className="font-bold text-primary-1">S/ {pedido.total.toFixed(2)}</span>
+                    </div>
                   </div>
                 </div>
               </ModalBody>
 
               <ModalFooter>
-                <Button color="primary" variant="flat" onPress={onClose}>
-                  Cancelar
+                <Button
+                  color="default"
+                  variant="flat"
+                  onPress={onClose}
+                  className="font-medium"
+                >
+                  Mantener Pedido
                 </Button>
-                <Button color="danger" onPress={async () => {
-                  await handleCancelar()
-                  onClose()
-                }}>
-                  Confirmar Cancelación
+                <Button
+                  color="danger"
+                  variant="solid"
+                  onPress={async () => {
+                    await handleCancelar()
+                    onClose()
+                  }}
+                  className="font-medium"
+                >
+                  Sí, Cancelar
                 </Button>
               </ModalFooter>
 
