@@ -9,7 +9,7 @@ import 'swiper/css'
 import { ImageGallery } from '../components/ImageGallery'
 import { BannerHome } from '../components/Cards'
 import { ListCategorias, ListProducts } from './ListProducts'
-import { useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams, Link } from 'react-router'
 import { useEffect, useState } from 'react'
 import { getProductoById } from '~/services/productosService'
 import type { Producto } from '~/Types/Producto'
@@ -24,6 +24,7 @@ export default function Product() {
   const [cantidad, setCantidad] = useState(1)
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [wishlist, setWishlist] = useState<string[]>([])
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
   const navigate = useNavigate()
   const { fetchCarrito } = useCarritoContext()
 
@@ -49,6 +50,12 @@ export default function Product() {
     if (!producto) return
     setIsWishlisted(wishlist.includes(producto.idProducto))
   }, [wishlist, producto])
+
+  // Establecer categoría seleccionada cuando se carga el producto
+  useEffect(() => {
+    if (!producto) return
+    setSelectedCategory(producto.idCategoria || null)
+  }, [producto])
 
   // Mantener userId actualizado
   useEffect(() => {
@@ -79,6 +86,11 @@ export default function Product() {
       saveWishlist(updated)
       setIsWishlisted(true)
     }
+  }
+
+  // Manejar cambio de categoría
+  const handleCategoryChange = (categoryId: number | null) => {
+    setSelectedCategory(categoryId)
   }
 
   const handleProductos = async () => {
@@ -422,16 +434,39 @@ export default function Product() {
           <div className='flex flex-col lg:flex-row gap-6 mt-16'>
             <div className="hidden lg:block lg:flex-shrink-0">
               <ListCategorias
-                selectedCategory={null}
-                onCategoryChange={() => {}}
+                selectedCategory={selectedCategory}
+                onCategoryChange={handleCategoryChange}
               />
             </div>
             <div className="flex-1 lg:min-w-0">
-              <div className="mb-8">
-                <h2 className='text-foreground text-3xl font-bold mb-2'>Productos relacionados</h2>
-                <p className='text-foreground/70'>Otros productos que podrían interesarte</p>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+                <div>
+                  <h2 className='text-foreground text-3xl font-bold mb-2'>
+                    {selectedCategory === null
+                      ? 'Todos los productos'
+                      : selectedCategory === producto?.idCategoria
+                        ? 'Productos relacionados'
+                        : 'Productos de esta categoría'
+                    }
+                  </h2>
+                  <p className='text-foreground/70'>
+                    {selectedCategory === null
+                      ? 'Explora toda nuestra selección de productos'
+                      : selectedCategory === producto?.idCategoria
+                        ? `Otros productos de la categoría "${producto?.categoriaNombre}"`
+                        : 'Descubre productos de esta categoría'
+                    }
+                  </p>
+                </div>
+                <Link
+                  to="/shop"
+                  className="bg-primary-1 text-secondary font-semibold px-6 py-3 rounded-xl hover:bg-primary-1/90 transition-colors duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl shrink-0"
+                >
+                  <MdShoppingCart size={16} />
+                  Ver todos en Shop
+                </Link>
               </div>
-              <ListProducts />
+              <ListProducts selectedCategory={selectedCategory} />
             </div>
           </div>
         </div>
