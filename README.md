@@ -1,7 +1,7 @@
 # README: Proyecto Minimarket
 
 <div align="center" >
-  <img src="https://raw.githubusercontent.com/CristianRVM/ImgMinimarket/refs/heads/main/logo-minimarket.webp" alt="Proyect Logo" width="200px"/ >
+  <img src="https://raw.githubusercontent.com/CristianRVM/ImgMinimarket/refs/heads/main/logo-minimarket.webp" alt="Proyecto Logo" width="200px"/ >
 </div>
 
 <!-- Tabla de Contenido-->
@@ -33,7 +33,7 @@ La aplicación busca ofrecer una solución centralizada que permita:
 
 Con esta herramienta, se espera reducir los errores asociados a la gestión manual, y facilitar la toma de decisiones para el crecimiento del negocio.
 
-## Caracteristicas Principales
+## Características Principales
 
 - 🗃️ Registro y control de ventas
 - 📦 Gestión de inventario
@@ -88,7 +88,7 @@ _El **Registro** permite que nuevos usuarios creen una cuenta para acceder al ca
 
 ### Nosotros
 
-![Img Nosostros](https://raw.githubusercontent.com/CristianRVM/ImgMinimarket/refs/heads/main/nostros.webp "Nosotros")
+![Img Nosotros](https://raw.githubusercontent.com/CristianRVM/ImgMinimarket/refs/heads/main/nostros.webp "Nosotros")
 _La sección **Nosotros** presenta la historia, misión y visión del minimarket "La Caserita", mostrando su compromiso con las familias de la urbanización y su objetivo de brindar productos frescos y de calidad para el hogar_
 
 <p align="right"><a href="#tabla-de-contenido">Indice</a></p>
@@ -122,7 +122,7 @@ Esta vista está diseñada para que el cliente explore fácilmente la amplia var
 
 <p align="right"><a href="#tabla-de-contenido">Indice</a></p>
 
-## Stack Tecnologico
+## Stack Tecnológico
 
 - ![HTML](https://img.shields.io/badge/html-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 - ![CSS](https://img.shields.io/badge/css-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
