@@ -51,10 +51,10 @@ export function Header({ user }: { user: string }) {
       <div className="pr-8 flex items-center gap-4">
         <input type="text" className="bg-secondary text-foreground h-10 rounded-2xl px-4 border-1 border-foreground/10" placeholder="Buscar" />
         <FaCog className="text-2xl text-primary-1 cursor-pointer hover:rotate-180 transition-transform" />
-        <div className='cursor-pointer hover:bg-secondary p-2 rounded-xl text-primary-1 flex items-center gap-2' onClick={closeSession}>
+        <button type="button" className='cursor-pointer hover:bg-secondary p-2 rounded-xl text-primary-1 flex items-center gap-2' onClick={closeSession}>
           <FaUser className="text-2xl text-primary-1" />
           <p className="m-0 leading-none font-semibold">Cerrar Sesión</p>
-        </div>
+        </button>
       </div>
     </header>
   )
