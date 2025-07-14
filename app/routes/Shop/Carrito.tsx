@@ -217,6 +217,7 @@ export default function Carrito() {
                       // Agregar a pendingUpdates
                       setPendingUpdates(prev => new Map(prev.set(producto.idProducto, q)))
                     }}
+                    maxStock={producto.stock}
                     isUpdating={updatingProducts.has(producto.idProducto)}
                     hasPendingUpdate={pendingUpdates.has(producto.idProducto)}
                   />
@@ -342,11 +343,13 @@ function ProductMini({ producto, quantity }: { producto: Producto, quantity: num
 function CantidadInput({
   quantity,
   setQuantity,
+  maxStock,
   isUpdating = false,
   hasPendingUpdate = false
 }: {
   quantity: number
   setQuantity: (q: number) => void
+  maxStock: number
   isUpdating?: boolean
   hasPendingUpdate?: boolean
 }) {
@@ -357,7 +360,7 @@ function CantidadInput({
   }
 
   const handleIncrease = () => {
-    if (quantity < 99 && !isUpdating) {
+    if (quantity < maxStock && !isUpdating) {
       setQuantity(quantity + 1)
     }
   }
@@ -365,7 +368,7 @@ function CantidadInput({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isUpdating) return
     const value = parseInt(e.target.value) || 0
-    if (value >= 0 && value <= 99) {
+    if (value >= 0 && value <= maxStock) {
       setQuantity(value)
     }
   }
@@ -390,14 +393,14 @@ function CantidadInput({
           value={quantity}
           onChange={handleInputChange}
           min={0}
-          max={99}
+          max={maxStock}
           disabled={isUpdating}
           className="w-16 h-12 text-center font-bold text-lg text-foreground bg-transparent border-0 outline-none focus:bg-primary-1/5 transition-colors disabled:cursor-not-allowed disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
 
         <button
           onClick={handleIncrease}
-          disabled={quantity >= 99 || isUpdating}
+          disabled={quantity >= maxStock || isUpdating}
           className="w-12 h-12 flex items-center justify-center bg-gradient-to-r from-gray-50 to-gray-100 hover:from-primary-1/10 hover:to-primary-1/20 disabled:from-gray-100 disabled:to-gray-100 disabled:text-gray-300 text-gray-600 hover:text-primary-1 transition-all duration-200 border-l border-gray-200 disabled:cursor-not-allowed"
         >
           <FaPlus size={14} />
@@ -421,6 +424,19 @@ function CantidadInput({
       {quantity === 0 && hasPendingUpdate && (
         <div className="text-xs text-red-600 text-center font-medium">
           <span>Se eliminará del carrito</span>
+        </div>
+      )}
+
+      {/* Indicador de stock máximo */}
+      {quantity >= maxStock && maxStock > 0 && (
+        <div className="text-xs text-amber-600 text-center font-medium">
+          <span>Stock máximo ({maxStock})</span>
+        </div>
+      )}
+
+      {maxStock === 0 && (
+        <div className="text-xs text-red-600 text-center font-medium">
+          <span>Sin stock disponible</span>
         </div>
       )}
     </div>
