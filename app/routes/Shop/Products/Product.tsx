@@ -55,9 +55,11 @@ export default function Product() {
   useEffect(() => {
     if (!producto) return
     setSelectedCategory(producto.idCategoria || null)
-    // Ajustar cantidad si es mayor al stock disponible
-    if (cantidad > producto.stock) {
-      setCantidad(Math.max(1, producto.stock))
+    // Ajustar cantidad basada en el stock disponible
+    if (producto.stock === 0) {
+      setCantidad(0)
+    } else if (cantidad > producto.stock) {
+      setCantidad(producto.stock)
     }
   }, [producto, cantidad])
 
@@ -101,16 +103,16 @@ export default function Product() {
     if (isNaN(cantidad) || cantidad <= 0) {
       addToast({
         title: 'Error',
-        description: 'Cantidad inválida. Debe ser un número positivo.',
+        description: 'Por favor, selecciona una cantidad válida.',
         color: 'warning',
         shouldShowTimeoutProgress: true,
       })
       return
     }
-    if (!producto) {
+    if (!producto || producto.stock === 0) {
       addToast({
         title: 'Error',
-        description: 'Producto no encontrado.',
+        description: 'Este producto no está disponible en este momento.',
         color: 'danger',
         shouldShowTimeoutProgress: true,
       })
@@ -144,16 +146,16 @@ export default function Product() {
     if (isNaN(cantidad) || cantidad <= 0) {
       addToast({
         title: 'Error',
-        description: 'Cantidad inválida. Debe ser un número positivo.',
+        description: 'Por favor, selecciona una cantidad válida.',
         color: 'warning',
         shouldShowTimeoutProgress: true,
       })
       return
     }
-    if (!producto) {
+    if (!producto || producto.stock === 0) {
       addToast({
         title: 'Error',
-        description: 'Producto no encontrado.',
+        description: 'Este producto no está disponible en este momento.',
         color: 'danger',
         shouldShowTimeoutProgress: true,
       })
@@ -294,9 +296,9 @@ export default function Product() {
                 <span className="text-foreground font-medium">Cantidad:</span>
                 <div className="flex items-center border border-gray-300 rounded-lg">
                   <button
-                    onClick={() => setCantidad(Math.max(1, cantidad - 1))}
+                    onClick={() => setCantidad(Math.max(producto.stock > 0 ? 1 : 0, cantidad - 1))}
                     className="p-2 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={cantidad <= 1}
+                    disabled={cantidad <= (producto.stock > 0 ? 1 : 0)}
                   >
                     <MdRemove size={20} />
                   </button>
