@@ -55,7 +55,11 @@ export default function Product() {
   useEffect(() => {
     if (!producto) return
     setSelectedCategory(producto.idCategoria || null)
-  }, [producto])
+    // Ajustar cantidad si es mayor al stock disponible
+    if (cantidad > producto.stock) {
+      setCantidad(Math.max(1, producto.stock))
+    }
+  }, [producto, cantidad])
 
   // Mantener userId actualizado
   useEffect(() => {
@@ -291,7 +295,7 @@ export default function Product() {
                 <div className="flex items-center border border-gray-300 rounded-lg">
                   <button
                     onClick={() => setCantidad(Math.max(1, cantidad - 1))}
-                    className="p-2 hover:bg-gray-100 transition-colors"
+                    className="p-2 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={cantidad <= 1}
                   >
                     <MdRemove size={20} />
@@ -300,14 +304,19 @@ export default function Product() {
                     {cantidad}
                   </span>
                   <button
-                    onClick={() => setCantidad(Math.min(10, cantidad + 1))}
-                    className="p-2 hover:bg-gray-100 transition-colors"
-                    disabled={cantidad >= 10}
+                    onClick={() => setCantidad(Math.min(producto.stock, cantidad + 1))}
+                    className="p-2 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={cantidad >= producto.stock || producto.stock === 0}
                   >
                     <MdAdd size={20} />
                   </button>
                 </div>
-                <span className="text-sm text-foreground/70">Máximo 10 unidades</span>
+                <span className="text-sm text-foreground/70">
+                  {producto.stock > 0
+                    ? `Máximo ${producto.stock} unidades disponibles`
+                    : 'Sin stock disponible'
+                  }
+                </span>
               </div>
 
               {/* Action Buttons */}
