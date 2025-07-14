@@ -1,12 +1,13 @@
 import axios from 'axios'
 import type { User } from '~/Types/Usuario'
 import { registerWithEmail } from './firebaseAuth'
+import apiClient from './apiClient'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
 
 export const fetchUsers = async (): Promise<User[]> => {
   try {
-    const response = await axios.get<User[]>(`${API_URL}/usuario`)
+    const response = await apiClient.get<User[]>('/usuario')
     return response.data
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -89,7 +90,8 @@ export const createUser = async (user: Omit<User,'googleId' | 'facebookId' | 'cr
 
 export const updateUser = async (id: string, user: Omit<User, 'id' | 'googleId' | 'facebookId' | 'createdAt' | 'updatedAt'>): Promise<User> => {
   try {
-    const response = await axios.put<User>(`${API_URL}/usuario/${id}`, user)
+    // Usar apiClient que maneja automáticamente el token refresh con interceptors
+    const response = await apiClient.put<User>(`/usuario/${id}`, user)
     return response.data
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

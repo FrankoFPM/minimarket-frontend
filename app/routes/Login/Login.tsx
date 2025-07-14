@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router'
 import { InputField } from '../../Components/FormComponent'
 import { useForm } from 'react-hook-form'
-import { authenticateUser } from '~/services/authService'
+import { authenticateUser, checkTokenStatus } from '~/services/authService'
 import { LoginSocial, LoginWithEmail } from '~/services/firebaseAuth'
 
 /**

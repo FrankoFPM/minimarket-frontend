@@ -1,5 +1,6 @@
 import { addToast } from '@heroui/react'
 import axios from 'axios'
+import { auth } from '~/firebase/firebaseConfig'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
 
@@ -54,5 +55,21 @@ export const authenticateUser = async (email: string, password: string): Promise
       console.error('Error al autenticar:', (error as Error).message)
     }
     throw new Error('Error al autenticar. Verifica tus credenciales.')
+  }
+}
+
+// Función para forzar el refresh del token de Firebase (para uso del apiClient)
+export const forceTokenRefresh = async (): Promise<string | null> => {
+  try {
+    const user = auth.currentUser
+    if (user) {
+      const newToken = await user.getIdToken(true) // El 'true' fuerza el refresh
+      console.log('Token refreshed successfully')
+      return newToken
+    }
+    return null
+  } catch (error) {
+    console.error('Error refreshing token:', error)
+    throw error
   }
 }
