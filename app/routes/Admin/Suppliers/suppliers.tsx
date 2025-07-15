@@ -35,10 +35,10 @@ export default function ModuloSuppliers() {
   const headers = [
     { text:'ID', className: 'text-center' },
     { text:'Nombre de proovedor', className: 'text-left' },
-    { text:'Nombre de producto', className: 'text-left' },
-    { text:'Fecha de ingreso', className: 'text-left' },
-    { text:'Cantidad total', className: 'text-left' },
-    { text:'Precio unitario', className: 'text-left' },
+    { text:'Representante', className: 'text-left' },
+    { text:'Teléfono', className: 'text-left' },
+    { text:'Dirección', className: 'text-left' },
+    { text:'Email', className: 'text-left' },
     { text:'Estado', className: 'text-center' },
     { text:'Acciones', className: 'text-center' },
   ]
