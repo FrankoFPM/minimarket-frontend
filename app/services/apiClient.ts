@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { forceTokenRefresh } from './authService'
+import { addToast } from '@heroui/react'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
 
@@ -18,20 +19,27 @@ apiClient.interceptors.response.use(
     if (response.data && response.data.requiresTokenRefresh) {
       console.log('Token refresh required detected in response')
 
-      // Opcional: Mostrar notificación automática
-      const shouldRefresh = window.confirm(
-        'Tu sesión necesita actualizarse para reflejar los cambios. ¿Deseas continuar?'
-      )
+      // Mostrar notificación moderna y elegante
+      addToast({
+        title: 'Sesión actualizada',
+        description: 'Tu sesión se ha actualizado automáticamente para reflejar los cambios más recientes.',
+        color: 'success',
+        shouldShowTimeoutProgress: true,
+      })
 
-      if (shouldRefresh) {
-        forceTokenRefresh().then(() => {
-          console.log('Token refreshed after API response')
-          // Opcional: recargar la página
-          window.location.reload()
-        }).catch(error => {
-          console.error('Error refreshing token after API response:', error)
+      // Actualizar token automáticamente
+      forceTokenRefresh().then(() => {
+        console.log('Token refreshed after API response')
+      }).catch(error => {
+        console.error('Error refreshing token after API response:', error)
+        // Mostrar toast de error si falla
+        addToast({
+          title: 'Error de sesión',
+          description: 'Hubo un problema al actualizar tu sesión. Por favor, recarga la página.',
+          color: 'danger',
+          shouldShowTimeoutProgress: true,
         })
-      }
+      })
     }
     return response
   },
