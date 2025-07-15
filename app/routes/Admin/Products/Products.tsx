@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import type { Producto } from '~/Types/Producto'
 import { ModalAdd } from './ModalAdd'
 import { ModalActions } from './ModalActions'
+import { Button } from '@heroui/react'
+import ProductSeeder from './ProductSeeder'
 
 export default function ModuloProduct() {
   const headers = [
@@ -20,6 +22,7 @@ export default function ModuloProduct() {
 
   const [products, setProducts] = useState<Producto[]>([])
   const [loading, setLoading] = useState(true)
+  const [showSeeder, setShowSeeder] = useState(false)
 
   const fetchProducts = () => {
     setLoading(true)
@@ -32,11 +35,28 @@ export default function ModuloProduct() {
     fetchProducts()
   }, [])
 
+  if (showSeeder) {
+    return <ProductSeeder onBack={() => setShowSeeder(false)} />
+  }
+
   return (
     <div className="flex flex-col bg-background mx-auto my-10 container gap-4">
       <h1 className="text-3xl font-bold text-center">Panel de administración</h1>
       <p className="text-center">Desde este panel puedes gestionar los productos.</p>
-      <ModalAdd onSuccess={fetchProducts} />
+
+      <div className="flex justify-between items-center">
+        {(import.meta.env.MODE === 'production' || import.meta.env.MODE === 'development') && (
+          <Button
+            color="warning"
+            variant="bordered"
+            onPress={() => setShowSeeder(true)}
+          >
+            🌱 Insertar Datos de Prueba
+          </Button>
+        )}
+        <ModalAdd onSuccess={fetchProducts} />
+      </div>
+
       {loading ? (
         <div className="text-center py-8">Cargando productos...</div>
       ) : (

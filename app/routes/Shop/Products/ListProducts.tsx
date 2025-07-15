@@ -97,18 +97,18 @@ interface ListCategoriasProps {
 export function ListCategorias({ selectedCategory, onCategoryChange }: ListCategoriasProps) {
   const { categorias, loadingCategorias } = useCategorias()
 
-  // Mapeo de id de categoría a ícono
-  const iconMap: Record<number, JSX.Element> = {
-    1: <FaAppleAlt size={20} />,
-    2: <GiCarrot size={20} />,
-    3: <FaCheese size={20} />,
-    4: <GiMeat size={20} />,
-    5: <GiBreadSlice size={20} />,
-    6: <MdLocalGroceryStore size={20} />,
-    7: <MdLocalDrink size={20} />,
-    8: <FaSoap size={20} />,
-    9: <FaTooth size={20} />,
-    10: <AiOutlineEllipsis size={20} />,
+  // Mapeo de nombre de categoría a ícono
+  const iconNameMap: Record<string, JSX.Element> = {
+    'Abarrotes': <FaAppleAlt size={20} />,
+    'Frutas y Verduras': <GiCarrot size={20} />,
+    'Lácteos': <FaCheese size={20} />,
+    'Carnes': <GiMeat size={20} />,
+    'Panadería': <GiBreadSlice size={20} />,
+    'Snacks y Galletas': <MdLocalGroceryStore size={20} />,
+    'Bebidas': <MdLocalDrink size={20} />,
+    'Limpieza': <FaSoap size={20} />,
+    'Cuidado Personal': <FaTooth size={20} />,
+    // Puedes agregar más mapeos aquí si tienes más categorías
   }
 
   const handleCategoryClick = (categoryId: number | null) => {
@@ -157,7 +157,7 @@ export function ListCategorias({ selectedCategory, onCategoryChange }: ListCateg
                 <span className={`transition-colors ${
                   selectedCategory === cat.id ? 'text-secondary' : 'text-primary-1'
                 }`}>
-                  {iconMap[cat.id] || <AiOutlineEllipsis size={20} />}
+                  {iconNameMap[cat.nombre] || <AiOutlineEllipsis size={20} />}
                 </span>
                 <label className={`transition-colors text-sm lg:text-base font-semibold cursor-pointer select-none ${
                   selectedCategory === cat.id ? 'text-secondary' : 'text-foreground group-hover:text-primary-1'
