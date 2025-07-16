@@ -11,6 +11,7 @@ import type { Route } from './+types/root'
 import './app.css'
 import { HeroUIProvider } from '@heroui/system'
 import { ToastProvider } from '@heroui/react'
+import { usePasswordResetSync } from '~/hooks/usePasswordResetSync'
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -26,6 +27,9 @@ export const links: Route.LinksFunction = () => [
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  // Inicializar sincronización de restablecimientos de contraseña
+  usePasswordResetSync()
+
   // Leer la cookie del tema en el servidor
   const theme =
     typeof document === 'undefined'

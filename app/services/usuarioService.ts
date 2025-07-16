@@ -175,3 +175,26 @@ export const updateUserWithCredentials = async (id: string, userData: UserUpdate
     throw new Error('Error al actualizar usuario.')
   }
 }
+
+/**
+ * Registra un restablecimiento de contraseña en la base de datos
+ * Se usa cuando el usuario restablece su contraseña via email
+ */
+export const registerPasswordReset = async (userId: string, email: string): Promise<void> => {
+  try {
+    await axios.patch(`${API_URL}/usuario/${userId}/password-reset`, {
+      passwordResetAt: new Date().toISOString(),
+      email: email,
+      source: 'password_reset_link'
+    })
+
+    console.log('Restablecimiento de contraseña registrado para:', email)
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error('Error al registrar restablecimiento:', error.response?.data || error.message)
+    } else {
+      console.error('Error al registrar restablecimiento:', (error as Error).message)
+    }
+    throw new Error('Error al registrar restablecimiento de contraseña.')
+  }
+}
