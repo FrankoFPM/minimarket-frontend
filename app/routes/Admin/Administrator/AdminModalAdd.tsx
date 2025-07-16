@@ -7,7 +7,7 @@ import { createUser } from '~/services/usuarioService'
 
 export function AdminModalAdd({onSuccess}: { onSuccess: () => void }) {
   const addModal = useDisclosure()
-  const { register, handleSubmit, formState: { errors }, reset, getValues } = useForm<FormData>()
+  const { register, handleSubmit, formState: { errors, isSubmitting }, reset, getValues } = useForm<FormData>()
 
   const { distritos, loadingDistritos } = useDistritos()
 
@@ -43,7 +43,14 @@ export function AdminModalAdd({onSuccess}: { onSuccess: () => void }) {
         })
       } catch (error) {
         console.error('Error al crear el usuario:', error)
-      }}
+        addToast({
+          title: 'Error',
+          description: error instanceof Error ? error.message : 'Error al crear el usuario.',
+          color: 'danger',
+          shouldShowTimeoutProgress: true,
+        })
+      }
+    }
 
     return(
       <>
@@ -66,10 +73,10 @@ export function AdminModalAdd({onSuccess}: { onSuccess: () => void }) {
           title="Agregar usuario"
           footer={
             <>
-              <Button color="danger" onPress={addModal.onClose}>
+              <Button color="danger" onPress={addModal.onClose} isDisabled={isSubmitting}>
             Cerrar
               </Button>
-              <Button color="success" form='userForm' type='submit' >
+              <Button color="success" form='userForm' type='submit' isLoading={isSubmitting}>
             Guardar
               </Button>
             </>

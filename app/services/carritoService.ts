@@ -5,7 +5,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
 
 export const getCarrito = async (userId: string): Promise<Carrito[]> => {
   try {
-    const response = await axios.get(`${API_URL}/carrito/usuario/${userId}`)
+    const response = await axios.get(`${API_URL}/stock/carrito-validado/${userId}`)
     console.log('Carrito obtenido:', response.data)
     return response.data
   } catch (error: unknown) {

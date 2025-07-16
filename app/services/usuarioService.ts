@@ -1,7 +1,8 @@
 import axios from 'axios'
 import type { User } from '~/Types/Usuario'
-import { registerWithEmail } from './firebaseAuth'
+import { registerUserAsAdmin } from './firebaseAuth'
 import apiClient from './apiClient'
+import { handleFirebaseError, handleApiError } from '~/utils/errorHandling'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
 
@@ -71,20 +72,34 @@ export const fetchClientUsers = async (): Promise<User[]> => {
 
 export const createUser = async (user: Omit<User,'googleId' | 'facebookId' | 'createdAt' | 'updatedAt' | 'distritoNombre' | 'rol'>): Promise<User> => {
   try {
-    // 1. Registrar en Firebase
-    const userCredential = await registerWithEmail(user.email, user.password, `${user.nombre} ${user.apellido}`)
+    // 1. Registrar en Firebase usando la función que no afecta la sesión actual
+    const userCredential = await registerUserAsAdmin(user.email, user.password, `${user.nombre} ${user.apellido}`)
     const firebaseUser = userCredential.user
     const firebaseUid = firebaseUser.uid
     user.id = firebaseUid // Asignar el ID de Firebase al usuario
+
+    // 2. Crear usuario en la base de datos
     const response = await axios.post<User>(`${API_URL}/usuario`, user)
     return response.data
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error('Error al crear usuario cliente:', error.response?.data || error.message)
-    } else {
-      console.error('Error al crear usuario cliente:', (error as Error).message)
+    // Manejar errores de Firebase
+    if (error && typeof error === 'object' && 'code' in error) {
+      const firebaseErrorMessage = handleFirebaseError(error)
+      console.error('Error de Firebase al crear usuario:', firebaseErrorMessage)
+      throw new Error(firebaseErrorMessage)
     }
-    throw new Error('Error al crear usuario cliente.')
+
+    // Manejar errores de la API
+    if (axios.isAxiosError(error)) {
+      const apiErrorMessage = handleApiError(error)
+      console.error('Error de API al crear usuario:', apiErrorMessage)
+      throw new Error(apiErrorMessage)
+    }
+
+    // Error genérico
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido al crear usuario'
+    console.error('Error al crear usuario:', errorMessage)
+    throw new Error(errorMessage)
   }
 }
 
