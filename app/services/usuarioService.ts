@@ -51,22 +51,7 @@ export const fetchClientUsers = async (): Promise<User[]> => {
 
 /**
  *
- * @param user [
-  {
-    "id": "456DA52CE9894A04AB189BE7E894274C", omitir en insert
-    "nombre": "Franco",
-    "apellido": "PM",
-    "email": "example@example.com",
-    "telefono": "987654321",
-    "distritoId": 1,
-    "distritoNombre": "San Martin de porres", omitir en insert
-    "direccion": "Calle Falsa 123",
-    "googleId": null, omitir en insert
-    "facebookId": null, omitir en insert
-    "rol": "admin",
-    "estado": "activo"
-  }
-]
+ * @param user
  * @returns
  */
 

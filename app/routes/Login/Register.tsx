@@ -1,65 +1,68 @@
 import { Link, useNavigate } from 'react-router'
-import { InputField } from '~/Components/FormComponent'
-import { ThemeToggle } from '~/Components/UiComponentes'
+import { InputField, SelectInput } from '~/Components/FormComponent'
 import { useForm } from 'react-hook-form'
-import { registerUserClient } from '~/services/registerUser'
-import { registerWithEmail } from '~/services/firebaseAuth'
+import { useEffect } from 'react'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from '~/firebase/firebaseConfig'
+import { useDistritos } from '~/hooks/useCatalogos'
+import { addToast } from '@heroui/react'
+import { createUserClient } from '~/services/registerUser'
 
 const Register = () => {
   const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors }, getValues } = useForm<FormData>()
+  const { distritos } = useDistritos()
+
+  // Verificar si el usuario ya tiene una sesión activa
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Si hay un usuario autenticado, redirigir a la página principal
+        navigate('/')
+      }
+    })
+
+    return () => unsubscribe()
+  }, [navigate])
+
   interface FormData {
-    nombres: string;
-    apellidos: string;
+    nombre: string;
+    apellido: string;
     telefono: string;
     email: string;
+    direccion: string;
+    distritoId: number;
     password: string;
     confirmPassword: string;
   }
-
-  const onSubmit =async (data: FormData) => {
-
-    console.log('Datos enviados:', data)
-
-    const { nombres, apellidos, telefono, email, password, confirmPassword } = data
-    if (!nombres || !apellidos || !telefono || !email || !password || !confirmPassword) {
-      return
-    }
-
+  const onSubmit = async (data: FormData) => {
     try {
+      console.log('Datos del registro:', data)
 
-      // 1. Registrar en Firebase
-      const userCredential = await registerWithEmail(email, password, `${nombres} ${apellidos}`)
-      const firebaseUser = userCredential.user
-      const firebaseUid = firebaseUser.uid
-
-      const user = await registerUserClient({
-        id: firebaseUid, // ID de Firebase
-        nombre: nombres,
-        apellido: apellidos,
-        email: email,
-        distritoId: 1, // TODO: agregar al formulario
-        password: password,
-        telefono: telefono,
-        direccion: 'falso' //TODO: agregar al formulario
+      // Crear usuario utilizando el servicio unificado
+      await createUserClient({
+        ...data,
+        id: '', // El ID se asignará automáticamente por Firebase
       })
 
-      if (user === 201) {
-        console.log('Usuario registrado exitosamente')
-        navigate('/')
-      }
+      addToast({
+        title: 'Éxito',
+        description: 'Cuenta creada exitosamente. Bienvenido!',
+        color: 'success',
+        shouldShowTimeoutProgress: true,
+      })
 
-      console.log('Usuario registrado:', user)
+      // Redirigir a la página principal
+      navigate('/')
     } catch (error) {
-      if (error instanceof Error) {
-        console.error('Error al registrar:', error.message)
-      } else {
-        console.error('Error desconocido:', error)
-      }
-
+      console.error('Error al registrar usuario:', error)
+      addToast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Error al crear la cuenta.',
+        color: 'danger',
+        shouldShowTimeoutProgress: true,
+      })
     }
-
-    console.log(data)
   }
 
   if (process.env.NODE_ENV === 'development') {
@@ -99,16 +102,16 @@ const Register = () => {
               label="Nombre"
               placeholder="Ingrese sus nombres"
               type="text"
-              {...register('nombres',{required: 'Debe ingresar su nombre'})}
-              error={errors.nombres?.message}
+              {...register('nombre',{required: 'Debe ingresar su nombre'})}
+              error={errors.nombre?.message}
               className='rounded-md'
             />
             <InputField
               label="Apellido"
               placeholder="Ingrese sus apellidos"
               type="text"
-              {...register('apellidos', { required: 'Debe ingresar su apellido' })}
-              error={errors.apellidos?.message}
+              {...register('apellido', { required: 'Debe ingresar su apellido' })}
+              error={errors.apellido?.message}
               className='rounded-md'
             />
             <InputField
@@ -122,6 +125,31 @@ const Register = () => {
               error={errors.telefono?.message}
               className='rounded-md'
             />
+            <InputField
+              label="Dirección"
+              placeholder="Ingrese su dirección"
+              type="text"
+              {...register('direccion', {
+                required: 'Debe ingresar su dirección'
+              })}
+              error={errors.direccion?.message}
+              className='rounded-md'
+            />
+            <SelectInput
+              label="Distrito"
+              {...register('distritoId', {
+                required: 'Debe seleccionar un distrito'
+              })}
+              error={errors.distritoId?.message}
+              className='rounded-md'
+            >
+              <option value="">Seleccione un distrito</option>
+              {distritos.map((distrito) => (
+                <option key={distrito.id} value={distrito.id}>
+                  {distrito.nombre}
+                </option>
+              ))}
+            </SelectInput>
             <InputField
               label="Email"
               placeholder="Ingrese su correo"
@@ -172,10 +200,6 @@ const Register = () => {
               </p>
             </div>
           </form>
-          {/* Botón para alternar entre temas */}
-          <div className='absolute bottom-20'>
-            <ThemeToggle />
-          </div>
         </div>
       </div>
     </div>
