@@ -3,6 +3,7 @@ import type { User } from '~/Types/Usuario'
 import { registerUserAsAdmin } from './firebaseAuth'
 import apiClient from './apiClient'
 import { handleFirebaseError, handleApiError } from '~/utils/errorHandling'
+import { updateUserCredentials, canUpdateOwnCredentials, sendPasswordResetEmail } from './userCredentialService'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
 
@@ -113,5 +114,64 @@ export const deleteUser = async (id: string): Promise<void> => {
       console.error('Error al eliminar usuario:', (error as Error).message)
     }
     throw new Error('Error al eliminar usuario.')
+  }
+}
+
+export interface UserUpdateData extends Omit<User, 'id' | 'googleId' | 'facebookId' | 'createdAt' | 'updatedAt'> {
+  currentPassword?: string
+  newPassword?: string
+}
+
+/**
+ * Actualiza un usuario incluyendo sus credenciales de Firebase si es necesario
+ * @param id - ID del usuario a actualizar
+ * @param userData - Datos del usuario incluyendo credenciales opcionales
+ * @returns Usuario actualizado
+ */
+export const updateUserWithCredentials = async (id: string, userData: UserUpdateData): Promise<User> => {
+  try {
+    // Extraer datos de credenciales
+    const { currentPassword, newPassword, ...userDataForDB } = userData
+
+    // 1. Actualizar en la base de datos primero
+    const response = await apiClient.put<User>(`/usuario/${id}`, userDataForDB)
+    const updatedUser = response.data
+
+    // 2. Actualizar credenciales de Firebase si es necesario
+    if (canUpdateOwnCredentials(id)) {
+      // El usuario está autenticado y puede actualizar sus propias credenciales
+      if (currentPassword && (newPassword || userData.email)) {
+        try {
+          await updateUserCredentials(
+            {
+              newPassword: newPassword,
+              newEmail: userData.email,
+              newDisplayName: `${userData.nombre} ${userData.apellido}`
+            },
+            currentPassword
+          )
+        } catch (credentialError) {
+          // Si falla la actualización de credenciales, no fallar completamente
+          console.warn('Error al actualizar credenciales de Firebase:', credentialError)
+          // Opcionalmente, podrías lanzar una advertencia específica
+        }
+      }
+    } else {
+      // El usuario no puede actualizar sus propias credenciales
+      if (newPassword) {
+        // Enviar email de restablecimiento de contraseña
+        await sendPasswordResetEmail(userData.email)
+        console.log('Email de restablecimiento enviado para actualizar contraseña')
+      }
+    }
+
+    return updatedUser
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error('Error al actualizar usuario:', error.response?.data || error.message)
+    } else {
+      console.error('Error al actualizar usuario:', (error as Error).message)
+    }
+    throw new Error('Error al actualizar usuario.')
   }
 }

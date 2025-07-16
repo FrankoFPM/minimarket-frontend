@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form'
 import { useDistritos } from '~/hooks/useCatalogos'
 import { useEffect, useState } from 'react'
 import { deleteUser, updateUser } from '~/services/usuarioService'
+import { CredentialUpdateButton } from '~/Components/CredentialUpdateButton'
 
 interface AdminModalActions {
   user: User;
@@ -239,6 +240,13 @@ rol por defecto es cliente, si es admin, entonces rol='admin', el rol es inmutab
               ))
             )}
           </SelectInput>
+          <div>
+            <CredentialUpdateButton
+              userId={user.id}
+              userEmail={user.email}
+              userName={`${user.nombre} ${user.apellido}`}
+            />
+          </div>
           <InputField
             label="Contraseña (opcional)"
             type="password"
