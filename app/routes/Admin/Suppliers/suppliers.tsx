@@ -6,6 +6,7 @@ import { ModalBase } from '../Components/ModalBase'
 import { useEffect, useState } from 'react'
 import { createProveedor, getProveedores, softDeleteProveedor, updateProveedor } from '~/services/proveedorService'
 import { useForm } from 'react-hook-form'
+import { phoneValidation } from '~/utils/phoneValidation'
 
 interface Proveedor {
   id: number,
@@ -123,6 +124,7 @@ function ModalActions({supplier, OnSuccess}: ModalActions){
   const editModal = useDisclosure()
   const viewModal = useDisclosure()
   const deleteModal = useDisclosure()
+  const [isLoading, setIsLoading] = useState(false)
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>()
 
@@ -135,42 +137,38 @@ function ModalActions({supplier, OnSuccess}: ModalActions){
   }
 
   const onSubmit = async (data: FormData) => {
+    setIsLoading(true)
     console.log('Datos del formulario:', data)
-    if (data.nombre && data.contacto && data.telefono && data.direccion && data.email) {
-      try {
-        // Aquí puedes llamar a tu servicio para actualizar el proveedor
-        const updateSupplier = await updateProveedor(supplier.id, {
-          nombre: data.nombre,
-          contacto: data.contacto,
-          telefono: data.telefono,
-          direccion: data.direccion,
-          email: data.email,
-          estado: supplier.estado === 1 ? 'activo' : 'inactivo'
-        })
+    console.log('Errores de validación:', errors)
 
-        console.log('Proveedor actualizado:', updateSupplier)
-        // await updateProveedor(supplier.id, data);
-        addToast({
-          title: 'Proveedor actualizado',
-          description: 'El proveedor se ha actualizado correctamente.',
-          color: 'success'
-        })
-        OnSuccess()
-        editModal.onClose()
-      } catch (error) {
-        addToast({
-          title: 'Error al actualizar proveedor',
-          description: error instanceof Error ? error.message : 'Error desconocido',
-          color: 'danger'
-        })
-      }
-    }
-    else {
+    try {
+      // Aquí puedes llamar a tu servicio para actualizar el proveedor
+      const updateSupplier = await updateProveedor(supplier.id, {
+        nombre: data.nombre,
+        contacto: data.contacto,
+        telefono: data.telefono,
+        direccion: data.direccion,
+        email: data.email,
+        estado: supplier.estado === 1 ? 'activo' : 'inactivo'
+      })
+
+      console.log('Proveedor actualizado:', updateSupplier)
       addToast({
-        title: 'Error',
-        description: 'Por favor, completa todos los campos requeridos.',
+        title: 'Proveedor actualizado',
+        description: 'El proveedor se ha actualizado correctamente.',
+        color: 'success'
+      })
+      OnSuccess()
+      editModal.onClose()
+    } catch (error) {
+      console.error('Error al actualizar proveedor:', error)
+      addToast({
+        title: 'Error al actualizar proveedor',
+        description: error instanceof Error ? error.message : 'Error desconocido',
         color: 'danger'
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -217,9 +215,10 @@ function ModalActions({supplier, OnSuccess}: ModalActions){
             </Button>
             <Button
               color="success"
-              onPress={editModal.onClose}
               type='submit'
               form='editSupplierForm'
+              isLoading={isLoading}
+              disabled={isLoading}
             >
               Guardar
             </Button>
@@ -246,8 +245,8 @@ function ModalActions({supplier, OnSuccess}: ModalActions){
           <InputField
             label="Teléfono"
             type="text"
-            placeholder="Ingrese el número de teléfono"
-            {...register('telefono', { required: 'El teléfono es requerido' })}
+            placeholder="Ingrese el número de teléfono (ej: +51 123456789)"
+            {...register('telefono', phoneValidation)}
             error={errors.telefono?.message}
             className='rounded-md'
           />
@@ -456,8 +455,8 @@ function ModalAdd({ onSuccess }: { onSuccess: () => void }){
           <InputField
             label="Teléfono"
             type="text"
-            placeholder="Ingrese el número de teléfono"
-            {...register('telefono', { required: 'El teléfono es requerido' })}
+            placeholder="Ingrese el número de teléfono (ej: +51 123456789)"
+            {...register('telefono', phoneValidation)}
             error={errors.telefono?.message}
             className='rounded-md'
           />
