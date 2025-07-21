@@ -3,6 +3,9 @@ import { InputField } from '../../Components/FormComponent'
 import { useForm } from 'react-hook-form'
 import { authenticateUser } from '~/services/authService'
 import { LoginSocial, LoginWithEmail } from '~/services/firebaseAuth'
+import { useEffect } from 'react'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from '~/firebase/firebaseConfig'
 
 /**
  * Componente principal para la página de inicio de sesión.
@@ -52,6 +55,18 @@ export default function Login() {
   if (process.env.NODE_ENV === 'development') {
     console.log(errors)
   }
+
+  // Verificar si el usuario ya tiene una sesión activa
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Si hay un usuario autenticado, redirigir a la página principal
+        navigate('/')
+      }
+    })
+
+    return () => unsubscribe()
+  }, [navigate])
 
   return (
     <div className="h-screen w-screen flex bg-background justify-center items-center">

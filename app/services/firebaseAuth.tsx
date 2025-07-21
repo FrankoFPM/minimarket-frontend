@@ -1,8 +1,23 @@
 import { addToast } from '@heroui/react'
 import { createUserWithEmailAndPassword, FacebookAuthProvider, getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth'
+import { initializeApp } from 'firebase/app'
 import { FaFacebook, FaGoogle } from 'react-icons/fa'
 import { useNavigate } from 'react-router'
 import { auth } from '~/firebase/firebaseConfig'
+
+// Crear una instancia separada de Firebase para registro de usuarios
+const firebaseConfig = {
+  apiKey: 'AIzaSyBDBKBxAZaJGYBdrfAd9ZBeLlAZSWqTjJo',
+  authDomain: 'minimarketback.firebaseapp.com',
+  projectId: 'minimarketback',
+  storageBucket: 'minimarketback.firebasestorage.app',
+  messagingSenderId: '634080994170',
+  appId: '1:634080994170:web:2682fe6bb733003847acc3',
+  measurementId: 'G-QQ3J1RMFCZ'
+}
+
+const adminApp = initializeApp(firebaseConfig, 'admin-app')
+const adminAuth = getAuth(adminApp)
 
 export const LoginSocial = () =>{
   const navigate = useNavigate()
@@ -178,6 +193,54 @@ export const LoginWithEmail = (email: string, password: string,navigate: (path: 
         color: 'danger',
         shouldShowTimeoutProgress: true,
       })
+    }
+  }
+}
+
+/**
+ * Registra un nuevo usuario sin afectar la sesión actual del administrador
+ * Utiliza una instancia separada de Firebase Auth
+ */
+export const registerUserAsAdmin = async (
+  email: string,
+  password: string,
+  displayName: string,
+) => {
+  try {
+    // Usar la instancia separada de Firebase Auth
+    const userCredential = await createUserWithEmailAndPassword(adminAuth, email, password)
+    const user = userCredential.user
+    await updateProfile(user, { displayName })
+
+    console.log('Usuario registrado por admin:', user)
+
+    // Inmediatamente deslogear el usuario de la instancia admin
+    // para que no interfiera con la sesión principal
+    await adminAuth.signOut()
+
+    return userCredential
+  } catch (error: unknown) {
+    let errorCode = 'unknown'
+    let errorMessage = 'Ocurrió un error desconocido'
+    if (typeof error === 'object' && error !== null && 'code' in error && 'message' in error) {
+      errorCode = (error as { code: string }).code
+      errorMessage = (error as { message: string }).message
+    }
+
+    console.error('Error al registrar usuario como admin:', errorCode, errorMessage)
+
+    // Mapear errores comunes de Firebase
+    switch (errorCode) {
+    case 'auth/email-already-in-use':
+      throw new Error('El correo electrónico ya está en uso')
+    case 'auth/invalid-email':
+      throw new Error('El correo electrónico no es válido')
+    case 'auth/operation-not-allowed':
+      throw new Error('Operación no permitida')
+    case 'auth/weak-password':
+      throw new Error('La contraseña es muy débil')
+    default:
+      throw new Error(errorMessage)
     }
   }
 }

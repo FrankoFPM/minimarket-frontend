@@ -1,37 +1,35 @@
-import { Outlet, useNavigate } from 'react-router'
+import { Outlet } from 'react-router'
 import { Header, Navbar } from './Components/LayoutComponents'
-import { useEffect, useState } from 'react'
-import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from '~/firebase/firebaseConfig'
+import AdminLoader from './Components/AdminLoader'
+import AuthIndicator from './Components/AuthIndicator'
+import { useAdminAuth } from '~/hooks/useAdminAuth'
 
 export default function AdminLayout() {
-  const navigate = useNavigate()
-  const [userName, setUserName] = useState<string>('')
+  const { isLoading, isAuthenticated, userName, showAuthIndicator, loadingMessage } = useAdminAuth()
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        navigate('/login')
-        return
-      }
-      const idToken = await user.getIdTokenResult()
-      setUserName(user.displayName || user.email || 'Usuario')
-      console.log(idToken.claims.role)
-      console.log('ID Token Claims:', idToken.claims)
-      if (idToken.claims.role === 'cliente') {
-        navigate('/unauthorized')
-      }
-    })
-    return () => unsubscribe()
-  }, [navigate])
+  const handleLoaderComplete = () => {
+    // Callback cuando el loader termina su animación
+    console.log('Loader animation completed')
+  }
 
   return (
-    <div className="dashboard relative">
-      <Navbar />
-      <Header user={userName}/>
-      <main className='main pr-5 pb-5'>
-        <Outlet />
-      </main>
-    </div>
+    <>
+      <AdminLoader
+        isLoading={isLoading}
+        onComplete={handleLoaderComplete}
+        message={loadingMessage}
+      />
+      <AuthIndicator isVisible={showAuthIndicator} message="Acceso autorizado" />
+
+      {isAuthenticated && !isLoading && (
+        <div className="dashboard relative">
+          <Navbar />
+          <Header user={userName}/>
+          <main className='main pr-5 pb-5'>
+            <Outlet />
+          </main>
+        </div>
+      )}
+    </>
   )
 }
